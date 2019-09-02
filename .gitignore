@@ -4,7 +4,7 @@
 temp.s
 temp.map
 
-ophis.bin
+assembler/KickAss*
 build/*
 
 # Input to the similarity tool - copyrighted material, we can't check it in!
