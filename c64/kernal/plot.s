@@ -15,8 +15,7 @@ plot_set:
 	sty current_screen_y
 	stx current_screen_x
 
-	// Our implementation has different screen editor, updating any
-	// other variables (see [CM64]) seems to be unnecessary
+	// XXX handle cursor blink
 
 	// FALLTROUGH to save one byte on RTS
 
