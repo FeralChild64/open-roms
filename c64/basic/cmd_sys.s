@@ -4,7 +4,7 @@ cmd_sys:
 	bcc !+
 
 	// SYS requires an argument
-	jmp do_SYNTAX_ERROR
+	jmp do_SYNTAX_error
 	
 !:
 	jsr basic_parse_line_number

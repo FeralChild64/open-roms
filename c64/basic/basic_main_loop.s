@@ -12,7 +12,7 @@ basic_read_next_line:
 	ldx #$00
 read_line_loop:
 
-	jsr $ffcf 		; KERNAL CHRIN
+	jsr JCHRIN
 	bcs read_line_loop
 	
 	cmp #$0d

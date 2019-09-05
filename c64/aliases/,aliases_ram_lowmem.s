@@ -39,7 +39,7 @@
 	.label STREND    = $31 // $31-$32  -- NOT IMPLEMENTED --
 	.label FRETOP    = $33 // $33-$34  -- NOT IMPLEMENTED --
 	.label FRESPC    = $35 // $35-$36  [!] our implementation might be different  XXX give more details
-	.label MEMSIZ    = $37 // $37-$38  highest address of BASIC memory
+	// .label MEMSIZ    = $37 // $37-$38  -- NOT IMPLEMENTED -- highest address of BASIC memory XXX find a non-conflicting name
 	.label CURLIN    = $39 // $39-$3A  current BASIC line number
 	.label OLDLIN    = $3B // $3B-$3C  previous BASIC line number
 	.label OLDTXT    = $3D // $3D-$3E  current BASIC line pointer
@@ -159,7 +159,7 @@
 	.label SAT       = $26D  // $26D-$276, secondary addresses  (table, 10 bytes)
 	.label KEYD      = $277  // $277-$280  keyboard buffer
 	.label MEMSTR    = $281  // $281-$282
-	.label MEMSIZ    = $283  // $283-$284, NOTE: Mapping the 64 erroniously has the hex as $282, while the DEC is correct
+	.label MEMSIZ    = $283  // $283-$284, NOTE: Mapping the 64 erroneously has the hex as $282, while the DEC is correct
 	.label TIMOUT    = $285  //            IEEE-488 timeout
 	.label COLOR     = $286  //            current text foreground color
 	.label GDCOL     = $287  //            color of character under cursor
@@ -194,7 +194,7 @@
 
 	// BASIC vectors
 	.label IERROR    = $300  // $300-$301  -- NOT IMPLEMENTED --
-	.label IERROR    = $302  // $302-$303  -- NOT IMPLEMENTED --
+	.label IMAIN     = $302  // $302-$303  -- NOT IMPLEMENTED --
 	.label ICRNCH    = $304  // $304-$305  -- NOT IMPLEMENTED --
 	.label IQPLOP    = $306  // $306-$307  -- NOT IMPLEMENTED --
 	.label IGONE     = $308  // $308-$309  -- NOT IMPLEMENTED --

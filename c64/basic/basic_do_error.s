@@ -31,7 +31,7 @@ basic_do_error:
 	lda #$0D // XXX do we need this?
 	jsr JCHROUT
 
-	;; Reset stack, and go back to main loop
+	// Reset stack, and go back to main loop
 	ldx #$FE
 	txs
 	jmp basic_main_loop

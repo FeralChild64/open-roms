@@ -99,10 +99,10 @@ tk_might_be_keyword:
 	jsr pack_word
 	lda tokenise_work2
 	cmp #$10
-	bcc +
+	bcc !+
 	// Packed string too long
 	jmp do_STRING_TOO_LONG_error
-	*
+!:
 
 	// Search for it in keywords
 	jsr keyword_search

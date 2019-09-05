@@ -46,7 +46,7 @@
 	
 	// "Compute's Mapping the 64" book
 	.label keyboard_buffer = $0277
-	.label text_colour $0286 // p55
+	.label text_colour = $0286 // p55
 	.label colour_under_cursor = $0287 // p56
 	.label key_buffer_size = $0289 // p57
 

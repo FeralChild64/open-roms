@@ -35,7 +35,7 @@
 	// in ZP RAM.  (Compute's Mapping the 64, p25)
 	.label basic_current_statement_ptr = $7a
 	
-	.label basic_numeric_work_area $57 // $57 - $60 inclusive = 10 bytes
+	.label basic_numeric_work_area = $57 // $57 - $60 inclusive = 10 bytes
 
 	// Floating point accumulator 1 $61 - $68
 	.label basic_fac1_exponent = $61

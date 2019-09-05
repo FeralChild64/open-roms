@@ -10,7 +10,7 @@ basic_shift_mem_down_and_relink:
 	
 	// Source is that plus X
 	txa
-	pha 			; also keep for later
+	pha 			// also keep for later
 	clc
 	adc basic_current_line_ptr+0
 	sta memmove_src+0
@@ -118,7 +118,7 @@ relink_down_next_line:
 	ldx #<basic_current_line_ptr+0
 	jsr peek_under_roms
 	sec
-	sbc tokenise_Work3
+	sbc tokenise_work3
 	sta memmove_src+0
 	iny
 	jsr peek_under_roms

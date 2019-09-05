@@ -33,7 +33,7 @@ cmd_load:
 	jsr basic_fetch_and_consume_character
 	cmp #$22
 	beq !+
-	jmp do_SYNTAX_ERROR
+	jmp do_SYNTAX_error
 !:
 	// Filename starts here so set pointer
 	lda basic_current_statement_ptr+0

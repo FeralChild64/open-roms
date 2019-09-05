@@ -40,7 +40,7 @@ basic_do_new:
 	// records (without them going on the stack), GOSUB stack
 	// (same story), expression value cache?
 	
-	sec			; Read, not write value
+	sec			// Read, not write value
 	jsr JMEMTOP
 	cpx #$80
 	beq !+

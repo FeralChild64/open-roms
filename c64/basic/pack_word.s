@@ -67,7 +67,8 @@ pack_char_loop:
 	beq at_end
 	lda #$FF
 	.byte $2C
-at_end:	LDA #$FE
+at_end:
+	lda #$FE
 	dex
 	jsr write_unpacked_char
 	// Fall through

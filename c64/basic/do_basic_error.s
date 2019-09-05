@@ -117,7 +117,7 @@ do_TO_MANY_FILES_error:
 
 	// Restore $EA to correct value in case the NOP above is used
 	// as an argument to the preceeding INC $nn (opcode $E6).
-	LDA $EA
+	lda $EA
 	and #$80
 	sta $EA
 	
@@ -130,9 +130,9 @@ do_basic_error:
 	txa
 	pha
 	lda #$0d
-	jsr $ffd2
+	jsr JCHROUT
 	lda #$3f
-	jsr $ffd2
+	jsr JCHROUT
 	pla
 	tax
 

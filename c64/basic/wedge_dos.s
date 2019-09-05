@@ -173,7 +173,7 @@ wedge_dos_directory_line:
 	cpy #$50
 	beq !+ // line too long, terminate loading file
 	jsr JREADST
-	bne + // end of file
+	bne !+ // end of file
 	cpy #$04 // 2 bytes (pointer to next line) + 2 bytes (line number) 
 	bcc !-
 	lda BUF, y

@@ -103,7 +103,7 @@ not_a_token:
 	// current implementation does not support characters under ROM
 	ldx basic_current_line_number+1
 	cpx #$ff
-	bne +
+	bne !+
 	// We are in direct mode, allow wedge to handle '@' sign
 	// XXX Maybe it should be allowed only as the first command?
 	cmp #$40

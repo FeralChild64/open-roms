@@ -5,8 +5,8 @@
 
 	// CPU memory registers
 
-	.label CPU_D6510      $00
-	.label CPU_R6510      $01
+	.label CPU_D6510    = $00
+	.label CPU_R6510    = $01
 
 	// VIC-II registers
 
