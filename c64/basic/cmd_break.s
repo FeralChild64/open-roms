@@ -1,23 +1,22 @@
 cmd_stop:	
 basic_do_break:
-	jsr printf
+	jsr printf // XXX don't use printf, use packed messages!
 	.byte "BREAK",0
 
-	;; Check for direct mode
-	;; Are we in direct mode
+	// Check for direct mode
+	// Are we in direct mode
 	lda basic_current_line_number+1
-	cmp #$ff
-	beq +
-	;; Not direct mode
+	cmp #$FF
+	beq !+
+	// Not direct mode
 	jsr printf
-	.byte " IN ",0
+	.byte " IN ",0 // XXX don't use printf, use packed messages!
 	lda basic_current_line_number+1
 	ldx basic_current_line_number+0
 	jsr print_integer
 	
-*
-	lda #$0d
+!:
+	lda #$0D
 	jsr JCHROUT
 cmd_end:
 	jmp basic_main_loop
-	
