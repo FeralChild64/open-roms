@@ -208,6 +208,10 @@ int main(int argc,char **argv)
     unlink(filename);
     out=fopen(filename,"w");
     if (!out) DO_ERROR("Could not write to combined.s");
+
+    fprintf(out,"\t.segment Main [start=$%04x, min=$%04x, max=$%04x, outBin=\"OUT.BIN\", fill]\n" ,
+            start_address, start_address, end_address - 1);
+
     fprintf(out,"\t* = $%04x\n",address);
     for(int i=0;i<source_count;i++) source_files[i].written=0;
     int written_count;
@@ -255,7 +259,7 @@ int main(int argc,char **argv)
 	// Nothing else fits here.  So write next_fixed_routine
 	// fprintf(stderr,"Writing file %s\n",source_files[next_fixed_routine].file);
 	fprintf(out,"\n// Source file %s @ $%04X\n",source_files[next_fixed_routine].file,address);
-  fprintf(out,"\t* = $%04x\n", next_allocated_address); // XXX !!!
+  fprintf(out,"\t* = $%04x\n", next_allocated_address);
 	char filename[8192];
 	snprintf(filename,8192,"%s/%s",directory,source_files[next_fixed_routine].file);
 	if (dump_file(out,filename)) DO_ERROR("Could not dump fixed address routine");
@@ -264,7 +268,7 @@ int main(int argc,char **argv)
       } else {
 	fprintf(out,"\n// Source file %s @ $%04x\n",source_files[biggest].file,address);
 	// fprintf(stderr,"Writing file %s\n",source_files[biggest].file);
-  fprintf(out,"\t* = $%04x\n", address); // XXX !!!
+  fprintf(out,"\t* = $%04x\n", address);
 		
 	char filename[8192];
 	snprintf(filename,8192,"%s/%s",directory,source_files[biggest].file);
@@ -273,8 +277,6 @@ int main(int argc,char **argv)
 	address+=source_files[biggest].size;
       }
     }
-
-    fprintf(out,"\t* = $%04x\n", end_address); // XXX !!!
     
     fclose(out);
     
