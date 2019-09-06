@@ -255,7 +255,7 @@ int main(int argc,char **argv)
 	// Nothing else fits here.  So write next_fixed_routine
 	// fprintf(stderr,"Writing file %s\n",source_files[next_fixed_routine].file);
 	fprintf(out,"\n// Source file %s @ $%04X\n",source_files[next_fixed_routine].file,address);
-	fprintf(out,"\t.errorif * > $%04x \"PC\"\n\t//.fill $%04x-*,$00\n", next_allocated_address,next_allocated_address); // XXX !!!
+  fprintf(out,"\t* = $%04x\n", next_allocated_address); // XXX !!!
 	char filename[8192];
 	snprintf(filename,8192,"%s/%s",directory,source_files[next_fixed_routine].file);
 	if (dump_file(out,filename)) DO_ERROR("Could not dump fixed address routine");
@@ -264,7 +264,7 @@ int main(int argc,char **argv)
       } else {
 	fprintf(out,"\n// Source file %s @ $%04x\n",source_files[biggest].file,address);
 	// fprintf(stderr,"Writing file %s\n",source_files[biggest].file);
-	fprintf(out,"\t.errorif * > $%04x \"PC\"\n\t//.fill $%04x-*,$00\n",address,address); // XXX !!! was "\t.checkpc $%04x\n\t.advance $%04x,$00\n"
+  fprintf(out,"\t* = $%04x\n", address); // XXX !!!
 		
 	char filename[8192];
 	snprintf(filename,8192,"%s/%s",directory,source_files[biggest].file);
@@ -274,7 +274,7 @@ int main(int argc,char **argv)
       }
     }
 
-    fprintf(out,"\t.errorif * > $%04x \"PC\"\n\t//.fill $%04x-*,$00\n", end_address,end_address); // XXX !!!
+    fprintf(out,"\t* = $%04x\n", end_address); // XXX !!!
     
     fclose(out);
     
