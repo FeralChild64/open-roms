@@ -41,17 +41,17 @@ basic_shift_mem_up_and_relink:
 	sta memmove_size+1
 	
 	// jsr printf
-	// .byte "TOP OF BASIC = $"
+	// .text "TOP OF BASIC = $"
 	// .byte $f1,<basic_end_of_text_ptr,>basic_end_of_text_ptr
 	// .byte $f0,<basic_end_of_text_ptr,>basic_end_of_text_ptr
 	// .byte $0d
-	// .byte "SHIFTING UP $"
+	// .text "SHIFTING UP $"
 	// .byte $f1,<memmove_size,>memmove_size
 	// .byte $f0,<memmove_size,>memmove_size
-	// .byte " BYTES FROM $"
+	// .text " BYTES FROM $"
 	// .byte $f1,<memmove_src,>memmove_src
 	// .byte $f0,<memmove_src,>memmove_src
-	// .byte " TO $"
+	// .text " TO $"
 	// .byte $f1,<memmove_dst,>memmove_dst
 	// .byte $f0,<memmove_dst,>memmove_dst
 	// .byte $0d,0
@@ -85,13 +85,13 @@ basic_shift_mem_up_and_relink:
 	stx tokenise_work3
 	
 	// jsr printf
-	// .byte "REVISED BOUNDS $"
+	// .text "REVISED BOUNDS $"
 	// .byte $f1,<memmove_size,>memmove_size
 	// .byte $f0,<memmove_size,>memmove_size
-	// .byte " BYTES FROM $"
+	// .text " BYTES FROM $"
 	// .byte $f1,<memmove_src,>memmove_src
 	// .byte $f0,<memmove_src,>memmove_src
-	// .byte " TO $"
+	// .text " TO $"
 	// .byte $f1,<memmove_dst,>memmove_dst
 	// .byte $f0,<memmove_dst,>memmove_dst
 	// .byte $0d,0
@@ -133,13 +133,13 @@ relink_up_next_line:
 	sta memmove_src+1
 
 	// jsr printf
-	// .byte "LINE ADDR = $"
+	// .text "LINE ADDR = $"
 	// .byte $f1,<basic_current_line_ptr,>basic_end_of_text_ptr
 	// .byte $f0,<basic_current_line_ptr,>basic_end_of_text_ptr
-	// .byte $d,"  BEFORE = $"
+	// .text $d,"  BEFORE = $"
 	// .byte $f1,<memmove_dst,>memmove_dst
 	// .byte $f0,<memmove_dst,>memmove_dst	
-	// .byte ",  AFTER = $"
+	// .text ",  AFTER = $"
 	// .byte $f1,<memmove_src,>memmove_src
 	// .byte $f0,<memmove_src,>memmove_src
 	// .byte $d

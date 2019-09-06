@@ -4,6 +4,9 @@
 
 .macro TARGET_HOOK_BANNER() {
 
-	.byte "  OPEN ROMS FOR ULTIMATE 64", $0D, $0D, "  ", $00
+	.text "  OPEN ROMS FOR ULTIMATE 64"
+	.byte $0D, $0D
+	.text "  "
+	.byte $00
 
 }

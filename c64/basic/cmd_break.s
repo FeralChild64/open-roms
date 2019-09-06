@@ -1,7 +1,8 @@
 cmd_stop:	
 basic_do_break:
 	jsr printf // XXX don't use printf, use packed messages!
-	.byte "BREAK",0
+	.text "BREAK"
+	.byte 0
 
 	// Check for direct mode
 	// Are we in direct mode
@@ -9,8 +10,9 @@ basic_do_break:
 	cmp #$FF
 	beq !+
 	// Not direct mode
-	jsr printf
-	.byte " IN ",0 // XXX don't use printf, use packed messages!
+	jsr printf // XXX don't use printf, use packed messages!
+	.text " IN "
+	.byte 0
 	lda basic_current_line_number+1
 	ldx basic_current_line_number+0
 	jsr print_integer

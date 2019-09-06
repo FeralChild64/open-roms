@@ -2,7 +2,7 @@
 // Names of ZP and low memory locations:
 // - Compute's Mapping the Commodore 64
 // - https://www.c64-wiki.com/wiki/Zeropage
-// - http://unusedino.de/ec64/technical/project64/memory_maps.html)
+// - http://unusedino.de/ec64/technical/project64/memory_maps.html
 //
 
 	// $00-$01 - 6502 CPU registers are here
@@ -39,7 +39,7 @@
 	.label STREND    = $31 // $31-$32  -- NOT IMPLEMENTED --
 	.label FRETOP    = $33 // $33-$34  -- NOT IMPLEMENTED --
 	.label FRESPC    = $35 // $35-$36  [!] our implementation might be different  XXX give more details
-	// .label MEMSIZ    = $37 // $37-$38  -- NOT IMPLEMENTED -- highest address of BASIC memory XXX find a non-conflicting name
+	// .label MEMSIZ    = $37 // $37-$38  -- NOT IMPLEMENTED -- highest address of BASIC memory XXX remove name conflict
 	.label CURLIN    = $39 // $39-$3A  current BASIC line number
 	.label OLDLIN    = $3B // $3B-$3C  previous BASIC line number
 	.label OLDTXT    = $3D // $3D-$3E  current BASIC line pointer
@@ -158,8 +158,8 @@
 	.label FAT       = $263  // $263-$26C, device numbers       (table, 10 bytes)
 	.label SAT       = $26D  // $26D-$276, secondary addresses  (table, 10 bytes)
 	.label KEYD      = $277  // $277-$280  keyboard buffer
-	.label MEMSTR    = $281  // $281-$282
-	.label MEMSIZ    = $283  // $283-$284, NOTE: Mapping the 64 erroneously has the hex as $282, while the DEC is correct
+	.label MEMSTR    = $281  // $281-$282  XXX rename to LORAM
+	.label MEMSIZ    = $283  // $283-$284, NOTE: Mapping the 64 erroneously has the hex as $282, while the DEC is correct XXX rename to HIRAM
 	.label TIMOUT    = $285  //            IEEE-488 timeout
 	.label COLOR     = $286  //            current text foreground color
 	.label GDCOL     = $287  //            color of character under cursor

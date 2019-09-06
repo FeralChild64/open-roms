@@ -4,6 +4,7 @@
 
 .macro TARGET_HOOK_BANNER() {
 
-	.byte "  OPEN ROMS, ", $00
+	.text "  OPEN ROMS, "
+	.byte $00
 
 }

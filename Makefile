@@ -36,7 +36,7 @@ all: build/chargen build/newkern_generic build/newbasic_generic build/newc65 bui
 clean:
 	@rm -rf build
 	@rm -f temp.s
-	@rm -f temp.map
+	@rm -f temp.sym
 
 updatebin: build/chargen build/newbasic_generic build/newkern_generic build/newbasic_mega65 build/newkern_mega65 build/newbasic_ultimate64 build/newkern_ultimate64
 	cp build/chargen                  bin/chargen.rom

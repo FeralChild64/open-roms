@@ -28,17 +28,17 @@ basic_shift_mem_down_and_relink:
 	sta memmove_size+1
 
 	// jsr printf
-	// .byte "TOP OF BASIC = $"
+	// .text "TOP OF BASIC = $"
 	// .byte $f1,<basic_end_of_text_ptr,>basic_end_of_text_ptr
 	// .byte $f0,<basic_end_of_text_ptr,>basic_end_of_text_ptr
 	// .byte $0d
-	// .byte "SHIFTING DOWN $"
+	// .text "SHIFTING DOWN $"
 	// .byte $f1,<memmove_size,>memmove_size
 	// .byte $f0,<memmove_size,>memmove_size
-	// .byte " BYTES FROM $"
+	// .text " BYTES FROM $"
 	// .byte $f1,<memmove_src,>memmove_src
 	// .byte $f0,<memmove_src,>memmove_src
-	// .byte " TO $"
+	// .text " TO $"
 	// .byte $f1,<memmove_dst,>memmove_dst
 	// .byte $f0,<memmove_dst,>memmove_dst
 	// .byte $0d,0
@@ -79,13 +79,13 @@ basic_shift_mem_down_and_relink:
 	inc memmove_size+1
 	
 	// jsr printf
-	// .byte "REVISED BOUNDS $"
+	// .text "REVISED BOUNDS $"
 	// .byte $f1,<memmove_size,>memmove_size
 	// .byte $f0,<memmove_size,>memmove_size
-	// .byte " BYTES FROM $"
+	// .text " BYTES FROM $"
 	// .byte $f1,<memmove_src,>memmove_src
 	// .byte $f0,<memmove_src,>memmove_src
-	// .byte " TO $"
+	// .text " TO $"
 	// .byte $f1,<memmove_dst,>memmove_dst
 	// .byte $f0,<memmove_dst,>memmove_dst
 	// .byte $0d,0

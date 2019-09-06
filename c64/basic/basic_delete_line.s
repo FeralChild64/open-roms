@@ -8,7 +8,7 @@
 basic_delete_line:
 
 	// jsr printf
-	// .byte "DELETING LINE AT $"
+	// .text "DELETING LINE AT $"
 	// .byte $f1,<basic_current_line_ptr,>basic_current_line_ptr
 	// .byte $f0,<basic_current_line_ptr,>basic_current_line_ptr
 	// .byte $0d,0
@@ -32,7 +32,7 @@ basic_delete_line:
 	sta tokenise_work4
 
 	// jsr printf
-	// .byte "LINE LENGTH IS $"
+	// .text "LINE LENGTH IS $"
 	// .byte $f0,<tokenise_work4,>tokenise_work4
 	// .byte $f0,<tokenise_work3,>tokenise_work3
 	// .byte $0d,0

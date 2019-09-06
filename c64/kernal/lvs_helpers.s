@@ -66,7 +66,9 @@ lvs_display_searching_for:
 	lda MSGFLG
 	bpl lvs_display_end
 	jsr printf // XXX don't use printf, use packed message
-	.byte $0D,"SEARCHING FOR ",0
+	.byte $0D
+	.text "SEARCHING FOR "
+	.byte 0
 	ldy #$00
 !:
 	cpy FNLEN
@@ -87,16 +89,21 @@ lvs_display_loading_verifying:
 	lda VERCK
 	beq !+
 	jsr printf // XXX don't use printf, use packed message
-	.byte $0D,"VERIFYING",0
+	.byte $0D
+	.text "VERIFYING"
+	.byte 0
 	jmp lvs_display_start_addr
 !:
 	jsr printf // XXX don't use printf, use packed message
-	.byte $0D,"LOADING",0
+	.byte $0D
+	.text "LOADING"
+	.byte 0
 	// FALLTHROUGH
 
 lvs_display_start_addr:
 	jsr printf // XXX don't use printf, use packed message
-	.byte " FROM $",0
+	.text " FROM $"
+	.byte 0
 	lda STAL+1
 	jsr printf_printhexbyte
 	lda STAL+0
@@ -107,7 +114,8 @@ lvs_display_done:
 	lda MSGFLG
 	bpl lvs_display_end
 	jsr printf // XXX don't use printf, use packed message
-	.byte " TO $",0
+	.text " TO $"
+	.byte 0
 	lda STAL+1
 	jsr printf_printhexbyte
 	lda STAL+0

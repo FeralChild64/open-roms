@@ -153,7 +153,8 @@ do_basic_error:
 
 	// We were in a program, so show IN <line>
 	jsr printf // XXX don't use printf, use packed messages
-	.byte " IN ",0
+	.text " IN "
+	.byte 0
 
 	lda basic_current_line_number+1
 	ldx basic_current_line_number+0

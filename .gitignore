@@ -2,7 +2,7 @@
 # Compilation related files
 
 temp.s
-temp.map
+temp.sym
 
 assembler/KickAss*
 build/*

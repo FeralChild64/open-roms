@@ -17,7 +17,7 @@ basic_insert_line:
 	// put the line in there after.
 
 	// jsr printf
-	// .byte "INSERTING LINE AT $"
+	// .text "INSERTING LINE AT $"
 	// .byte $f1,<basic_current_line_ptr,>basic_current_line_ptr
 	// .byte $f0,<basic_current_line_ptr,>basic_current_line_ptr
 	// .byte $0d,0

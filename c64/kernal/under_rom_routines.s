@@ -6,7 +6,7 @@
 
 install_ram_routines:
 	// Copy routines into place
-	ldx #ram_routines_len-1
+	ldx #ram_routines_end-ram_routines_start-1
 !:
 	lda ram_routines_start,x
 	sta tiny_nmi_handler,x
@@ -62,5 +62,3 @@ memmap_allram_routine:
 	rts
 
 ram_routines_end:
-	.const ram_routines_len = ram_routines_end-ram_routines_start
-

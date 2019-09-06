@@ -41,10 +41,10 @@ basic_execute_statement:
 	bcs basic_end_of_line
 	
 	// jsr printf
-	// .byte "LINE PTR = $"
+	// .text "LINE PTR = $"
 	// .byte $f1,<basic_current_line_ptr,>basic_current_line_ptr
 	// .byte $f0,<basic_current_line_ptr,>basic_current_line_ptr
-	// .byte ", STATEMENT PTR = $"
+	// .text ", STATEMENT PTR = $"
 	// .byte $f1,<basic_current_statement_ptr,>basic_current_statement_ptr
 	// .byte $f0,<basic_current_statement_ptr,>basic_current_statement_ptr
 	// .byte $d,0
