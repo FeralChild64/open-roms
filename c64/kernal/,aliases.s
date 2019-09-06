@@ -56,7 +56,7 @@
 	.label key_repeat_flags = $028A // p58
 	// https://www.c64-wiki.com/wiki/Page_2
 	.label key_repeat_counter = $028B
-	.label key_first_repeat_delay $028C
+	.label key_first_repeat_delay = $028C
 	// bit 0 = shift, 1 = Vendor Key, 2 = Control
 	.label key_bucky_state = $028D
 	.label key_last_bucky_state = $028E

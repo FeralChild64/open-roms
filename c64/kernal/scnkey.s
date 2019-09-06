@@ -65,11 +65,10 @@
 	.label BufferQuantity    = $B4  // 1 byte
 
 
-	
 	// Operational Variables
 	.const MaxKeyRollover = 3
 
-scnkey:
+SCNKEY:
 
 	lda #$00
 	sta BufferQuantity
@@ -94,7 +93,7 @@ sk_start:
 	jsr accept_key
 	iny
 	cpy BufferQuantity
-	bne -
+	bne !-
 no_keys_waiting:
 	
 	rts
@@ -194,7 +193,7 @@ ReturnNoKeys:
 	sta Buffer,x
 	sta BufferOld,x
 	dex
-	bpl -
+	bpl !-
 
 	rts
 
@@ -245,13 +244,13 @@ JoystickActivity:
 	lda $dc01
 	and #$03
 	cmp #$01
-	bne +
+	bne !+
 	// down
 	ldx #$07       		// UP/DOWN
 	jsr KeyFound
 !:
 	cmp #$02
-	bne +
+	bne !+
 	// Up
 	// Mark shift as pressed
 	ldx #$01
@@ -266,26 +265,26 @@ JoystickActivity:
 	// feed the key input at a higher level, rather than
 	// simulating directly pressing the cursor keys.
 	cmp #$03
-	beq +
+	beq !+
 	jmp skdone
-!:	
+!:
 	lda $dc01
 	and #$0c
 	cmp #$04
-	bne +
+	bne !+
 	ldx #$02
 	jsr KeyFound		// LEFT/RIGHT
 !:
 	cmp #$08
-	bne +
+	bne !+
 	ldx #$01
 	stx key_bucky_state
 	ldx #$02
 	jsr KeyFound		// LEFT/RIGHT
-!:	
+!:
 	jmp skdone
-	
-	
+
+
 skip0:
 
 	// // Set max keys allowed before ignoring result
@@ -322,7 +321,7 @@ next_row:
 
 	stx $dc00       // Disconnect all Keyboard Rows
 	cpx $dc01       // Only Control Port activity will be detected
-	beq + 
+	beq !+
 	jmp ReturnNoKeys
 !:
 	// Make X = $00, assumed below

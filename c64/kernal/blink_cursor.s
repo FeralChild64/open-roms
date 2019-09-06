@@ -7,9 +7,9 @@
 
 show_cursor_if_enabled:
 	lda cursor_blink_disable
-	beq +
+	beq !+
 	rts
-*	lda cursor_is_visible
+!:	lda cursor_is_visible
 	beq show_cursor
 	rts
 	

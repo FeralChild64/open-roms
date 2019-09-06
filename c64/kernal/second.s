@@ -10,7 +10,7 @@
 //
 
 
-second:
+SECOND:
 
 	// Due to OPEN/CLOSE/TKSA/SECOND command encoding (see https://www.pagetable.com/?p=1031),
 	// allowed channels are 0-15; report error if out of range

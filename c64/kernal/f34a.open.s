@@ -9,7 +9,7 @@
 //
 
 
-open:
+OPEN:
 
 	// Reset status
 	jsr kernalstatus_reset
@@ -69,7 +69,7 @@ open_done_success:
 open_iec:
 
 	// We have a command to send to IEC device
-	jsr listen
+	jsr LISTEN
 	bcc !+
 	jmp kernalerror_DEVICE_NOT_FOUND
 !:

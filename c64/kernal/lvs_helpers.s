@@ -22,7 +22,7 @@ lvs_send_file_name_loop:
 	jsr iec_tx_byte
 	jmp lvs_send_file_name_loop
 lvs_send_file_name_done:
-	jsr unlsn
+	jsr UNLSN
 	rts
 
 lvs_handle_byte_load_verify:

@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): none
 //
 
-restor:
+RESTOR:
 
 	clc // clear carry - for writing to system table
 	ldx #<vector_defaults
@@ -16,7 +16,7 @@ restor:
 
 	// FALLTHROUGH
 
-vector:
+VECTOR:
 
 	// Temporary storage location - checked on real C64 that this is the
 	// address originally used; after calling VECTOR and checking zero page

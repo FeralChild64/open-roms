@@ -16,14 +16,14 @@ clrchn_real:
 	jsr iec_check_devnum
 	bcs !+
 	// Previous device was IEC one - send UNTALK first
-	jsr untlk
+	jsr UNTLK
 !:
 	// Restore output device to default
 	lda DFLTO
 	jsr iec_check_devnum
 	bcs !+
 	// Handle IEC output device
-	jsr unlsn
+	jsr UNLSN
 !:
 clrchn_reset: // entry needed by CHRIN
 	// Set input device number to keyboard

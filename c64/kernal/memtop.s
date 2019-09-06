@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): .A
 //
 
-memtop:
+MEMTOP:
 
 	bcc memtop_set
 	

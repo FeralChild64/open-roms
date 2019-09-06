@@ -7,7 +7,7 @@ default_brk_handler:
 
 	jsr JRESTOR
 	jsr JIOINIT
-	jsr CINT_BRK
+	jsr cint_brk
 
 	cli
 

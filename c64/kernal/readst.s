@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): .X, .Y
 //
 
-readst:
+READST:
 
 	// Check the current device number
 

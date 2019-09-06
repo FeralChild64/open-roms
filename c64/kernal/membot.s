@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): .A
 //
 
-membot:
+MEMBOT:
 
 	bcc membot_set
 	

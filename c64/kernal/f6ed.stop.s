@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): .Y
 //
 
-stop:
+STOP:
 	// Bit 7 of STKEY contains the state of the STOP key
 	// (Compute's Mapping the 64, p27)
 

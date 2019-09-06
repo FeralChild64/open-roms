@@ -10,7 +10,7 @@
 
 // XXX currently does not preserve registers, to be fixed!
 
-getin:
+GETIN:
 
 	// Wait for a key
 	lda keys_in_key_buffer

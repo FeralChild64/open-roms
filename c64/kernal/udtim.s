@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): .Y
 //
 
-udtim:
+UDTIM:
 
 	// Update jiffy clock. The whole day is $4F1A00 jiffies (24 hours * 60 minutes * 60 seconds * 60 jiffies),
 	// after this time we have to reset the clock.

@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): none
 //
 
-ioinit:
+IOINIT:
 
 	// Set $00/$01 port mode and value
 	// We want BASIC and KERNAL ROMs mapped, and datasette motor off

@@ -8,6 +8,6 @@
 // CPU registers that has to be preserved (see [RG64]): .A, .X, .Y
 //
 
-settmo:
+SETTMO:
 	sta TIMOUT
 	rts

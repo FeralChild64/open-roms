@@ -45,11 +45,11 @@ chkin_real:
 	jsr iec_check_devnum
 	bcs chkin_set_device
 	
-	jsr talk
+	jsr TALK
 	bcs chkinout_device_not_present // don't set DFLTN in case of failure
 
 	lda LAT, Y
-	jsr tksa
+	jsr TKSA
 	bcs chkinout_device_not_present
 
 chkin_set_device:
@@ -126,11 +126,11 @@ ckout_real:
 	jsr iec_check_devnum
 	bcs chkout_set_device
 
-	jsr listen
+	jsr LISTEN
 	bcs chkinout_device_not_present // don't set DFLTO in case of failure
 
 	lda LAT, Y
-	jsr second
+	jsr SECOND
 	bcs chkinout_device_not_present
 
 chkout_set_device:

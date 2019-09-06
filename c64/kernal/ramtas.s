@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): none
 //
 
-ramtas:
+RAMTAS:
 	// C64 Programmer's Reference guide p291:
 	// Clear $0000-$0101, $0200-$03ff
 	// PGS: $0000, $0001 are CPU IO ports, so shouldn't get written to

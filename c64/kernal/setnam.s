@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): .A, .X, .Y
 //
 
-setnam:
+SETNAM:
 
 	// There are 6 sane ways to implement this routine,
 	// I hope this one won't cause similarity to CBM code

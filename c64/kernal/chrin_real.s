@@ -80,9 +80,9 @@ not_end_of_input:
 	inc keyboard_input_ready
 	clc
 	rts
-	
 
-read_from_keyboard:	
+
+read_from_keyboard:
 
 	jsr enable_cursor
 	
@@ -142,18 +142,18 @@ empty_line:
 	clc
 	lda #$0d
 	rts
-	
-not_enter:	
+
+not_enter:
 	// Print character
 	lda keyboard_buffer
-	jsr chrout
+	jsr CHROUT
 
 	jsr pop_keyboard_buffer
 
 	// Keep looking for input from keyboard until carriage return
 	jmp chrin_repeat
 
-pop_keyboard_buffer:	
+pop_keyboard_buffer:
 	// Pop key out of keyboard buffer
 	// Disable interrupts while reading from keyboard buffer
 	// so that no race conditions can occur
@@ -170,7 +170,7 @@ pop_keyboard_buffer:
 	cli
 
 	rts
-	
+
 screen_code_to_petscii:
 	cmp #$1b
 	bcs not_alpha
@@ -185,7 +185,7 @@ not_alpha:
 
 	rts
 
-not_punctuation:	
+not_punctuation:
 	cmp #$5b
 	bcs not_shifted
 
@@ -193,8 +193,8 @@ not_punctuation:
 	adc #$80
 
 	rts
-	
-not_shifted:	
+
+not_shifted:
 
 	cmp #$80
 	bcs not_vendor

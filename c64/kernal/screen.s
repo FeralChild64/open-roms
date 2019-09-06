@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): .A
 //
 
-screen:
+SCREEN:
 
 	// There are only 2 sane ways to implement this routine,
 	// I hope this one is different than what Commodore picked :)

@@ -11,16 +11,16 @@ vector_defaults:
 	.word default_brk_handler    // CBINV
 	.word default_nmi_handler    // NMINV
 
-	.word open                   // IOPEN
-	.word close                  // ICLOSE
-	.word chkin                  // ICHKIN
-	.word ckout                  // ICKOUT
-	.word clrchn                 // ICLRCH
-	.word chrin                  // IBASIN
-	.word chrout                 // IBSOUT
-	.word stop                   // ISTOP
-	.word getin                  // IGETIN
-	.word clall                  // ICLALL
+	.word OPEN                   // IOPEN
+	.word CLOSE                  // ICLOSE
+	.word CHKIN                  // ICHKIN
+	.word CKOUT                  // ICKOUT
+	.word CLRCHN                 // ICLRCH
+	.word CHRIN                  // IBASIN
+	.word CHROUT                 // IBSOUT
+	.word STOP                   // ISTOP
+	.word GETIN                  // IGETIN
+	.word CLALL                  // ICLALL
 	.word default_brk_handler    // USRCMD
-	.word load                   // ILOAD 
-	.word save                   // ISAVE
+	.word LOAD                   // ILOAD 
+	.word SAVE                   // ISAVE

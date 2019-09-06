@@ -4,7 +4,7 @@
 	// (Compute's Mapping the 64 p216)
 set_pointer_to_current_screen_line:
 	//  Get pointer to start of the screen
-	lda hibase
+	lda HIBASE
 	sta current_screen_line_ptr+1
 	lda #$00
 	sta current_screen_line_ptr+0

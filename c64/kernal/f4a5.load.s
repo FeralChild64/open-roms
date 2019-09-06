@@ -20,7 +20,7 @@
 	// XXX honor MSGFLG bit 6
 	// XXX add VERIFY support
 
-load:
+LOAD:
 
 	// Are we loading or verifying?
 	sta VERCK
@@ -60,7 +60,7 @@ load:
 
 	// Call device to LISTEN (p16)
 	lda current_device_number
-	jsr listen
+	jsr LISTEN
 	bcc !+
 	jmp lvs_device_not_found_error // XXX deduplicate with other jumps in this routine
 !:
@@ -77,7 +77,7 @@ load:
 !:
 	// Now command device to talk (p16)
 	lda current_device_number
-	jsr talk
+	jsr TALK
 	bcc !+
 	jmp lvs_load_verify_error // XXX deduplicate with other jumps in this routine 
 !:

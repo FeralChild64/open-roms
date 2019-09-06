@@ -9,5 +9,5 @@
 // CPU registers that has to be preserved (see [RG64]): none
 //
 
-save:
+SAVE:
 	rts

@@ -11,7 +11,7 @@
 //
 
 
-untlk:
+UNTLK:
 
 	// According to serial-bus.pdf (page 15) this routine flushes the IEC out buffer
 	jsr iec_tx_flush

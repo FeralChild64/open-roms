@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): none
 //
 
-rdtim:
+RDTIM:
 
 	// Disable interrupts for the duration of the routine, to prevent
 	// jiffy clock update while reeading it's values

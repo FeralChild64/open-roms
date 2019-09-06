@@ -9,7 +9,7 @@
 //
 
 
-ciout:
+CIOUT:
 
 	pha
 	lda C3PO

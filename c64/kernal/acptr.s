@@ -9,6 +9,6 @@
 //
 
 
-acptr:
+ACPTR:
 	jsr kernalstatus_reset
 	jmp iec_rx_byte

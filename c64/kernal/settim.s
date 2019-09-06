@@ -8,7 +8,7 @@
 // CPU registers that has to be preserved (see [RG64]): .A, .X, .Y
 //
 
-settim:
+SETTIM:
 
 	// Disable interrupts for the duration of the routine, to prevent
 	// jiffy clock update while changing it's values

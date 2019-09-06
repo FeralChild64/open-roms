@@ -789,7 +789,7 @@ x_not_negative:
 	sta current_screen_x
 	inc current_screen_y
 
-x_not_too_big:	
+x_not_too_big:
 
 	// Make sure Y isn't negative
 	lda current_screen_y
@@ -800,7 +800,7 @@ x_not_too_big:
 	// Make sure Y isn't too large for absolute size of
 	// screen
 	cmp #24
-	bcc +
+	bcc !+
 	lda #24
 	sta current_screen_y
 !:
@@ -808,7 +808,7 @@ x_not_too_big:
 	// into account the line link table
 	ldy #24 		// max allowable line
 	ldx #0
-link_count_loop:	
+link_count_loop:
 	lda screen_line_link_table,x
 	bpl !+
 	dey

@@ -24,7 +24,7 @@ clearscreen_l1:
 	// searching through the ZP allocations listed in
 	// Compute's Mapping the 64
 	sta current_screen_line_ptr+0
-	lda hibase
+	lda HIBASE
 	sta current_screen_line_ptr+1
 	ldx #$03		// countdown for pages to update
 	iny 			// Y now = #$00
