@@ -104,7 +104,7 @@ int main(int argc,char **argv)
 	            source_files[source_count].file=strdup(de->d_name);
               source_files[source_count].label=strdup(de->d_name);
               for (char *charptr = source_files[source_count].label; *charptr != 0; charptr++) {
-                if (*charptr == '.') *charptr = '_'; // KickAss does not likes dots in labels
+                if (*charptr == '.') *charptr = '_'; // KickAss does not like full stops in labels
               }
 	            source_files[source_count].address=-1;
 	            source_count++;
@@ -211,15 +211,25 @@ int main(int argc,char **argv)
 
     fprintf(out,"\t.segment Main [start=$%04x, min=$%04x, max=$%04x, outBin=\"OUT.BIN\", fill]\n" ,
             start_address, start_address, end_address - 1);
-
     fprintf(out,"\t* = $%04x\n",address);
-    for(int i=0;i<source_count;i++) source_files[i].written=0;
-    int written_count;
 
+    // First write files of length 0, so that all the zeropage location definitions are
+    // known to KickAss - otherwise it will assume 16-bit address is needed, which will backfire
+    int written_count = 0;
+    for(int i=0;i<source_count;i++) {
+      if (source_files[i].size == 0) {
+        fprintf(out,"\n// Source file %s\n",source_files[i].file);
+        char filename[8192];
+        snprintf(filename,8192,"%s/%s",directory,source_files[i].file);
+        if (dump_file(out,filename)) DO_ERROR("Could not dump 0-size routine");
+        source_files[i].written=1;
+      }
+      else source_files[i].written=0;
+    }
     // XXX - We should use dynamic programming optimisation to pack the routines
     // optimally in the space, so that when we get near to full, we don't run out
     // of space due to fragmentation.
-    for(written_count=0;written_count<source_count;written_count++) {
+    for(;written_count<source_count;written_count++) {
       // First, find the next allocated address
       int next_allocated_address=0xffff;
       int next_fixed_routine=-1;
