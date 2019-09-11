@@ -73,11 +73,11 @@ basic_execute_statement:
 	ldy #0
 
 #if CONFIG_MEMORY_MODEL_60K
-	ldx #<basic_current_line_ptr
+	ldx #<basic_current_statement_ptr
 	jsr peek_under_roms
 	cmp #$00
 #else // CONFIG_MEMORY_MODEL_38K
-	lda (basic_current_line_ptr),y
+	lda (basic_current_statement_ptr),y
 #endif
 
 	beq basic_end_of_line

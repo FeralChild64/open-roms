@@ -165,9 +165,9 @@ end_of_line_search:
 
 #if CONFIG_MEMORY_MODEL_60K
 	ldx #<basic_current_line_ptr+0
-	jsr poke_under_roms
+	jsr peek_under_roms
 #else // CONFIG_MEMORY_MODEL_38K
-	sta (basic_current_line_ptr),y
+	lda (basic_current_line_ptr),y
 #endif
 
 	cmp #$00
