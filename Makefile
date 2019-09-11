@@ -15,6 +15,11 @@ SRCDIR_KERNAL_ultimate64 = $(SRCDIR_KERNAL_COMMON) c64/kernal/,target_ultimate64
 
 SRC_TOOLS  = $(wildcard src/tools/*.c,src/tools/*.cc)
 
+# Generated files
+
+GEN_BASIC  = build/,generated/packed_messages.s
+GEN_KERNAL =
+
 # List of tools
 
 TOOL_COLLECT_DATA   = build/tools/collect_data
@@ -84,13 +89,13 @@ build/chargen.rom: $(TOOL_PNGPREPARE) assets/8x8font.png
 
 # Dependencies - BASIC and KERNAL
 
-build/target_generic/OUTB.BIN:    $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(SRCDIR_BASIC_generic)     $(foreach dir,$(SRCDIR_BASIC_generic),$(wildcard $(dir)/*.s)) build/,generated/packed_messages.s
-build/target_mega65/OUTB.BIN:     $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(SRCDIR_BASIC_mega65)      $(foreach dir,$(SRCDIR_BASIC_mega65),$(wildcard $(dir)/*.s)) build/,generated/packed_messages.s
-build/target_ultimate64/OUTB.BIN: $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(SRCDIR_BASIC_ultimate64)  $(foreach dir,$(SRCDIR_BASIC_ultimate64),$(wildcard $(dir)/*.s)) build/,generated/packed_messages.s
+build/target_generic/OUTB.BIN:    $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(GEN_BASIC)  $(SRCDIR_BASIC_generic)     c64/,,config_generic.s    $(foreach dir,$(SRCDIR_BASIC_generic),$(wildcard $(dir)/*.s))
+build/target_mega65/OUTB.BIN:     $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(GEN_BASIC)  $(SRCDIR_BASIC_mega65)      c64/,,config_mega65.s     $(foreach dir,$(SRCDIR_BASIC_mega65),$(wildcard $(dir)/*.s))
+build/target_ultimate64/OUTB.BIN: $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(GEN_BASIC)  $(SRCDIR_BASIC_ultimate64)  c64/,,config_ultimate64.s $(foreach dir,$(SRCDIR_BASIC_ultimate64),$(wildcard $(dir)/*.s))
 
-build/target_generic/OUTK.BIN:    $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(SRCDIR_KERNAL_generic)    $(foreach dir,$(SRCDIR_KERNAL_generic),$(wildcard $(dir)/*.s))
-build/target_mega65/OUTK.BIN:     $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(SRCDIR_KERNAL_mega65)     $(foreach dir,$(SRCDIR_KERNAL_mega65),$(wildcard $(dir)/*.s))
-build/target_ultimate64/OUTK.BIN: $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(SRCDIR_KERNAL_ultimate64) $(foreach dir,$(SRCDIR_KERNAL_ultimate64),$(wildcard $(dir)/*.s))
+build/target_generic/OUTK.BIN:    $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(GEN_KERNAL) $(SRCDIR_KERNAL_generic)    c64/,,config_generic.s    $(foreach dir,$(SRCDIR_KERNAL_generic),$(wildcard $(dir)/*.s))
+build/target_mega65/OUTK.BIN:     $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(GEN_KERNAL) $(SRCDIR_KERNAL_mega65)     c64/,,config_mega65.s     $(foreach dir,$(SRCDIR_KERNAL_mega65),$(wildcard $(dir)/*.s))
+build/target_ultimate64/OUTK.BIN: $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(GEN_KERNAL) $(SRCDIR_KERNAL_ultimate64) c64/,,config_ultimate64.s $(foreach dir,$(SRCDIR_KERNAL_ultimate64),$(wildcard $(dir)/*.s))
 
 build/target_generic/newrom:      build/target_generic/OUTB.BIN     build/target_generic/OUTK.BIN
 build/target_mega65/newrom:       build/target_mega65/OUTB.BIN      build/target_mega65/OUTK.BIN
@@ -114,13 +119,13 @@ build/,generated/packed_messages.s: $(TOOL_COMPRESS_TEXT)
 build/target_%/OUTB.BIN:
 	@mkdir -p build/target_$*
 	@rm -f $@* build/target_$*/BASIC*
-	@$(TOOL_BUILD_SEGMENT) -s BASIC -i BASIC-$* -o OUTB.BIN -t build/target_$* -l a000 -h e4d2 $(SRCDIR_BASIC_$*) build/,generated/packed_messages.s
+	@$(TOOL_BUILD_SEGMENT) -s BASIC -i BASIC-$* -o OUTB.BIN -t build/target_$* -l a000 -h e4d2 c64/,,config_$*.s $(SRCDIR_BASIC_$*) $(GEN_BASIC)
 
 .PRECIOUS: build/target_%/OUTK.BIN
 build/target_%/OUTK.BIN:
 	@mkdir -p build/target_$*
 	@rm -f $@* build/target_$*/KERNAL*
-	@$(TOOL_BUILD_SEGMENT) -s KERNAL -i KERNAL-$* -o OUTK.BIN -t build/target_$* -l e4d3 -h ffff $(SRCDIR_KERNAL_$*)
+	@$(TOOL_BUILD_SEGMENT) -s KERNAL -i KERNAL-$* -o OUTK.BIN -t build/target_$* -l e4d3 -h ffff c64/,,config_$*.s $(SRCDIR_KERNAL_$*) $(GEN_KERNAL)
 
 .PRECIOUS: build/target_%/newrom
 build/target_%/newrom:

@@ -163,8 +163,7 @@ relink_up_loop:
 	sta basic_current_line_ptr+1
 
 	// Have we run out of lines to patch?
-	ldx #<basic_current_line_ptr
-	jsr peek_pointer_null_check
+	jsr peek_line_pointer_null_check
 	bcs relink_up_next_line
 
 	rts

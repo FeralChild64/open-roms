@@ -101,8 +101,7 @@ basic_shift_mem_down_and_relink:
 
 	// Check if we still have any lines left
 	ldy #0
-	ldx #<basic_current_line_ptr
-	jsr peek_pointer_null_check
+	jsr peek_line_pointer_null_check
 	bcs relink_down_next_line
 	// Nope, so just return
 	clc
@@ -141,8 +140,7 @@ relink_down_loop:
 	sta basic_current_line_ptr+1
 
 	// Have we run out of lines to patch?
-	ldx #<basic_current_line_ptr
-	jsr peek_pointer_null_check
+	jsr peek_line_pointer_null_check
 	bcs relink_down_next_line
 
 	clc
