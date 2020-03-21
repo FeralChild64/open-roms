@@ -81,6 +81,7 @@ DEP_KERNAL = $(SRC_KERNAL) $(SRCDIR_KERNAL) $(GEN_KERNAL)
 TOOL_COLLECT_DATA       = build/tools/collect_data
 TOOL_COMPRESS_TEXT      = build/tools/compress_text
 TOOL_GENERATE_CONSTANTS = build/tools/generate_constants
+TOOL_GENERATE_STRINGS   = build/tools/generate_strings
 TOOL_PATCH_CHARGEN      = build/tools/patch_chargen
 TOOL_PNGPREPARE         = build/tools/pngprepare
 TOOL_BUILD_SEGMENT      = build/tools/build_segment
@@ -145,7 +146,7 @@ GIT_COMMIT:= $(shell git log -1 --pretty='%h' | tr '[:lower:]' '[:upper:]')
 .PHONY: all clean updatebin
 
 all:
-	$(MAKE) -j64 --output-sync=target $(TARGET_LIST) $(EXT_TARGET_LIST)
+	$(MAKE) -j64 --output-sync=target $(TARGET_LIST) $(EXT_TARGET_LIST) $(TOOL_GENERATE_STRINGS)
 
 clean:
 	@rm -rf build c64/basic/combined.s c64/kernal/combined.s
