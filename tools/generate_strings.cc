@@ -330,8 +330,12 @@ private:
 	void removeTrailingStrings();
 	void buildDictionary();
 	void calculateFrequencies();
+
 	void encodeWordsTokens();
+	void encodeByFreq(const std::string &plain, std::vector<uint8_t> &encoded) const;
 	void encodeStrings();
+
+
 	void prepareOutput();
 
 	virtual bool isRelevant(const EntryString &entry) const;
@@ -361,6 +365,12 @@ class DataSetM65 : public DataSet
 {
 	bool isRelevant(const EntryString &entry) const { return entry.enabledM65; }
 };
+
+class DataSetX16 : public DataSet
+{
+	bool isRelevant(const EntryString &entry) const { return entry.enabledX16; }
+};
+
 
 //
 // Work class implementation
@@ -420,7 +430,10 @@ const std::string &DataSet::getOutput()
 
 void DataSet::removeTrailingStrings()
 {
-	// XXX
+	while (strings.back().string.empty())
+	{
+		strings.pop_back();
+	}
 }
 
 void DataSet::buildDictionary()
@@ -443,6 +456,8 @@ void DataSet::buildDictionary()
 
 	std::sort(words.begin(), words.end());
 	words.erase(std::unique(words.begin(), words.end()), words.end());
+
+	// XXX check dictionary size
 }
 
 void DataSet::calculateFrequencies()
@@ -462,7 +477,7 @@ void DataSet::calculateFrequencies()
 			{
 				if (character >= 0x80)
 				{
-					// XXX error
+					ERROR(std::string("character above 0x80 in token '") + token.string + "'");
 				}
 				
 				freqMap[character]++;
@@ -472,13 +487,13 @@ void DataSet::calculateFrequencies()
 	
 	// Calculate frequencies - words
 	
-	for (const auto &string : words)
+	for (const auto &word : words)
 	{
-		for (const auto &character : string)
+		for (const auto &character : word)
 		{	
 			if (character >= 0x80)
 			{
-				// XXX error
+				ERROR(std::string("character above 0x80 in word '") + word + "'");
 			}
 			
 			freqMap[character]++;
@@ -522,6 +537,34 @@ void DataSet::encodeWordsTokens()
 	tokensEncoded.clear();
 	wordsEncoded.clear();
 	
+	// Encode by character frequencies - tokens
+
+	for (const auto &tokenList : tokens)
+	{
+		std::vector<std::vector<uint8_t>> tokenListEncoded;
+
+		for (const auto &token : tokenList)
+		{
+			std::vector<uint8_t> encoded;
+			encodeByFreq(token.string, encoded);
+			tokenListEncoded.push_back(encoded);
+		}
+
+		tokensEncoded.push_back(tokenListEncoded);
+	}
+
+	// Encode by character frequencies - words
+
+	for (const auto &word : words)
+	{
+		std::vector<uint8_t> encoded;
+		encodeByFreq(word, encoded);
+		wordsEncoded.push_back(encoded);
+	}
+}
+
+void DataSet::encodeByFreq(const std::string &plain, std::vector<uint8_t> &encoded) const
+{
 	// XXX
 }
 
