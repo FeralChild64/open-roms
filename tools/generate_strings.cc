@@ -457,7 +457,7 @@ void DataSet::buildDictionary()
 	std::sort(words.begin(), words.end());
 	words.erase(std::unique(words.begin(), words.end()), words.end());
 
-	// XXX check dictionary size
+	if (words.size() > 254) ERROR("max 254 words in strings allowed");
 }
 
 void DataSet::calculateFrequencies()
@@ -565,12 +565,67 @@ void DataSet::encodeWordsTokens()
 
 void DataSet::encodeByFreq(const std::string &plain, std::vector<uint8_t> &encoded) const
 {
-	// XXX
+	bool fullByte = true;
+
+	auto putNibble = [&](uint8_t val)
+	{
+		if (fullByte)
+		{
+			encoded.push_back(val);
+			fullByte = false;
+		}
+		else
+		{
+			encoded.back() += val * 0x10;
+			fullByte = true;
+		}
+	};
+
+	auto putByte = [&](uint8_t val)
+	{
+		if (fullByte)
+		{
+			encoded.push_back(val);
+		}
+		else
+		{
+			encoded.back() += (val % 0x10) * 0x10;
+			encoded.push_back(val / 0x10);			
+		}
+	};
+
+	// Encode every single character by frequency, put them in the output vector
+
+	for (const char &character : plain)
+	{
+		auto iterNibble = std::find(asNibble.begin(), asNibble.end(), character);
+		if (iterNibble != asNibble.end())
+		{
+			putNibble(std::distance(asNibble.begin(), iterNibble) + 1);
+		}
+		else
+		{
+			putNibble(0x0F);
+
+			auto iterByte = std::find(asByte.begin(), asByte.end(), character);
+			if (iterByte == asByte.end())
+			{
+				ERROR("internal error in 'encodeByFreq'");
+			}
+			putByte(std::distance(asByte.begin(), iterByte) + 1);
+		}
+	}
+
+	// Make sure the last byte of encoded stream is 0
+
+	if (encoded.size() == 0 || encoded.back() != 0) encoded.push_back(0);
 }
 
 void DataSet::encodeStrings()
 {
 	stringsEncoded.clear();
+
+	// Encode every string (not token) by references to 
 
 	// XXX
 }
