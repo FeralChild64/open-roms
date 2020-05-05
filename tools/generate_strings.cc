@@ -12,6 +12,12 @@
 #include <vector>
 
 //
+// Command line settings
+//
+
+std::string CMD_outFile = "out.s";
+
+//
 // Type definition for text/tokens to generate
 //
 
@@ -649,6 +655,33 @@ void printBanner()
     printBannerLineBottom();
 }
 
+void parseCommandLine(int argc, char **argv)
+{
+    int opt;
+
+    // Retrieve command line options
+
+    while ((opt = getopt(argc, argv, "o:")) != -1)
+    {
+        switch(opt)
+        {
+            case 'o': CMD_outFile   = optarg; break;
+            default: printUsage(); ERROR();
+        }
+    }
+}
+
+void writeStrings()
+{
+	DataSetSTD dataSetSTD;
+	DataSetM65 dataSetM65;
+	DataSetX16 dataSetX16;
+
+
+
+	// XXX
+}
+
 //
 // Main function
 //
@@ -656,6 +689,9 @@ void printBanner()
 int main(int argc, char **argv)
 {
     printBanner();
+    parseCommandLine(argc, argv);
+
+    writeStrings();
 
     return 0;
 }
