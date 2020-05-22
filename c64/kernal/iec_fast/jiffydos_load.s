@@ -5,6 +5,8 @@
 //
 // JiffyDOS protocol support for IEC - optimized load loop
 //
+// Based on description from https://github.com/mist64/cbmbus_doc
+//
 
 #if CONFIG_IEC_JIFFYDOS && !CONFIG_MEMORY_MODEL_60K
 
@@ -18,17 +20,6 @@
 
 
 jiffydos_load:
-
-/* XXX NEW version, not yet finished
-
-	//
-	// JiffyDOS protocol support for IEC - optimized load loop
-	//
-	// Based on description from https://github.com/mist64/cbmbus_doc
-	//
-
-	// First we need to switch the device to optimized LOAD protocol,
-	// by making it talk on channel 1 instead of 0
 
 	jsr UNTLK
 
@@ -62,6 +53,15 @@ jiffydos_load:
 
 #endif
 
+	// Preserve 3 lowest bits of CIA2_PRA  XXX deduplicate this
+
+	lda CIA2_PRA
+	and #%00000111
+	sta C3PO
+
+	// A trick to shorten EAL update time
+	ldy #$FF
+
 	// FALLTROUGH
 
 jiffydos_load_mode_escape:
@@ -78,58 +78,15 @@ jiffydos_load_mode_escape:
 
 	// XXX check for error
 
-
+	nop
+.break
+	nop
 
 jiffydos_load_mode_receive:
 
-
-	// Preserve 3 lowest bits of CIA2_PRA  XXX deduplicate this
-
-	lda CIA2_PRA
-	and #%00000111
-	sta C3PO
+	// XXX check whether there is more data to read (if CLK is pulled, switch back to escape mode)
 
 	// XXX read data
-
-*/
-
-
-
-	// Timing is critical, do not allow interrupts
-	sei
-
-#if CONFIG_IEC_JIFFYDOS_BLANK
-
-	// Preserve register with screen status (blank/visible)
-	lda VIC_SCROLY
-	sta TBTCNT
-
-	// Blank screen to make sure no sprite/badline will interrupt
-	jsr screen_off
-
-	// Preserve 3 lowest bits of CIA2_PRA  XXX deduplicate this
-
-	lda CIA2_PRA
-	and #%00000111
-	sta C3PO
-
-#else
-
-	// Store previous sprite status in temporary variable
-	jsr jiffydos_prepare
-	sta TBTCNT
-
-#endif
-
-	// A trick to shorten EAL update time
-	ldy #$FF
-
-	// FALLTROUGH
-
-jiffydos_load_loop:
-
-	// Wait until device is ready to send (releases CLK)
-	jsr iec_wait_for_clk_release
 
 	// Prepare 'start sending' message
 	lda CIA2_PRA
@@ -137,7 +94,7 @@ jiffydos_load_loop:
 
 #if CONFIG_IEC_JIFFYDOS_BLANK
 
-	// It seems JiffyDOS needs some time here; waste few cycles
+	// It seems JiffyDOS needs some time here; waste few cycles      XXX test this with new load loop
 	nop
 	jsr iec_wait_rts
 
@@ -152,7 +109,7 @@ jiffydos_load_loop:
 	stx CIA2_PRA                       // cycles: 4
 
 #endif
-
+.break
 	// Prepare 'data pull' byte, cycles: 3 + 2 + 2 = 7
 	lda C3PO
 	ora #BIT_CIA2_PRA_DAT_OUT          // pull
@@ -188,6 +145,25 @@ jiffydos_load_loop:
 	// Store retrieved byte, cycles: 2 + 6 = 8 
 	iny                                // NTSC needs this delay
 	sta (EAL),y                        // not compatible with CONFIG_MEMORY_MODEL_60K
+
+
+.break
+
+
+xxx:
+	jmp xxx
+
+
+
+
+
+
+
+/* old version
+
+
+jiffydos_load_loop:
+
 
 	// Retrieve status bits, cycles: 4
 	bit CIA2_PRA
@@ -244,5 +220,6 @@ jiffydos_load_end:
 	// End of load loop
 	jmp load_iec_loop_end
 
+*/
 
 #endif // CONFIG_IEC_JIFFYDOS and not CONFIG_MEMORY_MODEL_60K
