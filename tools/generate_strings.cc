@@ -3,7 +3,7 @@
 //
 
 // XXX this is a next-generation replacement of 'compress_text.c', still under development!
-
+// XXX use dictionary compression using https://stackoverflow.com/questions/9195676/finding-the-smallest-number-of-substrings-to-represent-a-set-of-strings
 
 #include "common.h"
 
@@ -24,7 +24,7 @@ std::string CMD_outFile = "out.s";
 // Type definition for text/tokens to generate
 //
 
-typedef struct EntryString
+typedef struct StringEntry
 {
 	bool        enabledSTD;     // whether enabled for basic build 
 	bool        enabledM65;     // whether enabled for Mega65 build
@@ -32,15 +32,23 @@ typedef struct EntryString
 	std::string alias;          // alias, for the assembler
 	std::string string;         // string/token
 	uint8_t     abbrevLen = 0;  // length of token abbreviation
-} EntryString;
+} StringEntry;
 
+typedef struct StringEntryList
+{
+	std::string              name;
+	std::vector<StringEntry> list;
+} StringEntryList;
+
+typedef std::vector<uint8_t>       StringEncoded;
+typedef std::vector<StringEncoded> StringEncodedList;
 
 // http://www.classic-games.com/commodore64/cbmtoken.html
 // https://www.c64-wiki.com/wiki/BASIC_token
 
 // BASIC keywords - V2 dialect
 
-const std::vector<EntryString> GLOBAL_Keywords_V2 =
+const StringEntryList GLOBAL_Keywords_V2 = { "keywords_V2",
 {
     // STD    M65    X16 
 	{ true,  true,  true,  "IDX_KV2_80",   "END",        2 }, // https://www.landsnail.com/a2ref.htm
@@ -121,19 +129,19 @@ const std::vector<EntryString> GLOBAL_Keywords_V2 =
 	{ true,  true,  true,  "IDX_KV2_C9",   "RIGHT$",     2 }, // https://www.landsnail.com/a2ref.htm
 	{ true,  true,  true,  "IDX_KV2_CA",   "MID$",       2 }, // https://www.landsnail.com/a2ref.htm
 	{ true,  true,  true,  "IDX_KV2_CB",   "GO",         0 }, // https://en.wikipedia.org/wiki/Goto
-};
+} };
 
 // BASIC keywords - extended keywords list #1, for now just for testing
 
-const std::vector<EntryString> GLOBAL_Keywords_X1 =
+const StringEntryList GLOBAL_Keywords_X1 =  { "keywords_X1",
 {
     // STD    M65    X16 
 	{ false, true,  false, "IDX_KX1_01",   "TEST",         },
-};
+} };
 
 // BASIC errors - all dialects
 
-const std::vector<EntryString> GLOBAL_Errors =
+const StringEntryList GLOBAL_Errors =  { "errors",
 {
 	// STD    M65    X16   --- error strings compatible with CBM BASIC V2
 	{ true,  true,  true,  "IDX_EV2_01", "TOO MANY FILES"           },
@@ -180,20 +188,20 @@ const std::vector<EntryString> GLOBAL_Errors =
 	{ false, false, true,  "IDX_EV7_29", "FILE READ"                },
 	// STD    M65    X16   --- error strings specific to OpenROMs
 	{ true,  true,  true,  "IDX_EOR_2A", "MEMORY CORRUPT"           },	
-};
+} };
 
 // BASIC errors - miscelaneous strings
 
-const std::vector<EntryString> GLOBAL_MiscStrings =
+const StringEntryList GLOBAL_MiscStrings =  { "misc",
 {
-	// STD    M65    X16
+	// STD    M65    X16   --- misc strings as on CBM machines
 	{ true,  true,  true,  "IDX_STR_BYTES",   " BASIC BYTES FREE"   },
 	{ true,  true,  true,  "IDX_STR_READY",   "READY.\r"            },
 	{ true,  true,  true,  "IDX_STR_ERROR",   " ERROR"              },
 	{ true,  true,  true,  "IDX_STR_IN",      " IN "                },
+	// STD    M65    X16   --- misc strings specific to OpenROMs
 	{ true,  true,  true,  "IDX_STR_BRK",     "BRK AT $"            },
-	{ true,  true,  true,  "IDX_STR_CORRUPT", "MEMORY CORRUPT"      },
-};
+} };
 
 //
 // Work class definitions
@@ -203,7 +211,7 @@ class DataSet
 {
 public:
 
-	void addStrings(const std::vector<EntryString> &stringList);
+	void addStrings(const StringEntryList &stringList);
 
 	const std::string &getOutput();
 
@@ -211,56 +219,65 @@ private:
 
 	void process();
 
-	void removeTrailingStrings();
 	void calculateFrequencies();
 	void encodeStrings();
 
-	void encodeByFreq(const std::string &plain, std::vector<uint8_t> &encoded) const;
+	void encodeByFreq(const std::string &plain, StringEncoded &encoded) const;
 
 	void prepareOutput();
 
-	virtual bool isRelevant(const EntryString &entry) const;
-	
-	std::vector<std::vector<EntryString>>          strings;
-	std::vector<std::vector<std::vector<uint8_t>>> stringsEncoded;
+	virtual bool isRelevant(const StringEntry &entry) const;
+	virtual std::string layoutName() const;
 
-	std::vector<char>                              asNibble;
-	std::vector<char>                              asByte;
+	std::vector<StringEntryList>          stringEntryLists;
+	std::vector<StringEncodedList>        stringEncodedLists;
+
+	std::vector<char>                     asNibble;
+	std::vector<char>                     asByte;
 	
-	std::string outputString;
-	bool        outputStringValid = false;
+	std::string outFileContent;
+	bool        outFileContentValid = false;
 };
 
 class DataSetSTD : public DataSet
 {
-	bool isRelevant(const EntryString &entry) const { return entry.enabledSTD; }
+	bool isRelevant(const StringEntry &entry) const { return entry.enabledSTD; }
+	std::string layoutName() const { return "STD"; }
 };
 
 class DataSetM65 : public DataSet
 {
-	bool isRelevant(const EntryString &entry) const { return entry.enabledM65; }
+	bool isRelevant(const StringEntry &entry) const { return entry.enabledM65; }
+	std::string layoutName() const { return "M65"; }
 };
 
 class DataSetX16 : public DataSet
 {
-	bool isRelevant(const EntryString &entry) const { return entry.enabledX16; }
+	bool isRelevant(const StringEntry &entry) const { return entry.enabledX16; }
+	std::string layoutName() const { return "X16"; }
 };
-
 
 //
 // Work class implementation
 //
 
-void DataSet::addStrings(const std::vector<EntryString> &stringList)
+void DataSet::addStrings(const StringEntryList &stringList)
 {
-	strings.insert(strings.end(), stringList.begin(), stringList.end());
+	// Import the new list of strings
+
+	stringEntryLists.push_back(stringList);
 
 	// Clear strings not relevant for the current configuration
 	
-	for (auto &entry : strings)
+	while (1)
 	{
-		if (isRelevant(entry)) continue;
-		entry.string.clear();
+		if (isRelevant(stringEntryLists.back().list.back())) break;
+
+		stringEntryLists.back().list.pop_back();
+		if (stringEntryLists.back().list.empty())
+		{
+			ERROR(std::string("no valid strings in layout '") + layoutName() + "', list'" + stringEntryLists.back().name + "'");
+		}
 	}
 	
 	outputStringValid = false;
@@ -268,7 +285,6 @@ void DataSet::addStrings(const std::vector<EntryString> &stringList)
 
 void DataSet::process()
 {
-	removeTrailingStrings();
 	calculateFrequencies();
 	encodeStrings();
 	prepareOutput();
@@ -284,14 +300,6 @@ const std::string &DataSet::getOutput()
 	return outputString;
 }
 
-void DataSet::removeTrailingStrings()
-{
-	while (strings.back().string.empty())
-	{
-		strings.pop_back();
-	}
-}
-
 void DataSet::calculateFrequencies()
 {
 	asNibble.clear();
@@ -299,36 +307,23 @@ void DataSet::calculateFrequencies()
 	
 	std::map<char, uint16_t> freqMap;
 	
-	// Calculate frequencies - tokens
+	// Calculate frequencies
 
-	for (const auto &tokenList : tokens)
+	for (const auto &stringEntryList : stringEntryLists)
 	{
-		for (const auto &token : tokenList)
+		for (const auto &stringEntry : stringEntryList.list)
 		{
-			for (const auto &character : token.string)
+			if (!isRelevant(stringEntry)) continue;
+
+			for (const auto &character : stringEntry.string)
 			{
 				if (character >= 0x80)
 				{
-					ERROR(std::string("character above 0x80 in token '") + token.string + "'");
+					ERROR(std::string("character above 0x80 in string '") + stringEntry.string + "'");
 				}
 				
 				freqMap[character]++;
 			}
-		}
-	}
-	
-	// Calculate frequencies - words
-	
-	for (const auto &word : words)
-	{
-		for (const auto &character : word)
-		{	
-			if (character >= 0x80)
-			{
-				ERROR(std::string("character above 0x80 in word '") + word + "'");
-			}
-			
-			freqMap[character]++;
 		}
 	}
 	
@@ -364,7 +359,7 @@ void DataSet::calculateFrequencies()
 	}	
 }
 
-void DataSet::encodeByFreq(const std::string &plain, std::vector<uint8_t> &encoded) const
+void DataSet::encodeByFreq(const std::string &plain, StringEncoded &encoded) const
 {
 	bool fullByte = true;
 
@@ -426,14 +421,7 @@ void DataSet::encodeStrings()
 {
 	stringsEncoded.clear();
 
-	// Encode every string by frequency
-
-	for (const auto &word : words)
-	{
-		std::vector<uint8_t> encoded;
-		encodeByFreq(word, encoded);
-		wordsEncoded.push_back(encoded);
-	}
+	// Encode every relevant string from every list by frequency
 
 	// XXX
 }
