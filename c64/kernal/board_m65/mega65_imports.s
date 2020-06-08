@@ -9,6 +9,9 @@
 
 
 .label STOP                            = KERNAL_0.STOP
+
+.label hw_entry_reset                  = KERNAL_0.hw_entry_reset
+.label return_from_interrupt           = KERNAL_0.return_from_interrupt
 .label clrchn_reset                    = KERNAL_0.clrchn_reset
 .label udtim_keyboard                  = KERNAL_0.udtim_keyboard
 
@@ -25,8 +28,7 @@
 
 #if CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO
 
-.label screen_on                       = KERNAL_0.screen_on
-.label screen_off                      = KERNAL_0.screen_off
+.label mega65_unhide                   = KERNAL_0.mega65_unhide
 .label tape_motor_on                   = KERNAL_0.tape_motor_on
 .label tape_motor_off                  = KERNAL_0.tape_motor_off
 
@@ -45,6 +47,7 @@
 .label print_return                    = KERNAL_0.proxy_K1_print_return
 
 .label __MSG_KERNAL_PRESS_PLAY         = KERNAL_0.__MSG_KERNAL_PRESS_PLAY
+.label __MSG_KERNAL_OK_SEARCHING       = KERNAL_0.__MSG_KERNAL_OK_SEARCHING
 .label __MSG_KERNAL_FOUND              = KERNAL_0.__MSG_KERNAL_FOUND
 
 #endif
@@ -53,5 +56,13 @@
 #if CONFIG_TAPE_NORMAL
 
 .label tape_normal_byte_store          = KERNAL_0.tape_normal_byte_store
+
+#endif
+
+
+#if CONFIG_TAPE_HEAD_ALIGN
+
+.label CLALL                           = KERNAL_0.proxy_K1_CLALL
+.label nmi_lock                        = KERNAL_0.nmi_lock
 
 #endif

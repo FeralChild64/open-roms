@@ -61,15 +61,40 @@ tape_wait_play_loop:
 
 #else
 
+	// The ROM is configured for tape adapter without the key sense - but it is still
+	// possible, that regular Datasette or Tapuino is connected
+
+	lda CPU_R6510
+	and #$10
+	beq tape_wait_first_pulse          // branch if button reported pressed, most likely really no key sense
+
+	// We have key sense - perform regular waiting
+!:
+	jsr STOP
+	bcs tape_break_error
+
+	lda CPU_R6510
+	and #$10
+	beq !-
+
+tape_wait_first_pulse:
+
 	// We have no key sense - so just turn the motor on and wait for the first pulse
 
 	jsr tape_motor_on
 
-	lda #$10
 !:
+	jsr STOP
+	bcs tape_break_error
+
+	lda #$10
 	bit CIA1_ICR    // $DC0D
 	bne !-
 !:
+	jsr STOP
+	bcs tape_break_error
+	
+	lda #$10
 	bit CIA1_ICR    // $DC0D
 	beq !-
 
@@ -79,10 +104,27 @@ tape_wait_play_loop:
 
 tape_wait_play_done:
 
-	// Prepare for reading
-
 	lda #$01
 	sta CAS1                           // set the interlock
+
+#if CONFIG_TAPE_HEAD_ALIGN
+
+	rts
+
+tape_prepare_reading:
+
+#endif // CONFIG_TAPE_HEAD_ALIGN
+
+#if CONFIG_MB_MEGA_65
+
+	// Display confirmation
+
+	ldx #__MSG_KERNAL_OK_SEARCHING
+	jsr print_kernal_message
+
+#endif
+
+	// Prepare for reading
 
 	jsr print_return
 	jmp tape_screen_off_motor_on

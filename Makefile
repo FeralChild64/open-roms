@@ -13,15 +13,19 @@ SRCDIR_BASIC   = $(SRCDIR_COMMON) \
                  c64/basic/,stubs \
                  c64/basic/,stubs_math \
                  c64/basic/assets \
+                 c64/basic/basic_commands \
+                 c64/basic/basic_operators \
+                 c64/basic/basic_functions \
                  c64/basic/board_m65 \
                  c64/basic/board_x16 \
-                 c64/basic/commands \
+                 c64/basic/engine \
                  c64/basic/init \
                  c64/basic/math \
                  c64/basic/math_consts \
                  c64/basic/math_mov \
                  c64/basic/print \
-                 c64/basic/rom_revision
+                 c64/basic/rom_revision \
+                 c64/basic/wedge
 
 SRCDIR_KERNAL  = $(SRCDIR_COMMON) \
                  c64/kernal \
@@ -131,7 +135,7 @@ SEG_LIST_X16 =    $(DIR_X16)/basic.seg_0  \
 				  $(DIR_X16)/kernal.seg_0 \
 				  $(DIR_X16)/kernal.seg_1
 
-REL_TARGET_LIST = $(TARGET_LIST_GEN) $(TARGET_LIST_TST) $(TARGET_M65_x) $(TARGET_M65_x_PXL) $(TARGET_LIST_U64)
+REL_TARGET_LIST = $(TARGET_LIST_GEN) $(TARGET_M65_x) $(TARGET_M65_x_PXL) $(TARGET_LIST_U64)
 
 # Misc strings
 
@@ -141,11 +145,14 @@ HYBRID_WARNING = "*** WARNING *** Distributing kernal_hybrid.rom violates both o
 
 GIT_COMMIT:= $(shell git log -1 --pretty='%h' | tr '[:lower:]' '[:upper:]')
 
-# Rules - main
+# Rules - main   XXX fast build does not always succeed, not yet clear, why
 
-.PHONY: all clean updatebin
+.PHONY: all fast clean updatebin
 
 all:
+	$(MAKE) $(TARGET_LIST) $(EXT_TARGET_LIST) $(TOOL_GENERATE_STRINGS)
+
+fast:
 	$(MAKE) -j64 --output-sync=target $(TARGET_LIST) $(EXT_TARGET_LIST) $(TOOL_GENERATE_STRINGS)
 
 clean:
@@ -224,7 +231,7 @@ $(DIR_M65)/kernal.seg_1 $(DIR_M65)/KERNAL_1_combined.vs $(DIR_M65)/KERNAL_1_comb
     $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(DEP_KERNAL) $(CFG_M65) $(DIR_M65)/KERNAL_0_combined.sym
 
 $(DIR_X16)/basic.seg_1  $(DIR_X16)/BASIC_1_combined.vs  $(DIR_X16)/BASIC_1_combined.sym: \
-    $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(DEP_BASIC) $(CFG_X16) $(DIR_M65)/KERNAL_0_combined.sym $(DIR_X16)/BASIC_0_combined.sym
+    $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(DEP_BASIC) $(CFG_X16) $(DIR_X16)/KERNAL_0_combined.sym $(DIR_X16)/BASIC_0_combined.sym
 $(DIR_X16)/kernal.seg_1 $(DIR_X16)/KERNAL_1_combined.vs $(DIR_X16)/KERNAL_1_combined.sym: \
     $(TOOL_ASSEMBLER) $(TOOL_BUILD_SEGMENT) $(DEP_KERNAL) $(CFG_X16) $(DIR_X16)/KERNAL_0_combined.sym
 
@@ -299,22 +306,22 @@ $(DIR_M65)/kernal.seg_1 $(DIR_M65)/KERNAL_1_combined.vs $(DIR_M65)/KERNAL_1_comb
 $(DIR_X16)/OUTB_0.BIN $(DIR_X16)/BASIC_0_combined.vs $(DIR_X16)/BASIC_0_combined.sym:
 	@mkdir -p $(DIR_X16)
 	@rm -f $@* $(DIR_X16)/BASIC_0*
-	@$(TOOL_BUILD_SEGMENT) -a ../../$(TOOL_ASSEMBLER) -r X16 -s BASIC_0 -i BASIC_0-mega65 -o OUTB_0.BIN -d $(DIR_X16) -l c000 -h e4d2 $(CFG_X16) $(SRCDIR_BASIC) $(GEN_BASIC)
+	@$(TOOL_BUILD_SEGMENT) -a ../../$(TOOL_ASSEMBLER) -r X16 -s BASIC_0 -i BASIC_0-x16 -o OUTB_0.BIN -d $(DIR_X16) -l c000 -h e4d2 $(CFG_X16) $(SRCDIR_BASIC) $(GEN_BASIC)
 
 $(DIR_X16)/OUTK_0.BIN $(DIR_X16)/KERNAL_0_combined.vs $(DIR_X16)/KERNAL_0_combined.sym:
 	@mkdir -p $(DIR_X16)
 	@rm -f $@* $(DIR_X16)/KERNAL_0*
-	@$(TOOL_BUILD_SEGMENT) -a ../../$(TOOL_ASSEMBLER) -r X16 -s KERNAL_0 -i KERNAL_0-mega65 -o OUTK_0.BIN -d $(DIR_X16) -l e4d3 -h ffff $(CFG_X16) $(SRCDIR_KERNAL) $(GEN_KERNAL)
+	@$(TOOL_BUILD_SEGMENT) -a ../../$(TOOL_ASSEMBLER) -r X16 -s KERNAL_0 -i KERNAL_0-x16 -o OUTK_0.BIN -d $(DIR_X16) -l e4d3 -h ffff $(CFG_X16) $(SRCDIR_KERNAL) $(GEN_KERNAL)
 
 $(DIR_X16)/basic.seg_1 $(DIR_X16)/BASIC_1_combined.vs $(DIR_X16)/BASIC_1_combined.sym:
 	@mkdir -p $(DIR_X16)
 	@rm -f $@* $(DIR_X16)/basic.seg_1 $(DIR_X16)/BASIC_1*
-	@$(TOOL_BUILD_SEGMENT) -a ../../$(TOOL_ASSEMBLER) -r X16 -s BASIC_1 -i BASIC_1-mega65 -o basic.seg_1 -d $(DIR_X16) -l a000 -h bfff $(CFG_X16) $(SRCDIR_BASIC) $(GEN_BASIC)
+	@$(TOOL_BUILD_SEGMENT) -a ../../$(TOOL_ASSEMBLER) -r X16 -s BASIC_1 -i BASIC_1-x16 -o basic.seg_1 -d $(DIR_X16) -l a000 -h bfff $(CFG_X16) $(SRCDIR_BASIC) $(GEN_BASIC)
 
 $(DIR_X16)/kernal.seg_1 $(DIR_X16)/KERNAL_1_combined.vs $(DIR_X16)/KERNAL_1_combined.sym:
 	@mkdir -p $(DIR_X16)
 	@rm -f $@* $(DIR_X16)/kernal.seg_1 $(DIR_X16)/KERNAL_1*
-	@$(TOOL_BUILD_SEGMENT) -a ../../$(TOOL_ASSEMBLER) -r X16 -s KERNAL_1 -i KERNAL_1-mega65 -o kernal.seg_1 -d $(DIR_X16) -l a000 -h bfff $(CFG_X16) $(SRCDIR_KERNAL) $(GEN_KERNAL)
+	@$(TOOL_BUILD_SEGMENT) -a ../../$(TOOL_ASSEMBLER) -r X16 -s KERNAL_1 -i KERNAL_1-x16 -o kernal.seg_1 -d $(DIR_X16) -l a000 -h bfff $(CFG_X16) $(SRCDIR_KERNAL) $(GEN_KERNAL)
 
 # Rules - BASIC and KERNAL
 
@@ -434,8 +441,8 @@ test_testing: build/kernal_testing.rom build/basic_testing.rom build/symbols_tes
 test_ultimate64: build/kernal_ultimate64.rom build/basic_ultimate64.rom build/symbols_ultimate64.vs
 	x64 -kernal build/kernal_ultimate64.rom -basic build/basic_ultimate64.rom -moncommands build/symbols_ultimate64.vs -1 $(TESTTAPE) -8 $(TESTDISK)
 
-test_mega65: $(TARGET_M65_x) $(TARGET_M65_PXL)
-	../xemu/build/bin/xmega65.native -dmarev 2 -forcerom -loadrom $(TARGET_M65_x)
+test_mega65: $(TARGET_M65_x) $(TARGET_M65_x_PXL)
+	../xemu/build/bin/xmega65.native -dmarev 2 -forcerom -loadrom $(TARGET_M65_x_PXL)
 
 test_cx16: $(TARGET_X16_x)
 	../x16-emulator/x16emu -rom $(TARGET_X16_x)

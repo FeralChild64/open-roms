@@ -125,7 +125,7 @@ Needs over 1000 bytes in KERNAL segment. If unsure - enable.
 
 Adds support for DolphinDOS fast protocol to the IEC bus, using UserPort cable.
 
-Needs about 160 buytes in KERNAL segment. If unsure - enable.
+Needs about 160 bytes in KERNAL segment. If unsure - enable.
 
 ### `CONFIG_IEC_DOLPHINDOS_FAST`
 
@@ -167,7 +167,7 @@ Needs about 100 more bytes in KERNAL segment.
 
 ### `CONFIG_TAPE_NO_KEY_SENSE`
 
-Enable this option if you are using a tape interface adapter with some audio signal source connected. These adapters lack key sense functionality, so the computer is unable to tell whether Play got pressed or not - with this option ROM will assume Play got pressed after imppulses start arriving from the tape.
+Enable this option if you are using a tape interface adapter with some audio signal source connected. These adapters lack key sense functionality, so the computer is unable to tell whether Play got pressed or not - this option changes the ROM behaviour, so that it can detect Play pressed when impulses start arriving from the tape.
 
 ### `CONFIG_TAPE_NO_MOTOR_CONTROL`
 
@@ -181,13 +181,13 @@ If used with `CONFIG_TAPE_NORMAL`, saves about 125 bytes in KERNAL segment. Not 
 
 ## Multiple SID support
 
-The SID is a sound chip - original machine had one installed. However, mods exists to add more of them for improved sound capabilitiee. Emulators and FPGA machines typically allow to simulate more than one too. Unfortunately, there is no standard regarding how these additional chips are visible in the processor address space, and there is no sane way to detect it - thus, it has to be configurable.
+The SID is a sound chip - the original Commodore 64 had one installed. However, mods exists to add more of them for improved sound capabilities. Emulators and FPGA machines typically allow to simulate more than one too. Unfortunately, there is no standard regarding how these additional chips are visible in the processor address space, and there is no sane way to detect it - thus, it has to be configurable.
 
 The SID support in the ROM is very limited - it only disables the sound during startup or warm restart (when STOP+RESTORE is pressed or BRK assembler instruction is executed).
 
 ### `CONFIG_SID_2ND` and `CONFIG_SID_3RD` 
 
-Each of them add support for one additional SID - addresses should be given in `CONFIG_SID_2ND_ADDRESS` and `CONFIG_SID_3RD_ADDRESS`, respectively.
+Each of them add support for one additional SID - addresses should be given in `CONFIG_SID_2ND_ADDRESS` and `CONFIG_SID_3RD_ADDRESS`, respectively. Do not use when `CONFIG_MB_MEGA_65` is selected - the motherboard support code already knows the SID locations. 
 
 Each of these options needs 3 bytes in KERNAL segment.
 
@@ -195,7 +195,7 @@ Each of these options needs 3 bytes in KERNAL segment.
 
 Cause the system to support SIDs in `$D4xx` and `$D5xx` ranges, respectively.
 
-Each of them needs a couple of bytes in KERNAL segment - but they can share some code, and `$D4xx` range support replaces the standard `$D400` address handling, so exact amount depends on the exact configuration.
+Each of them needs a couple of bytes in KERNAL segment - but they can share some code, and `$D4xx` range support replaces the standard `$D400` address handling, so exact amount depends on the exact configuration. Do not use when `CONFIG_MB_MEGA_65` is selected - the motherboard support code already knows the SID locations.
 
 ## Keyboard
 
@@ -203,7 +203,7 @@ Original keyboard support routine is just horrible. It does nothing to prevent g
 
 ### `CONFIG_LEGACY_SCNKEY`
 
-Uses old Open ROMs keyboard scanning routine, which is basically example routine by TWW/CTR, hacked to work within Kernal. It's greatest advantage is multi-key rollover, it's disadvantages - it's much less compatible (uses several bytes of memory which are normally free for user software - thus, it is considered legacy for now), does not support all the system variables (`RPTFLG` and `KEYLOG` are unsupported), and ignores the configuration options - this can be changed, but it requires some effort.
+Uses old Open ROMs keyboard scanning routine, which is basically the example routine by TWW/CTR, hacked to work within Kernal. It's greatest advantage is multi-key rollover, it's disadvantages - it's much less compatible (uses several bytes of memory which are normally free for user software - thus, it is considered legacy for now), does not support all the system variables (`RPTFLG` and `KEYLOG` are unsupported), and ignores the configuration options - this can be changed, but it requires some effort.
 
 Needs 30-250 more space in KERNAL segment (depending on the features enabled for current default routine). If unsure - disable.
 
@@ -237,7 +237,7 @@ Saves 22 bytes from KERNAL segment.
 
 ### `CONFIG_KEY_FAST_SCAN`
 
-Performs somee speed optimizations in the keyboard scanning routine, at the eexpense of some more ROM space.
+Performs somee speed optimizations in the keyboard scanning routine, at the expense of some more ROM space.
 
 Needs 13 bytes more space in KERNAL segment. Only disable if you are running out of ROM space.
 
@@ -249,7 +249,7 @@ Needs about 65 bytes of ROM space in KERNAL segment to handle both joysticks.
 
 ### `CONFIG_PROGRAMMABLE_KEYS`
 
-Allows to assign command to any function key, `RUN` key and `HELP` key (if selected keybaord has one) - just fill-in appropriate `CONFIG_KEYCMD_*` variable(s). Keys not present on the selected keyboard are ignored.
+Allows to assign commands to any function key, `RUN` key and `HELP` key (if selected keybaord has one) - just fill-in appropriate `CONFIG_KEYCMD_*` variable(s). Keys not present on the selected keyboard are ignored.
 
 Needs 25 bytes more space in KERNAL segment for the code. In addition, each configured key takes 3 bytes + length of the command.
 
@@ -283,9 +283,15 @@ Feature needs about 330 bytes in BASIC segment. If unsure - enable.
 
 ### `CONFIG_TAPE_WEDGE`
 
-If enabled, a simple DOS wedge is available from the direct mode for turbo tape loading - supports `←L` only
+If enabled, a simple DOS wedge is available from the direct mode for tape loading - supports `←L` only.
 
-Feature needs about 5 bytes in BASIC segment. If unsure - enable.
+Feature needs few bytes in BASIC segment. If unsure - enable.
+
+### `CONFIG_TAPE_HEAD_ALIGN`
+
+If enabled, embeds a tape head align tool into the ROM, it can be started with `←H`. Requires `CONFIG_TAPE_WEDGE`.
+
+Feature needs about 800 bytes in KERNAL segment. Only recomended for machines with extended ROM, like Mega65.
 
 ### `CONFIG_BCD_SAFE_INTERRUPTS`
 

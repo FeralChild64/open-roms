@@ -55,5 +55,15 @@ proxy_K1_print_return:
 	jsr print_return
 	jmp map_KERNAL_1
 
+#endif
+
+
+#if CONFIG_TAPE_HEAD_ALIGN
+
+proxy_K1_CLALL:
+
+	jsr map_NORMAL
+	jsr CLALL
+	jmp map_KERNAL_1
 
 #endif

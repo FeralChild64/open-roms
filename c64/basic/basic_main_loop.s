@@ -5,12 +5,9 @@
 
 basic_main_loop:
 
-	// XXX - Check if direct or program mode, and get next line of input
-	// the appropriate way.
-	// XXX - For now, it is hard coded to direct mode
-
 	// Tell user we are ready
-	jsr ready_message
+	ldx #30
+	jsr print_packed_message
 
 	// Enable Kernal messages
 	lda #$80
@@ -20,7 +17,6 @@ basic_read_next_line:
 	// Read a line of input
 	ldx #$00
 read_line_loop:
-
 	jsr JCHRIN
 	bcs read_line_loop
 	
@@ -28,11 +24,8 @@ read_line_loop:
 	beq got_line_of_input
 	// Not carriage return, so try to append to line so far
 	cpx #80
-	bcc !+
-	// Report STRING TOO LONG error (Computes Mapping the 64 p93)
-	ldx #22
-	jmp basic_do_error
-!:
+	bcs_16 do_STRING_TOO_LONG_error // see Computes Mapping the 64 p93
+
 	sta BUF,x
 	inx
 	jmp read_line_loop
@@ -177,4 +170,4 @@ not_a_line:
 	lda #$FF
 	sta CURLIN+1
 
-	jmp basic_execute_statement
+	jmp execute_statements

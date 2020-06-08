@@ -648,6 +648,12 @@ void DataSet::prepareOutput()
 // Common helper functions
 //
 
+void printUsage()
+{
+    std::cout << "\n" <<
+        "usage: generate_strings [-o <out file>]" << "\n\n";
+}
+
 void printBanner()
 {
     printBannerLineTop();

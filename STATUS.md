@@ -15,14 +15,15 @@ Here are the features of the Open ROMs not found in the original ROMs from the 8
 * normal tape load error log is limited by free stack space only (no artificial limitation like in original ROMs)
 * tape format autodetection; normal vs turbo is mostly transparent to user
 * improved support for tape adapters (for using regular casette players and other audio devices instead of Datasette) and emulators
+* built-in tape head align tool (only feasible to use on machines with extended memory, like Mega65)
 
-* extended `LOAD` command
+* extended / tweaked `LOAD` / `VERIFY` commands
     * start/end addresses are displayed, in the Final cartridge style
     * command with just the file name tries to use the last device if it's number seems sane; otherwise uses 8
-    * secondary address over 255 is considered a start address
+    * command without parameters tries to load first file from drive chosen as above
 
 * uses RAM under ROM and I/O: 61438 bytes free
-* cold/warm start silences multiple SID chips - all $D4xx and $D5xx addresses, configured addresses
+* cold/warm start silences multiple SID chips
 * warm start due to BRK prints out the instruction address
 
 
@@ -98,7 +99,7 @@ The following ROM features are currently missing:
 | Driver             | Status   |  Remarks                                           |
 | :----------------: | :------: | :------------------------------------------------: |
 | standard           | DONE     |                                                    |
-| JiffyDOS           | DONE     |                                                    |
+| JiffyDOS           | PARTIAL  | LOAD needs improvement for better performance      |
 | DolphinDOS         | DONE     |                                                    |
 | CIA burst mod      | NOT DONE |                                                    |
 | Mega65 burst       | NOT DONE |                                                    |
@@ -282,7 +283,7 @@ Not all of them - only these we want to have implemented.
 | `$A68E`   | `RUNC`       | DONE     |                                                    |
 | `$A7AE`   | `NEWSTT`     | PARTIAL  | redirected to RUN command                          |
 | `$AB1E`   | `STROUT`     | DONE     |                                                    |
-| `$AD9E`   | `FRMEVL`     | NOT DONE |                                                    |
+| `$AD9E`   | `FRMEVL`     | PARTIAL  |                                                    |
 | `$BDCD`   | `LINPRT`     | DONE     | temporary implementation                           |
 | `$E3BF`   | `INIT`       | NOT DONE |                                                    |
 | `$E422`   | `INITMSG`    | DONE     |                                                    |

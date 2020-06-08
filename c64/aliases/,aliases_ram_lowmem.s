@@ -17,10 +17,10 @@
 	.label CHARAC    = $07 //          [!] our implementation might be different  XXX give more details
 	.label ENDCHR    = $08 //          [!] our implementation might be different  XXX give more details
 	.label TRMPOS    = $09 //          -- NOT IMPLEMENTED --
-	.label VERCKB    = $0A //          -- NOT IMPLEMENTED --
+	.label VERCKB    = $0A //          flag used by BASIC, 0 - LOAD, 1 - VERIFY
 	.label COUNT     = $0B //          [!] our implementation might be different  XXX give more details
 	.label DIMFLG    = $0C //          [!] our implementation might be different  XXX give more details
-	.label VALTYP    = $0D //          -- NOT IMPLEMENTED --
+	.label VALTYP    = $0D //          expression eveluation result; $00 - float, $FF - string
 	.label INTFLG    = $0E //          -- NOT IMPLEMENTED --
 	.label GARBFL    = $0F //          [!] our implementation might be different  XXX give more details
 	.label SUBFLG    = $10 //          -- NOT IMPLEMENTED --
@@ -28,9 +28,9 @@
 	.label TANSGN    = $12 //          -- NOT IMPLEMENTED --
 	.label CHANNL    = $13 //          -- NOT IMPLEMENTED --
 	.label LINNUM    = $14 // $14-$15  BASIC line number, [!] also used by DOS Wedge
-	.label TEMPPT    = $16 //          -- NOT IMPLEMENTED --
-	.label LASTPT    = $17 // $17-$18  -- NOT IMPLEMENTED --
-	.label TEMPST    = $19 // $19-$21  -- NOT IMPLEMENTED --
+	.label TEMPPT    = $16 //          pointer to the first available slot in the temporary string descriptor stack
+	.label LASTPT    = $17 // $17-$18  pointer to the last used slot in the temporary string descriptor
+	.label TEMPST    = $19 // $19-$21  temporary string stack descriptors
 	.label INDEX     = $22 // $22-$25  temporary variables, [!] our usage might be different
 	.label RESHO     = $26 // $26-$2A  -- NOT IMPLEMENTED --
 	.label TXTTAB    = $2B // $2B-$2C  start of BASIC code
@@ -49,7 +49,7 @@
 	.label VARNAM    = $45 // $45-$46  -- NOT IMPLEMENTED --
 	.label VARPNT    = $47 // $47-$48  -- NOT IMPLEMENTED --
 	.label FORPNT    = $49 // $49-$4A  -- NOT IMPLEMENTED --
-	.label OPPTR     = $4B // $4B-$4C  -- NOT IMPLEMENTED --
+	.label OPPTR     = $4B // $4B-$4C  helper variable for expression computation, [!] our usage details are different
 	.label OPMASK    = $4D //          -- NOT IMPLEMENTED --
 	.label DEFPNT    = $4E // $4E-$4F  -- NOT IMPLEMENTED --
 	.label DSCPNT    = $50 // $50-$52  -- NOT IMPLEMENTED --

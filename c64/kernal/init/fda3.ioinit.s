@@ -59,9 +59,11 @@ IOINIT:
 	// Now silence the SID chip(s), depending on the configuration - we want them silent ASAP
 	//
 
-	// First the standard chip (skip if it is covered by whole $D4XX range)
-
 	lda #$00
+
+#if !CONFIG_MB_MEGA_65
+
+	// First the standard chip (skip if it is covered by whole $D4XX range)
 
 #if !CONFIG_SID_D4XX
 	sta SID_SIGVOL
@@ -100,6 +102,17 @@ IOINIT:
 
 #endif // CONFIG_SID_D4XX || CONFIG_SID_D5XX
 
+#else
+
+	// Mega65 specific handling - it contains 4 SIDs
+
+	sta SID_SIGVOL + __SID_R1_OFFSET
+	sta SID_SIGVOL + __SID_R2_OFFSET
+	sta SID_SIGVOL + __SID_L1_OFFSET
+	sta SID_SIGVOL + __SID_L2_OFFSET
+
+#endif // CONFIG_MB_MEGA_65
+
 	//
 	// Now continue the CIAs initialization
 	//
@@ -125,26 +138,26 @@ IOINIT:
 
 	// Checked using VICE that original ROM initializes timers this way
 	ldx #$08
-	stx CIA1_CRB    // $DC0F
-	stx CIA2_CRA    // $DD0E
-	stx CIA2_CRB    // $DD0F
+	stx CIA1_CRB     // $DC0F
+	stx CIA2_CRA     // $DD0E
+	stx CIA2_CRB     // $DD0F
 
 	// Set VIC-II bank - at least the 'Operacja Proboszcz' game needs this within IOINIT
 	// Checked on original ROMs, that it sets bit #2 (RS-232 output) high
 
 	ldx #%00000111 // XXX adapt this to IEC idle state, JMP at the end won't be needed
-	stx CIA2_PRA    // $DD00
+	stx CIA2_PRA     // $DD00
 
 	// Put something sane in the IRQ timer
 	jsr setup_irq_timer
 
 	// Enable timer A to run continuously (http://codebase64.org/doku.php?id=base:timerinterrupts)
 	ldx #$11
-	stx CIA1_CRA    // $DC0E
+	stx CIA1_CRA     // $DC0E
 
 	// Enable timer interrupt
 	ldx #$81
-	stx CIA1_ICR    // $DC0D
+	stx CIA1_ICR     // $DC0D
 
 #if CONFIG_IEC
 

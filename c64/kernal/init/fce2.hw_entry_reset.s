@@ -11,13 +11,25 @@ hw_entry_reset:
 	// The GPL program at https://github.com/Klaus2m5/6502_65C02_functional_tests/blob/master/6502_functional_test.a65
 	// uses the similar initial reset sequence, affirmed by c64 PRG p269
 
-	sei // disable the interrupts, as fast as possible - they are disabled in case of HW reset,
-	    // but this routine can be also called manually
+	sei                      // disable the interrupts, as fast as possible - they are disabled in case of HW reset,
+	                         // but this routine can be also called manually
 
-	cld // required for all CPUs - due to possibility of manual call
+	cld                      // required for all CPUs - due to possibility of manual call
+
+#if HAS_OPCODES_65CE02
+
+	see                      // disable extended stack
+
+#endif
 
 	ldx #$FF
 	txs
+
+#if ROM_LAYOUT_M65
+
+	jsr map_NORMAL           // we want normal memory mapping
+
+#endif
 
 #if CONFIG_PLATFORM_COMMODORE_64
 
