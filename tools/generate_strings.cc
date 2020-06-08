@@ -226,8 +226,8 @@ private:
 
 	void prepareOutput();
 
-	virtual bool isRelevant(const StringEntry &entry) const;
-	virtual std::string layoutName() const;
+	virtual bool isRelevant(const StringEntry &entry) const = 0;
+	virtual std::string layoutName() const = 0;
 
 	std::vector<StringEntryList>          stringEntryLists;
 	std::vector<StringEncodedList>        stringEncodedLists;
@@ -236,7 +236,6 @@ private:
 	std::vector<char>                     asByte;
 	
 	std::string outFileContent;
-	bool        outFileContentValid = false;
 };
 
 class DataSetSTD : public DataSet
@@ -280,7 +279,9 @@ void DataSet::addStrings(const StringEntryList &stringList)
 		}
 	}
 	
-	outputStringValid = false;
+	// Clear the output content - make sure it is not valid anymore
+
+	outFileContent.clear();
 }
 
 void DataSet::process()
@@ -292,12 +293,12 @@ void DataSet::process()
 
 const std::string &DataSet::getOutput()
 {
-	if (!outputStringValid)
+	if (outFileContent.empty())
 	{
 		process();
 	}
 	
-	return outputString;
+	return outFileContent;
 }
 
 void DataSet::calculateFrequencies()
@@ -419,7 +420,7 @@ void DataSet::encodeByFreq(const std::string &plain, StringEncoded &encoded) con
 
 void DataSet::encodeStrings()
 {
-	stringsEncoded.clear();
+	stringEncodedLists.clear();
 
 	// Encode every relevant string from every list by frequency
 
@@ -429,8 +430,6 @@ void DataSet::encodeStrings()
 void DataSet::prepareOutput()
 {
 	// XXX
-	
-	outputStringValid = true;
 }
 
 
@@ -482,9 +481,9 @@ void writeStrings()
 	dataSetM65.addStrings(GLOBAL_Errors);
 	dataSetM65.addStrings(GLOBAL_MiscStrings);
 
-	DataSetX16.addStrings(GLOBAL_Keywords_V2);
-	DataSetX16.addStrings(GLOBAL_Errors);
-	DataSetX16.addStrings(GLOBAL_MiscStrings);
+	dataSetX16.addStrings(GLOBAL_Keywords_V2);
+	dataSetX16.addStrings(GLOBAL_Errors);
+	dataSetX16.addStrings(GLOBAL_MiscStrings);
 
 	// XXX
 }
