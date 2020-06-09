@@ -54,7 +54,7 @@ SRC_TOOLS  = $(wildcard tools/*.c,tools/*.cc)
 
 # Generated files
 
-GEN_BASIC  = build/,generated/packed_messages.s build/,generated/float_constants.s
+GEN_BASIC  = build/,generated/packed_messages.s build/,generated/packed_strings.s build/,generated/float_constants.s
 GEN_KERNAL =
 
 # List of build directories
@@ -150,10 +150,10 @@ GIT_COMMIT:= $(shell git log -1 --pretty='%h' | tr '[:lower:]' '[:upper:]')
 .PHONY: all fast clean updatebin
 
 all:
-	$(MAKE) $(TARGET_LIST) $(EXT_TARGET_LIST) $(TOOL_GENERATE_STRINGS)
+	$(MAKE) $(TARGET_LIST) $(EXT_TARGET_LIST)
 
 fast:
-	$(MAKE) -j64 --output-sync=target $(TARGET_LIST) $(EXT_TARGET_LIST) $(TOOL_GENERATE_STRINGS)
+	$(MAKE) -j64 --output-sync=target $(TARGET_LIST) $(EXT_TARGET_LIST)
 
 clean:
 	@rm -rf build c64/basic/combined.s c64/kernal/combined.s
@@ -262,6 +262,10 @@ build/symbols_ultimate64.vs:      $(DIR_U64)/BASIC_combined.vs    $(DIR_U64)/KER
 build/,generated/packed_messages.s: $(TOOL_COMPRESS_TEXT)
 	@mkdir -p build/,generated
 	$(TOOL_COMPRESS_TEXT) > build/,generated/packed_messages.s
+
+build/,generated/packed_strings.s: $(TOOL_GENERATE_STRINGS)
+	@mkdir -p build/,generated
+	$(TOOL_GENERATE_STRINGS) -o build/,generated/packed_strings.s
 
 build/,generated/float_constants.s: $(TOOL_GENERATE_CONSTANTS)
 	@mkdir -p build/,generated

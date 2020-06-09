@@ -1,15 +1,19 @@
 //
-// Utility to generate compressed strings and BASIC tokens
+// Utility to generate compressed messages and BASIC tokens
 //
 
 // XXX this is a next-generation replacement of 'compress_text.c', still under development!
-// XXX use dictionary compression using https://stackoverflow.com/questions/9195676/finding-the-smallest-number-of-substrings-to-represent-a-set-of-strings
+// XXX use dictionary compression by finding the set of non-overlapping strings that can be concatenated
+//     to produce full set of strings; some idea for the algorithm (not sure if proper one) is available here
+//     https://stackoverflow.com/questions/9195676/finding-the-smallest-number-of-substrings-to-represent-a-set-of-strings
+//     needs some investigation...
 
 #include "common.h"
 
 #include <unistd.h>
 
 #include <algorithm>
+#include <fstream>
 #include <sstream>
 #include <map>
 #include <vector>
@@ -297,7 +301,7 @@ const std::string &DataSet::getOutput()
 	{
 		process();
 	}
-	
+
 	return outFileContent;
 }
 
@@ -424,12 +428,66 @@ void DataSet::encodeStrings()
 
 	// Encode every relevant string from every list by frequency
 
-	// XXX
+	for (const auto &stringEntryList : stringEntryLists)
+	{
+		stringEncodedLists.emplace_back();
+		auto &stringEncodedList = stringEncodedLists.back();
+
+		for (const auto &stringEntry : stringEntryList.list)
+		{
+			stringEncodedList.emplace_back();
+			auto &stringEncoded = stringEncodedList.back();
+
+			if (isRelevant(stringEntry))
+			{
+				encodeByFreq(stringEntry.string, stringEncoded);
+			}
+			else
+			{
+				stringEncoded.push_back(0);
+			}
+		}
+	}
 }
 
 void DataSet::prepareOutput()
 {
-	// XXX
+	// Convert our encoded strings to a KickAssembler source
+
+	std::ostringstream stream;
+	stream << std::endl << "#if ROM_LAYOUT_" << layoutName() << std::endl;
+
+	// Export all nibble data
+
+	stream << std::endl << ".macro put_packed_as_nibbles()" << std::endl << "{" << std::endl;
+
+	for (const auto& nibble : asNibble)
+	{
+		// XXX
+	} 
+
+	stream << std::endl << "}" << std::endl;
+	stream << std::endl << ".macro put_packed_as_bytes()" << std::endl << "{" << std::endl;
+
+	// XXX length
+
+	for (const auto& byte : asByte)
+	{
+		// XXX
+	} 
+
+	// XXX length
+
+	stream << std::endl << "}" << std::endl;
+
+
+
+
+
+	// Finalize the file stream
+
+	stream << std::endl << "#endif // ROM_LAYOUT_" << layoutName() << std::endl;
+	outFileContent = stream.str();
 }
 
 
@@ -446,7 +504,7 @@ void printUsage()
 void printBanner()
 {
     printBannerLineTop();
-    std::cout << "// Generating compressed strings and BASIC tokens" << "\n";
+    std::cout << "// Generating compressed messages and BASIC tokens" << "\n";
     printBannerLineBottom();
 }
 
@@ -472,6 +530,8 @@ void writeStrings()
 	DataSetM65 dataSetM65;
 	DataSetX16 dataSetX16;
 
+	// Add input data to computation objects
+
 	dataSetSTD.addStrings(GLOBAL_Keywords_V2);
 	dataSetSTD.addStrings(GLOBAL_Errors);
 	dataSetSTD.addStrings(GLOBAL_MiscStrings);
@@ -485,7 +545,40 @@ void writeStrings()
 	dataSetX16.addStrings(GLOBAL_Errors);
 	dataSetX16.addStrings(GLOBAL_MiscStrings);
 
-	// XXX
+	// Retrieve the results
+
+	std::string outputSTD = dataSetSTD.getOutput();
+	std::string outputM65 = dataSetM65.getOutput();
+	std::string outputX16 = dataSetX16.getOutput();
+
+    // Remove old file
+
+    unlink(CMD_outFile.c_str());
+
+    // Open output file for writing
+
+    std::ofstream outFile(CMD_outFile, std::fstream::out | std::fstream::trunc);
+    if (!outFile.good()) ERROR(std::string("can't open oputput file '") + CMD_outFile + "'");
+
+    // Write header
+
+    outFile << "//\n// Generated file - do not edit\n//";
+
+    // Write packed strings
+
+    outFile << std::endl << std::endl;
+    outFile << outputSTD;
+    outFile << std::endl << std::endl;
+	outFile << outputM65;
+    outFile << std::endl << std::endl;    
+    outFile << outputX16;  
+    outFile << std::endl << std::endl;
+
+    // Close the file
+   
+    outFile.close();
+
+    std::cout << std::string("Compressed strings written to: ") + CMD_outFile + "\n\n";
 }
 
 //
