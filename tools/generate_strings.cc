@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <fstream>
+#include <iomanip>
 #include <sstream>
 #include <map>
 #include <vector>
@@ -55,84 +56,84 @@ typedef std::vector<StringEncoded> StringEncodedList;
 const StringEntryList GLOBAL_Keywords_V2 = { "keywords_V2",
 {
     // STD    M65    X16 
-	{ true,  true,  true,  "IDX_KV2_80",   "END",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_81",   "FOR",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_82",   "NEXT",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_83",   "DATA",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_84",   "INPUT#",     2 }, // https://www.atariarchives.org/creativeatari/Using_Disks_With_Atari_Basic.php
-	{ true,  true,  true,  "IDX_KV2_85",   "INPUT",      0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_86",   "DIM",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_87",   "READ",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_88",   "LET",        2 }, // https://en.wikipedia.org/wiki/Atari_BASIC
-	{ true,  true,  true,  "IDX_KV2_89",   "GOTO",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_8A",   "RUN",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_8B",   "IF",         0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_8C",   "RESTORE",    3 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_8D",   "GOSUB",      3 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_8E",   "RETURN",     3 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_8F",   "REM",        0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_90",   "STOP",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_91",   "ON",         0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_92",   "WAIT",       2 }, // http://www.picaxe.com/BASIC-Commands/Time-Delays/wait/
-	{ true,  true,  true,  "IDX_KV2_93",   "LOAD",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_94",   "SAVE",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_95",   "VERIFY",     2 }, // https://en.wikipedia.org/wiki/Sinclair_BASIC
-	{ true,  true,  true,  "IDX_KV2_96",   "DEF",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_97",   "POKE",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_98",   "PRINT#",     2 }, // https://www.atariarchives.org/creativeatari/Using_Disks_With_Atari_Basic.php
-	{ true,  true,  true,  "IDX_KV2_99",   "PRINT",      0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_9A",   "CONT",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_9B",   "LIST",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_9C",   "CLR",        2 }, // Apple I Replica Creation: Back to the Garage, p125
-	{ true,  true,  true,  "IDX_KV2_9D",   "CMD",        2 }, // https://en.wikipedia.org/wiki/List_of_DOS_commands
-	{ true,  true,  true,  "IDX_KV2_9E",   "SYS",        2 }, // https://www.lifewire.com/dos-commands-4070427
-	{ true,  true,  true,  "IDX_KV2_9F",   "OPEN",       2 }, // https://www.atariarchives.org/creativeatari/Using_Disks_With_Atari_Basic.php
+	{ true,  true,  true,  "KV2_80",   "END",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_81",   "FOR",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_82",   "NEXT",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_83",   "DATA",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_84",   "INPUT#",     2 }, // https://www.atariarchives.org/creativeatari/Using_Disks_With_Atari_Basic.php
+	{ true,  true,  true,  "KV2_85",   "INPUT",      0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_86",   "DIM",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_87",   "READ",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_88",   "LET",        2 }, // https://en.wikipedia.org/wiki/Atari_BASIC
+	{ true,  true,  true,  "KV2_89",   "GOTO",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_8A",   "RUN",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_8B",   "IF",         0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_8C",   "RESTORE",    3 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_8D",   "GOSUB",      3 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_8E",   "RETURN",     3 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_8F",   "REM",        0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_90",   "STOP",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_91",   "ON",         0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_92",   "WAIT",       2 }, // http://www.picaxe.com/BASIC-Commands/Time-Delays/wait/
+	{ true,  true,  true,  "KV2_93",   "LOAD",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_94",   "SAVE",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_95",   "VERIFY",     2 }, // https://en.wikipedia.org/wiki/Sinclair_BASIC
+	{ true,  true,  true,  "KV2_96",   "DEF",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_97",   "POKE",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_98",   "PRINT#",     2 }, // https://www.atariarchives.org/creativeatari/Using_Disks_With_Atari_Basic.php
+	{ true,  true,  true,  "KV2_99",   "PRINT",      0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_9A",   "CONT",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_9B",   "LIST",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_9C",   "CLR",        2 }, // Apple I Replica Creation: Back to the Garage, p125
+	{ true,  true,  true,  "KV2_9D",   "CMD",        2 }, // https://en.wikipedia.org/wiki/List_of_DOS_commands
+	{ true,  true,  true,  "KV2_9E",   "SYS",        2 }, // https://www.lifewire.com/dos-commands-4070427
+	{ true,  true,  true,  "KV2_9F",   "OPEN",       2 }, // https://www.atariarchives.org/creativeatari/Using_Disks_With_Atari_Basic.php
 	// STD    M65    X16 
-	{ true,  true,  true,  "IDX_KV2_A0",   "CLOSE",      3 }, // https://www.atariarchives.org/creativeatari/Using_Disks_With_Atari_Basic.php
-	{ true,  true,  true,  "IDX_KV2_A1",   "GET",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_A2",   "NEW",        0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_A3",   "TAB(",       2 }, // http://www.antonis.de/qbebooks/gwbasman/tab.html
-	{ true,  true,  true,  "IDX_KV2_A4",   "TO",         0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_A5",   "FN",         0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_A6",   "SPC(",       2 }, // http://www.antonis.de/qbebooks/gwbasman/spc.html
-	{ true,  true,  true,  "IDX_KV2_A7",   "THEN",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_A8",   "NOT",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_A9",   "STEP",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_AA",   "+",          0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_AB",   "-",          0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_AC",   "*",          0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_AD",   "/",          0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_AE",   "^",          0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_AF",   "AND",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_B0",   "OR",         0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_B1",   ">",          0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_B2",   "=",          0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_B3",   "<",          0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_B4",   "SGN",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_B5",   "INT",        0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_B6",   "ABS",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_B7",   "USR",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_B8",   "FRE",        2 }, // http://www.antonis.de/qbebooks/gwbasman/fre.html
-	{ true,  true,  true,  "IDX_KV2_B9",   "POS",        0 }, // http://www.antonis.de/qbebooks/gwbasman/pos.html
-	{ true,  true,  true,  "IDX_KV2_BA",   "SQR",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_BB",   "RND",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_BC",   "LOG",        0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_BD",   "EXP",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_BE",   "COS",        0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_BF",   "SIN",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_A0",   "CLOSE",      3 }, // https://www.atariarchives.org/creativeatari/Using_Disks_With_Atari_Basic.php
+	{ true,  true,  true,  "KV2_A1",   "GET",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_A2",   "NEW",        0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_A3",   "TAB(",       2 }, // http://www.antonis.de/qbebooks/gwbasman/tab.html
+	{ true,  true,  true,  "KV2_A4",   "TO",         0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_A5",   "FN",         0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_A6",   "SPC(",       2 }, // http://www.antonis.de/qbebooks/gwbasman/spc.html
+	{ true,  true,  true,  "KV2_A7",   "THEN",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_A8",   "NOT",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_A9",   "STEP",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_AA",   "+",          0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_AB",   "-",          0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_AC",   "*",          0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_AD",   "/",          0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_AE",   "^",          0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_AF",   "AND",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_B0",   "OR",         0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_B1",   ">",          0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_B2",   "=",          0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_B3",   "<",          0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_B4",   "SGN",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_B5",   "INT",        0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_B6",   "ABS",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_B7",   "USR",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_B8",   "FRE",        2 }, // http://www.antonis.de/qbebooks/gwbasman/fre.html
+	{ true,  true,  true,  "KV2_B9",   "POS",        0 }, // http://www.antonis.de/qbebooks/gwbasman/pos.html
+	{ true,  true,  true,  "KV2_BA",   "SQR",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_BB",   "RND",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_BC",   "LOG",        0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_BD",   "EXP",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_BE",   "COS",        0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_BF",   "SIN",        2 }, // https://www.landsnail.com/a2ref.htm
 	// STD    M65    X16 
-	{ true,  true,  true,  "IDX_KV2_C0",   "TAN",        0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_C1",   "ATN",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_C2",   "PEEK",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_C3",   "LEN",        0 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_C4",   "STR$",       3 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_C5",   "VAL",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_C6",   "ASC",        2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_C7",   "CHR$",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_C8",   "LEFT$",      3 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_C9",   "RIGHT$",     2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_CA",   "MID$",       2 }, // https://www.landsnail.com/a2ref.htm
-	{ true,  true,  true,  "IDX_KV2_CB",   "GO",         0 }, // https://en.wikipedia.org/wiki/Goto
+	{ true,  true,  true,  "KV2_C0",   "TAN",        0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_C1",   "ATN",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_C2",   "PEEK",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_C3",   "LEN",        0 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_C4",   "STR$",       3 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_C5",   "VAL",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_C6",   "ASC",        2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_C7",   "CHR$",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_C8",   "LEFT$",      3 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_C9",   "RIGHT$",     2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_CA",   "MID$",       2 }, // https://www.landsnail.com/a2ref.htm
+	{ true,  true,  true,  "KV2_CB",   "GO",         0 }, // https://en.wikipedia.org/wiki/Goto
 } };
 
 // BASIC keywords - extended keywords list #1, for now just for testing
@@ -140,7 +141,7 @@ const StringEntryList GLOBAL_Keywords_V2 = { "keywords_V2",
 const StringEntryList GLOBAL_Keywords_X1 =  { "keywords_X1",
 {
     // STD    M65    X16 
-	{ false, true,  false, "IDX_KX1_01",   "TEST",         },
+	{ false, true,  false, "KX1_01",   "TEST",         },
 } };
 
 // BASIC errors - all dialects
@@ -148,50 +149,50 @@ const StringEntryList GLOBAL_Keywords_X1 =  { "keywords_X1",
 const StringEntryList GLOBAL_Errors =  { "errors",
 {
 	// STD    M65    X16   --- error strings compatible with CBM BASIC V2
-	{ true,  true,  true,  "IDX_EV2_01", "TOO MANY FILES"           },
-	{ true,  true,  true,  "IDX_EV2_02", "FILE OPEN"                },
-	{ true,  true,  true,  "IDX_EV2_03", "FILE NOT OPEN"            },
-	{ true,  true,  true,  "IDX_EV2_04", "FILE NOT FOUND"           },
-	{ true,  true,  true,  "IDX_EV2_05", "DEVICE NOT PRESENT"       },
-	{ true,  true,  true,  "IDX_EV2_06", "NOT INPUT FILE"           },
-	{ true,  true,  true,  "IDX_EV2_07", "NOT OUTPUT FILE"          },
-	{ true,  true,  true,  "IDX_EV2_08", "MISSING FILENAME"         },
-	{ true,  true,  true,  "IDX_EV2_09", "ILLEGAL DEVICE NUMBER"    },
-	{ true,  true,  true,  "IDX_EV2_0A", "NEXT WITHOUT FOR"         },
-	{ true,  true,  true,  "IDX_EV2_0B", "SYNTAX"                   },
-	{ true,  true,  true,  "IDX_EV2_0C", "RETURN WITHOUT GOSUB"     },
-	{ true,  true,  true,  "IDX_EV2_0D", "OUT OF DATA"              },
-	{ true,  true,  true,  "IDX_EV2_0E", "ILLEGAL QUANTITY"         },
-	{ true,  true,  true,  "IDX_EV2_0F", "OVERFLOW"                 },
-	{ true,  true,  true,  "IDX_EV2_10", "OUT OF MEMORY"            },
-	{ true,  true,  true,  "IDX_EV2_11", "UNDEF\'D STATEMENT"       },
-	{ true,  true,  true,  "IDX_EV2_12", "BAD SUBSCRIPT"            },
-	{ true,  true,  true,  "IDX_EV2_13", "REDIM\'D ARRAY"           },
-	{ true,  true,  true,  "IDX_EV2_14", "DIVISION BY ZERO"         },
-	{ true,  true,  true,  "IDX_EV2_15", "ILLEGAL DIRECT"           },
-	{ true,  true,  true,  "IDX_EV2_16", "TYPE MISMATCH"            },
-	{ true,  true,  true,  "IDX_EV2_17", "STRING TOO LONG"          },
-	{ true,  true,  true,  "IDX_EV2_18", "FILE DATA"                },
-	{ true,  true,  true,  "IDX_EV2_19", "FORMULA TOO COMPLEX"      },
-	{ true,  true,  true,  "IDX_EV2_1A", "CAN\'T CONTINUE"          },
-	{ true,  true,  true,  "IDX_EV2_1B", "UNDEF\'D FUNCTION"        },
-	{ true,  true,  true,  "IDX_EV2_1C", "VERIFY"                   },
-	{ true,  true,  true,  "IDX_EV2_1D", "LOAD"                     },
-	{ true,  true,  true,  "IDX_EV2_1E", "BREAK"                    },
+	{ true,  true,  true,  "EV2_01", "TOO MANY FILES"           },
+	{ true,  true,  true,  "EV2_02", "FILE OPEN"                },
+	{ true,  true,  true,  "EV2_03", "FILE NOT OPEN"            },
+	{ true,  true,  true,  "EV2_04", "FILE NOT FOUND"           },
+	{ true,  true,  true,  "EV2_05", "DEVICE NOT PRESENT"       },
+	{ true,  true,  true,  "EV2_06", "NOT INPUT FILE"           },
+	{ true,  true,  true,  "EV2_07", "NOT OUTPUT FILE"          },
+	{ true,  true,  true,  "EV2_08", "MISSING FILENAME"         },
+	{ true,  true,  true,  "EV2_09", "ILLEGAL DEVICE NUMBER"    },
+	{ true,  true,  true,  "EV2_0A", "NEXT WITHOUT FOR"         },
+	{ true,  true,  true,  "EV2_0B", "SYNTAX"                   },
+	{ true,  true,  true,  "EV2_0C", "RETURN WITHOUT GOSUB"     },
+	{ true,  true,  true,  "EV2_0D", "OUT OF DATA"              },
+	{ true,  true,  true,  "EV2_0E", "ILLEGAL QUANTITY"         },
+	{ true,  true,  true,  "EV2_0F", "OVERFLOW"                 },
+	{ true,  true,  true,  "EV2_10", "OUT OF MEMORY"            },
+	{ true,  true,  true,  "EV2_11", "UNDEF\'D STATEMENT"       },
+	{ true,  true,  true,  "EV2_12", "BAD SUBSCRIPT"            },
+	{ true,  true,  true,  "EV2_13", "REDIM\'D ARRAY"           },
+	{ true,  true,  true,  "EV2_14", "DIVISION BY ZERO"         },
+	{ true,  true,  true,  "EV2_15", "ILLEGAL DIRECT"           },
+	{ true,  true,  true,  "EV2_16", "TYPE MISMATCH"            },
+	{ true,  true,  true,  "EV2_17", "STRING TOO LONG"          },
+	{ true,  true,  true,  "EV2_18", "FILE DATA"                },
+	{ true,  true,  true,  "EV2_19", "FORMULA TOO COMPLEX"      },
+	{ true,  true,  true,  "EV2_1A", "CAN\'T CONTINUE"          },
+	{ true,  true,  true,  "EV2_1B", "UNDEF\'D FUNCTION"        },
+	{ true,  true,  true,  "EV2_1C", "VERIFY"                   },
+	{ true,  true,  true,  "EV2_1D", "LOAD"                     },
+	{ true,  true,  true,  "EV2_1E", "BREAK"                    },
 	// STD    M65    X16   --- error strings compatible with CBM BASIC V7
-	{ false, false, true,  "IDX_EV7_1F", "CAN'T RESUME"             },
-	{ false, false, true,  "IDX_EV7_20", "LOOP NOT FOUND"           },
-	{ false, false, true,  "IDX_EV7_21", "LOOP WITHOUT DO"          },
-	{ false, false, true,  "IDX_EV7_22", "DIRECT MODE ONLY"         },
-	{ false, false, true,  "IDX_EV7_23", "NO GRAPHICS AREA"         },
-	{ false, false, true,  "IDX_EV7_24", "BAD DISK"                 },
-	{ false, false, true,  "IDX_EV7_25", "BEND NOT FOUND"           },
-	{ false, false, true,  "IDX_EV7_26", "LINE NUMBER TOO LARGE"    },
-	{ false, false, true,  "IDX_EV7_27", "UNRESOLVED REFERENCE"     },
-	{ true,   true, true,  "IDX_EV7_28", "NOT IMPLEMENTED"          }, // this is actually different message than V7 dialect prints
-	{ false, false, true,  "IDX_EV7_29", "FILE READ"                },
+	{ false, false, true,  "EV7_1F", "CAN'T RESUME"             },
+	{ false, false, true,  "EV7_20", "LOOP NOT FOUND"           },
+	{ false, false, true,  "EV7_21", "LOOP WITHOUT DO"          },
+	{ false, false, true,  "EV7_22", "DIRECT MODE ONLY"         },
+	{ false, false, true,  "EV7_23", "NO GRAPHICS AREA"         },
+	{ false, false, true,  "EV7_24", "BAD DISK"                 },
+	{ false, false, true,  "EV7_25", "BEND NOT FOUND"           },
+	{ false, false, true,  "EV7_26", "LINE NUMBER TOO LARGE"    },
+	{ false, false, true,  "EV7_27", "UNRESOLVED REFERENCE"     },
+	{ true,   true, true,  "EV7_28", "NOT IMPLEMENTED"          }, // this is actually different message than V7 dialect prints
+	{ false, false, true,  "EV7_29", "FILE READ"                },
 	// STD    M65    X16   --- error strings specific to OpenROMs
-	{ true,  true,  true,  "IDX_EOR_2A", "MEMORY CORRUPT"           },	
+	{ true,  true,  true,  "EOR_2A", "MEMORY CORRUPT"           },	
 } };
 
 // BASIC errors - miscelaneous strings
@@ -199,12 +200,12 @@ const StringEntryList GLOBAL_Errors =  { "errors",
 const StringEntryList GLOBAL_MiscStrings =  { "misc",
 {
 	// STD    M65    X16   --- misc strings as on CBM machines
-	{ true,  true,  true,  "IDX_STR_BYTES",   " BASIC BYTES FREE"   },
-	{ true,  true,  true,  "IDX_STR_READY",   "READY.\r"            },
-	{ true,  true,  true,  "IDX_STR_ERROR",   " ERROR"              },
-	{ true,  true,  true,  "IDX_STR_IN",      " IN "                },
+	{ true,  true,  true,  "STR_BYTES",   " BASIC BYTES FREE"   },
+	{ true,  true,  true,  "STR_READY",   "READY.\r"            },
+	{ true,  true,  true,  "STR_ERROR",   " ERROR"              },
+	{ true,  true,  true,  "STR_IN",      " IN "                },
 	// STD    M65    X16   --- misc strings specific to OpenROMs
-	{ true,  true,  true,  "IDX_STR_BRK",     "BRK AT $"            },
+	{ true,  true,  true,  "STR_BRK",     "BRK AT $"            },
 } };
 
 //
@@ -229,6 +230,8 @@ private:
 	void encodeByFreq(const std::string &plain, StringEncoded &encoded) const;
 
 	void prepareOutput();
+
+	void putCharEncoding(std::ostringstream &stream, uint8_t encoded, char character);
 
 	virtual bool isRelevant(const StringEntry &entry) const = 0;
 	virtual std::string layoutName() const = 0;
@@ -442,12 +445,32 @@ void DataSet::encodeStrings()
 			{
 				encodeByFreq(stringEntry.string, stringEncoded);
 			}
-			else
-			{
-				stringEncoded.push_back(0);
-			}
 		}
 	}
+}
+
+void DataSet::putCharEncoding(std::ostringstream &stream, uint8_t encoded, char character)
+{
+	stream << "\t.byte $" << std::uppercase << std::hex <<
+	          std::setfill('0') << std::setw(2) << +character <<
+	          "    // " << std::setfill(' ') << std::setw(2) << +encoded;
+
+	std::string petscii;
+
+	if (character == ' ')
+	{
+		petscii = " = SPACE";
+	}
+	else if (character == '\r')
+	{
+		petscii = " = RETURN";
+	}
+	else if (character > ' ' && character < 'a')
+	{
+		petscii = std::string(" = '") + character + "'";
+	}
+
+	stream << petscii << std::endl;
 }
 
 void DataSet::prepareOutput()
@@ -457,32 +480,82 @@ void DataSet::prepareOutput()
 	std::ostringstream stream;
 	stream << std::endl << "#if ROM_LAYOUT_" << layoutName() << std::endl;
 
-	// Export all nibble data
+	uint8_t encoded;
+
+	// Export all nibble-encoded characters
 
 	stream << std::endl << ".macro put_packed_as_nibbles()" << std::endl << "{" << std::endl;
-
+	
+	encoded = 0;
 	for (const auto& nibble : asNibble)
 	{
-		// XXX
+		putCharEncoding(stream, ++encoded, nibble);
 	} 
+	
+	stream << "}" << std::endl;
 
-	stream << std::endl << "}" << std::endl;
+	// Export all byte-encoded characters
+
 	stream << std::endl << ".macro put_packed_as_bytes()" << std::endl << "{" << std::endl;
 
-	// XXX length
-
+	encoded = 15;
 	for (const auto& byte : asByte)
 	{
-		// XXX
+		putCharEncoding(stream, ++encoded, byte);
 	} 
 
-	// XXX length
+	stream << "}" << std::endl;
 
-	stream << std::endl << "}" << std::endl;
+	// Export frequency-encoded strings
 
+	for (uint8_t idxList = 0; idxList < stringEntryLists.size(); idxList++)
+	{
+		const auto &stringEntryList   = stringEntryLists[idxList];
+		const auto &stringEncodedList = stringEncodedLists[idxList];
 
+		stream << std::endl << ".macro put_freq_packed_" << stringEntryList.name << "()" << std::endl << "{" << std::endl;
 
+		enum LastStr { NONE, SKIPPED, WRITTEN } lastStr = LastStr::NONE;
+		for (uint8_t idxString = 0; idxString < stringEncodedList.size(); idxString++)
+		{
+			const auto &stringEntry   = stringEntryList.list[idxString];
+			const auto &stringEncoded = stringEncodedList[idxString];
 
+			if (stringEncoded.empty())
+			{
+				if (lastStr == LastStr::WRITTEN) stream << std::endl;
+				stream << "\t.byte $00    // skipped " << stringEntry.alias << std::endl;
+				lastStr = LastStr::SKIPPED;
+			}
+			else
+			{
+				if (lastStr != LastStr::NONE) stream << std::endl;
+
+				stream << "\t.label IDX__" << stringEntry.alias << " = " << std::dec << +idxString << std::endl;
+				stream << "\t.byte ";
+
+				bool first = true;
+				for (const auto &charEncoded : stringEncoded)
+				{
+					if (first)
+					{
+						first = false;
+					}
+					else
+					{
+						stream << ", ";
+					}
+
+					stream << "$" << std::uppercase << std::hex << std::setfill('0') << std::setw(2) << +charEncoded;
+				}
+
+				stream << std::endl;
+				lastStr = LastStr::WRITTEN;
+			}
+		}
+
+		stream << "}" << std::endl;
+	}
 
 	// Finalize the file stream
 
