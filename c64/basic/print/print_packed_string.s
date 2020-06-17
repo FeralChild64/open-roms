@@ -15,10 +15,10 @@ print_packed_error:
 	jsr_ind VB1__print_packed_error
 	jmp     map_NORMAL
 
-print_packed_misc:
+print_packed_misc_str:
 
 	jsr     map_BASIC_1
-	jsr_ind VB1__print_packed_misc
+	jsr_ind VB1__print_packed_misc_str
 	jmp     map_NORMAL
 
 print_packed_keyword_V2:
@@ -33,13 +33,13 @@ print_packed_error:                    // .X - error string index
 
 	lda #<packed_errors
 	ldy #>packed_errors
-	bne print_packed_string_2          // branch always
+	bne print_freq_packed_string       // branch always
 
-print_packed_misc:                     // .X - misc string index
+print_packed_misc_str:                 // .X - misc string index
 
 	lda #<packed_misc
 	ldy #>packed_misc
-	bne print_packed_string_2          // branch always
+	bne print_freq_packed_string       // branch always
 
 print_packed_keyword_V2:               // .X - token number
 
@@ -48,7 +48,7 @@ print_packed_keyword_V2:               // .X - token number
 
 	// FALLTROUGH
 
-print_packed_string_2:                 // not to be used directly   XXX rename to print_packed_string
+print_freq_packed_string:              // not to be used directly   XXX rename to print_packed_string
 
 	// First store the initial address of the packed strings list
 
@@ -59,7 +59,7 @@ print_packed_string_2:                 // not to be used directly   XXX rename t
 	// The implementation assumes no packed string is longer than 255 bytes, including trailing zero
 !:
 	cpx #$00
-	beq print_packed_string_found      // branch if no need to advance anymore
+	beq print_freq_packed_string_found // branch if no need to advance anymore
 	dex
 
 	ldy #$00
@@ -79,7 +79,7 @@ print_packed_string_2:                 // not to be used directly   XXX rename t
 
 	jmp !--
 
-print_packed_string_found:
+print_freq_packed_string_found:
 
 	// At this point FRESPC contains a pointer to the string to display
 	// and we should start from the lower nibble
@@ -88,18 +88,18 @@ print_packed_string_found:
 
 	// FALLTROUGH
 
-print_packed_string_nibble_lo:
+print_freq_packed_string_nibble_lo:
 
 	// Get the low nibble and check for the end of packed string
 
 	lda (FRESPC), y
 	and #$0F
-	beq print_packed_string_end
+	beq print_freq_packed_string_end
 
 	// Not the end - check if this is a common character, encoded by a single nibble
 
 	cmp #$0F
-	beq print_packed_string_byte_split
+	beq print_freq_packed_string_byte_split
 
 	// Character is encoded by a single nibble - fetch it and display
 
@@ -109,18 +109,18 @@ print_packed_string_nibble_lo:
 
 	// FALLTROUGH
 
-print_packed_string_nibble_hi:
+print_freq_packed_string_nibble_hi:
 
 	// Get the high nibble and check for the end of packed string
 
 	lda (FRESPC), y
 	and #$F0
-	beq print_packed_string_end
+	beq print_freq_packed_string_end
 
 	// Not the end - check if this is a common character, encoded by a single nibble
 
 	cmp #$F0
-	beq print_packed_string_byte_single
+	beq print_freq_packed_string_byte_single
 
 	// Character is encoded by a single nibble - fetch it and display
 
@@ -133,7 +133,7 @@ print_packed_string_nibble_hi:
 	lda packed_as_nibbles-1, x
 	jmp !+                             // XXX should be bra on some CPUs
 
-print_packed_string_byte_single:
+print_freq_packed_string_byte_single:
 
 	// Character is encoded using a byte - which is stored normally
 
@@ -147,9 +147,9 @@ print_packed_string_byte_single:
 	// Advance to next nibble/byte
 
 	iny
-	bne print_packed_string_nibble_lo  // branch always
+	bne print_freq_packed_string_nibble_lo  // branch always
 
-print_packed_string_byte_split:
+print_freq_packed_string_byte_split:
 
 	// Character is encoded using a byte, but its nibbles are stored
 	// in two neighbour bytes; use a stack to combine them
@@ -172,8 +172,11 @@ print_packed_string_byte_split:
 	lda packed_as_bytes-$10, x
 	jsr JCHROUT                        // preserves .Y
                            
-	jmp print_packed_string_nibble_hi
+	jmp print_freq_packed_string_nibble_hi
 
-print_packed_string_end:
+print_freq_packed_string_end:
 
 	rts
+
+
+#endif

@@ -214,7 +214,7 @@ const StringEntryList GLOBAL_MiscStrings =  { "misc",
 	{ true,  true,  true,  "STR_ERROR",   " ERROR"              },
 	{ true,  true,  true,  "STR_IN",      " IN "                },
 	// STD    M65    X16   --- misc strings specific to OpenROMs
-	{ true,  true,  true,  "STR_BRK",     "BRK AT $"            },
+	{ true,  true,  true,  "STR_BRK_AT",  "BRK AT $"            },
 } };
 
 //
@@ -516,9 +516,6 @@ void DataSet::prepareOutput()
 
 	stream << "}" << std::endl;
 
-	// Export labels for frequency-encoded strings
-
-	// XXX
 
 	// Export frequency-encoded strings
 
@@ -526,6 +523,19 @@ void DataSet::prepareOutput()
 	{
 		const auto &stringEntryList   = stringEntryLists[idxList];
 		const auto &stringEncodedList = stringEncodedLists[idxList];
+
+		stream << std::endl;
+		for (uint8_t idxString = 0; idxString < stringEncodedList.size(); idxString++)
+		{
+			const auto &stringEntry   = stringEntryList.list[idxString];
+			const auto &stringEncoded = stringEncodedList[idxString];
+
+			if (!stringEncoded.empty())
+			{
+				stream << ".label IDX__" << stringEntry.alias << " = $" << std::uppercase << std::hex <<
+				          std::setfill('0') << std::setw(2) << +idxString << std::endl;
+			}
+		}
 
 		stream << std::endl << ".macro put_freq_packed_" << stringEntryList.name << "()" << std::endl << "{" << std::endl;
 
@@ -545,7 +555,7 @@ void DataSet::prepareOutput()
 			{
 				if (lastStr != LastStr::NONE) stream << std::endl;
 
-				stream << "\t// IDX__" << stringEntry.alias << " = " << std::dec << +idxString << std::endl;
+				stream << "\t// IDX__" << stringEntry.alias << std::endl;
 				stream << "\t.byte ";
 
 				bool first = true;

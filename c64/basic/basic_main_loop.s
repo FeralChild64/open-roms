@@ -6,8 +6,8 @@
 basic_main_loop:
 
 	// Tell user we are ready
-	ldx #1 // XXX IDX__STR_READY
-	jsr print_packed_misc
+	ldx #IDX__STR_READY
+	jsr print_packed_misc_str
 
 	// Enable Kernal messages
 	lda #$80

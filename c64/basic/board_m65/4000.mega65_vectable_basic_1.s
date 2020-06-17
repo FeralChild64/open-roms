@@ -16,7 +16,7 @@
 	.label VB1__tokenise_line           = $4000 + 2 * 2
 	.label VB1__list_single_line        = $4000 + 2 * 3
 	.label VB1__print_packed_error      = $4000 + 2 * 4
-	.label VB1__print_packed_misc       = $4000 + 2 * 5
+	.label VB1__print_packed_misc_str   = $4000 + 2 * 5
 	.label VB1__print_packed_keyword_V2 = $4000 + 2 * 6
 	.label VB1__basic_do_clr            = $4000 + 2 * 7
 	.label VB1__basic_do_new            = $4000 + 2 * 8
@@ -32,8 +32,8 @@
 	.word tokenise_line
 	.word list_single_line
 	.word print_packed_error
-	.word print_packed_misc
-	.word VB1__print_packed_keyword_V2
+	.word print_packed_misc_str
+	.word print_packed_keyword_V2
 	.word basic_do_clr
 	.word basic_do_new
 
