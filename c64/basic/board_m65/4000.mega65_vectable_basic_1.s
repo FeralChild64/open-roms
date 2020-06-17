@@ -21,8 +21,6 @@
 	.label VB1__basic_do_clr            = $4000 + 2 * 7
 	.label VB1__basic_do_new            = $4000 + 2 * 8
 
-	.label VB1__print_packed_message    = $4000 + 2 * 9
-
 #else
 
 	// Vector table (OpenROMs private!)
@@ -36,7 +34,5 @@
 	.word print_packed_keyword_V2
 	.word basic_do_clr
 	.word basic_do_new
-
-	.word print_packed_message
 
 #endif
