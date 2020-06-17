@@ -179,4 +179,4 @@ print_freq_packed_string_end:
 	rts
 
 
-#endif
+#endif // ROM layout

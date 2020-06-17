@@ -25,6 +25,7 @@ SRCDIR_BASIC   = $(SRCDIR_COMMON) \
                  c64/basic/math_mov \
                  c64/basic/print \
                  c64/basic/rom_revision \
+                 c64/basic/tokenizer \
                  c64/basic/wedge
 
 SRCDIR_KERNAL  = $(SRCDIR_COMMON) \
@@ -68,12 +69,12 @@ DIR_X16 = build/target_cx16
 
 # List of config files
 
-CFG_CUS    = c64/,,config_custom.s 
-CFG_GEN    = c64/,,config_generic.s
-CFG_TST    = c64/,,config_testing.s
-CFG_M65    = c64/,,config_mega65.s
-CFG_U64    = c64/,,config_ultimate64.s
-CFG_X16    = c64/,,config_cx16.s
+CFG_CUS = c64/,,config_custom.s 
+CFG_GEN = c64/,,config_generic.s
+CFG_TST = c64/,,config_testing.s
+CFG_M65 = c64/,,config_mega65.s
+CFG_U64 = c64/,,config_ultimate64.s
+CFG_X16 = c64/,,config_cx16.s
 
 # Dependencies - helper variables
 
