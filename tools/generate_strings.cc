@@ -4,6 +4,10 @@
 
 // XXX this is a next-generation replacement of 'compress_text.c', still under development!
 // XXX freq packed string should not be longer than 255 bytes, add error message
+// XXX add error message if we have not enough characters to fill-in nibbles
+// XXX sort nibbles and bytes starting from the least probable character, this will speed up the tokenizer
+// XXX align values in generated file for better output readability
+// XXX interpret the config file to select the string set (STD, M65, X16) and generate feature string
 // XXX use dictionary compression by finding the set of non-overlapping strings that can be concatenated
 //     to produce full set of strings; some idea for the algorithm (not sure if proper one) is available here
 //     https://stackoverflow.com/questions/9195676/finding-the-smallest-number-of-substrings-to-represent-a-set-of-strings
@@ -426,7 +430,7 @@ void DataSet::encodeByFreq(const std::string &plain, StringEncoded &encoded) con
 			{
 				ERROR("internal error in 'encodeByFreq'");
 			}
-			putByte(std::distance(asByte.begin(), iterByte) + 0x10);
+			putByte(std::distance(asByte.begin(), iterByte) + 1);
 		}
 	}
 
