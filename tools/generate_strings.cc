@@ -244,7 +244,7 @@ private:
 
 	void prepareOutput();
 
-	void putCharEncoding(std::ostringstream &stream, uint8_t encoded, char character);
+	void putCharEncoding(std::ostringstream &stream, uint8_t encoded, char character, bool isByte);
 
 	virtual bool isRelevant(const StringEntry &entry) const = 0;
 	virtual std::string layoutName() const = 0;
@@ -430,7 +430,7 @@ void DataSet::encodeByFreq(const std::string &plain, StringEncoded &encoded) con
 			{
 				ERROR("internal error in 'encodeByFreq'");
 			}
-			putByte(std::distance(asByte.begin(), iterByte) + 0x10);
+			putByte(std::distance(asByte.begin(), iterByte) + 1);
 		}
 	}
 
@@ -463,11 +463,11 @@ void DataSet::encodeStrings()
 	}
 }
 
-void DataSet::putCharEncoding(std::ostringstream &stream, uint8_t encoded, char character)
+void DataSet::putCharEncoding(std::ostringstream &stream, uint8_t encoded, char character, bool isByte)
 {
 	stream << "\t.byte $" << std::uppercase << std::hex <<
 	          std::setfill('0') << std::setw(2) << +character <<
-	          "    // " << std::setfill(' ') << std::setw(2) << +encoded;
+	          "    // " << std::setfill(isByte ? '0' : ' ') << std::setw(2) << +encoded;
 
 	std::string petscii;
 
@@ -503,7 +503,7 @@ void DataSet::prepareOutput()
 	encoded = 0;
 	for (const auto& nibble : asNibble)
 	{
-		putCharEncoding(stream, ++encoded, nibble);
+		putCharEncoding(stream, ++encoded, nibble, false);
 	} 
 	
 	stream << "}" << std::endl;
@@ -512,10 +512,10 @@ void DataSet::prepareOutput()
 
 	stream << std::endl << ".macro put_packed_as_bytes()" << std::endl << "{" << std::endl;
 
-	encoded = 15;
+	encoded = 0;
 	for (const auto& byte : asByte)
 	{
-		putCharEncoding(stream, ++encoded, byte);
+		putCharEncoding(stream, ++encoded, byte, true);
 	} 
 
 	stream << "}" << std::endl;

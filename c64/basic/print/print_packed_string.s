@@ -140,7 +140,7 @@ print_freq_packed_string_byte_single:
 	iny
 	lda (FRESPC), y
 	tax
-	lda packed_as_bytes-$10, x
+	lda packed_as_bytes-1, x
 !:
 	jsr JCHROUT                        // preserves .Y
 
@@ -169,7 +169,7 @@ print_freq_packed_string_byte_split:
 	txs                                // one cycle faster than PLA
 
 	tax
-	lda packed_as_bytes-$10, x
+	lda packed_as_bytes-1, x
 	jsr JCHROUT                        // preserves .Y
                            
 	jmp print_freq_packed_string_nibble_hi
