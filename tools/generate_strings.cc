@@ -430,7 +430,7 @@ void DataSet::encodeByFreq(const std::string &plain, StringEncoded &encoded) con
 			{
 				ERROR("internal error in 'encodeByFreq'");
 			}
-			putByte(std::distance(asByte.begin(), iterByte) + 1);
+			putByte(std::distance(asByte.begin(), iterByte) + 0x10);
 		}
 	}
 
