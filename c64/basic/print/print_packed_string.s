@@ -1,0 +1,179 @@
+// #LAYOUT# STD *       #TAKE
+// #LAYOUT# M65 *       #TAKE
+// #LAYOUT# X16 BASIC_0 #TAKE
+// #LAYOUT# *   *       #IGNORE
+
+// This routine prints strings that have been packed using the 'generate_trings' tool.
+// The general idea is to save space in the ROM.
+
+
+#if (ROM_LAYOUT_M65 && SEGMENT_BASIC_0)
+
+print_packed_error:
+
+	jsr     map_BASIC_1
+	jsr_ind VB1__print_packed_error
+	jmp     map_NORMAL
+
+print_packed_misc:
+
+	jsr     map_BASIC_1
+	jsr_ind VB1__print_packed_misc
+	jmp     map_NORMAL
+
+print_packed_keyword_V2:
+
+	jsr     map_BASIC_1
+	jsr_ind VB1__print_packed_keyword_V2
+	jmp     map_NORMAL
+
+#else
+
+print_packed_error:                    // .X - error string index
+
+	lda #<packed_errors
+	ldy #>packed_errors
+	bne print_packed_string_2          // branch always
+
+print_packed_misc:                     // .X - misc string index
+
+	lda #<packed_misc
+	ldy #>packed_misc
+	bne print_packed_string_2          // branch always
+
+print_packed_keyword_V2:               // .X - token number
+
+	lda #<packed_keywords_V2
+	ldy #>packed_keywords_V2
+
+	// FALLTROUGH
+
+print_packed_string_2:                 // not to be used directly   XXX rename to print_packed_string
+
+	// First store the initial address of the packed strings list
+
+	sta FRESPC+0
+	sty FRESPC+1
+
+	// Now find the address of the string to print out
+	// The implementation assumes no packed string is longer than 255 bytes, including trailing zero
+!:
+	cpx #$00
+	beq print_packed_string_found      // branch if no need to advance anymore
+	dex
+
+	ldy #$00
+!:
+	lda (FRESPC), y
+	iny
+	cmp #$00
+	bne !-                             // branch if not the end of packed string
+
+	clc                                // advance FREESPC pointer
+	tya
+	adc FRESPC+0
+	sta FRESPC+0
+	lda #$00
+	adc FRESPC+1
+	sta FRESPC+1
+
+	jmp !--
+
+print_packed_string_found:
+
+	// At this point FRESPC contains a pointer to the string to display
+	// and we should start from the lower nibble
+
+	ldy #$00
+
+	// FALLTROUGH
+
+print_packed_string_nibble_lo:
+
+	// Get the low nibble and check for the end of packed string
+
+	lda (FRESPC), y
+	and #$0F
+	beq print_packed_string_end
+
+	// Not the end - check if this is a common character, encoded by a single nibble
+
+	cmp #$0F
+	beq print_packed_string_byte_split
+
+	// Character is encoded by a single nibble - fetch it and display
+
+	tax
+	lda packed_as_nibbles-1, x
+	jsr JCHROUT                        // preserves .Y
+
+	// FALLTROUGH
+
+print_packed_string_nibble_hi:
+
+	// Get the high nibble and check for the end of packed string
+
+	lda (FRESPC), y
+	and #$F0
+	beq print_packed_string_end
+
+	// Not the end - check if this is a common character, encoded by a single nibble
+
+	cmp #$F0
+	beq print_packed_string_byte_single
+
+	// Character is encoded by a single nibble - fetch it and display
+
+	lsr
+	lsr
+	lsr
+	lsr
+
+	tax
+	lda packed_as_nibbles-1, x
+	jmp !+                             // XXX should be bra on some CPUs
+
+print_packed_string_byte_single:
+
+	// Character is encoded using a byte - which is stored normally
+
+	iny
+	lda (FRESPC), y
+	tax
+	lda packed_as_bytes-$10, x
+!:
+	jsr JCHROUT                        // preserves .Y
+
+	// Advance to next nibble/byte
+
+	iny
+	bne print_packed_string_nibble_lo  // branch always
+
+print_packed_string_byte_split:
+
+	// Character is encoded using a byte, but its nibbles are stored
+	// in two neighbour bytes; use a stack to combine them
+
+	lda (FRESPC), y
+	and #$F0
+	tsx
+	pha
+
+	iny
+	lda (FRESPC), y
+	and #$0F
+
+	clc
+	adc STACK, x
+
+	txs                                // one cycle faster than PLA
+
+	tax
+	lda packed_as_bytes-$10, x
+	jsr JCHROUT                        // preserves .Y
+                           
+	jmp print_packed_string_nibble_hi
+
+print_packed_string_end:
+
+	rts

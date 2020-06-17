@@ -3,6 +3,9 @@
 // #LAYOUT# X16 BASIC_0 #TAKE
 // #LAYOUT# *   *       #IGNORE
 
+// NOTE: this file is obsolete, to be replaced with newer solution.
+
+
 // This routine prints messages that have been packed
 // using the make_error_tables program.
 // The general idea is to save space in the ROM.

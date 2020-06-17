@@ -3,6 +3,7 @@
 //
 
 // XXX this is a next-generation replacement of 'compress_text.c', still under development!
+// XXX freq packed string should not be longer than 255 bytes, add error message
 // XXX use dictionary compression by finding the set of non-overlapping strings that can be concatenated
 //     to produce full set of strings; some idea for the algorithm (not sure if proper one) is available here
 //     https://stackoverflow.com/questions/9195676/finding-the-smallest-number-of-substrings-to-represent-a-set-of-strings
@@ -136,12 +137,20 @@ const StringEntryList GLOBAL_Keywords_V2 = { "keywords_V2",
 	{ true,  true,  true,  "KV2_CB",   "GO",         0 }, // https://en.wikipedia.org/wiki/Goto
 } };
 
-// BASIC keywords - extended keywords list #1, for now just for testing
+// BASIC keywords - extended keywords list #1 - commands only, for now just for testing
 
 const StringEntryList GLOBAL_Keywords_X1 =  { "keywords_X1",
 {
     // STD    M65    X16 
-	{ false, true,  false, "KX1_01",   "TEST",         },
+	{ false, true,  false, "KX1_01",   "TESTCMD",      },
+} };
+
+// BASIC keywords - extended keywords list #2 - functions only, for now just for testing
+
+const StringEntryList GLOBAL_Keywords_X2 =  { "keywords_X2",
+{
+    // STD    M65    X16 
+	{ false, true,  false, "KX2_01",   "TESTFUN",      },
 } };
 
 // BASIC errors - all dialects
@@ -180,17 +189,17 @@ const StringEntryList GLOBAL_Errors =  { "errors",
 	{ true,  true,  true,  "EV2_1D", "LOAD"                     },
 	{ true,  true,  true,  "EV2_1E", "BREAK"                    },
 	// STD    M65    X16   --- error strings compatible with CBM BASIC V7
-	{ false, false, true,  "EV7_1F", "CAN'T RESUME"             },
-	{ false, false, true,  "EV7_20", "LOOP NOT FOUND"           },
-	{ false, false, true,  "EV7_21", "LOOP WITHOUT DO"          },
-	{ false, false, true,  "EV7_22", "DIRECT MODE ONLY"         },
-	{ false, false, true,  "EV7_23", "NO GRAPHICS AREA"         },
-	{ false, false, true,  "EV7_24", "BAD DISK"                 },
-	{ false, false, true,  "EV7_25", "BEND NOT FOUND"           },
-	{ false, false, true,  "EV7_26", "LINE NUMBER TOO LARGE"    },
-	{ false, false, true,  "EV7_27", "UNRESOLVED REFERENCE"     },
-	{ true,   true, true,  "EV7_28", "NOT IMPLEMENTED"          }, // this is actually different message than V7 dialect prints
-	{ false, false, true,  "EV7_29", "FILE READ"                },
+	{ false, false, false, "EV7_1F", "CAN'T RESUME"             },
+	{ false, false, false, "EV7_20", "LOOP NOT FOUND"           },
+	{ false, false, false, "EV7_21", "LOOP WITHOUT DO"          },
+	{ false, false, false, "EV7_22", "DIRECT MODE ONLY"         },
+	{ false, false, false, "EV7_23", "NO GRAPHICS AREA"         },
+	{ false, false, false, "EV7_24", "BAD DISK"                 },
+	{ false, false, false, "EV7_25", "BEND NOT FOUND"           },
+	{ false, false, false, "EV7_26", "LINE NUMBER TOO LARGE"    },
+	{ false, false, false, "EV7_27", "UNRESOLVED REFERENCE"     },
+	{ true,   true,  true, "EV7_28", "NOT IMPLEMENTED"          }, // this is actually different message than V7 dialect prints
+	{ false, false, false, "EV7_29", "FILE READ"                },
 	// STD    M65    X16   --- error strings specific to OpenROMs
 	{ true,  true,  true,  "EOR_2A", "MEMORY CORRUPT"           },	
 } };
@@ -393,8 +402,9 @@ void DataSet::encodeByFreq(const std::string &plain, StringEncoded &encoded) con
 		}
 		else
 		{
-			encoded.back() += (val % 0x10) * 0x10;
-			encoded.push_back(val / 0x10);			
+			// Encode byte in a way to be easily decoded by 6502
+			encoded.back() += (val / 0x10) * 0x10;
+			encoded.push_back(val % 0x10);			
 		}
 	};
 
@@ -416,7 +426,7 @@ void DataSet::encodeByFreq(const std::string &plain, StringEncoded &encoded) con
 			{
 				ERROR("internal error in 'encodeByFreq'");
 			}
-			putByte(std::distance(asByte.begin(), iterByte) + 1);
+			putByte(std::distance(asByte.begin(), iterByte) + 0x10);
 		}
 	}
 
@@ -506,6 +516,10 @@ void DataSet::prepareOutput()
 
 	stream << "}" << std::endl;
 
+	// Export labels for frequency-encoded strings
+
+	// XXX
+
 	// Export frequency-encoded strings
 
 	for (uint8_t idxList = 0; idxList < stringEntryLists.size(); idxList++)
@@ -531,7 +545,7 @@ void DataSet::prepareOutput()
 			{
 				if (lastStr != LastStr::NONE) stream << std::endl;
 
-				stream << "\t.label IDX__" << stringEntry.alias << " = " << std::dec << +idxString << std::endl;
+				stream << "\t// IDX__" << stringEntry.alias << " = " << std::dec << +idxString << std::endl;
 				stream << "\t.byte ";
 
 				bool first = true;
@@ -611,6 +625,7 @@ void writeStrings()
 
 	dataSetM65.addStrings(GLOBAL_Keywords_V2);
 	dataSetM65.addStrings(GLOBAL_Keywords_X1);
+	dataSetM65.addStrings(GLOBAL_Keywords_X2);
 	dataSetM65.addStrings(GLOBAL_Errors);
 	dataSetM65.addStrings(GLOBAL_MiscStrings);
 

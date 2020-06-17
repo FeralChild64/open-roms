@@ -3,9 +3,7 @@
 // #LAYOUT# X16 BASIC_0 #TAKE
 // #LAYOUT# *   *       #IGNORE
 
-// NOTE: this file is obsolete, to be replaced with newer solution.
 
+packed_keywords_V2:
 
-packed_message_chars:
-
-	put_packed_chars()
+	put_freq_packed_keywords_V2()
