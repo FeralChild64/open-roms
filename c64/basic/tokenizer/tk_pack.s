@@ -29,18 +29,15 @@ tk_pack:
 	// Output - reuse the CPU stack
 
 	.label tk__packed       = $100 // packed candidate, 13 bytes is enough for worst case 8 byte keyword
-	.label tk__full_packed  = $10D // length of packed data (full bytes! half-used does not count!)
-	.label tk__len_unpacked = $10E // length of unpacked data
-	.label tk__shorten_bits = $10F // for quick shortening of packed candidate
-
-	// Helper variables
-
-	.label tk__nibble_flag  = $110 // $00 = start from new byte, $FF = start from high nibble
+	.label tk__len_unpacked = $10D // length of unpacked data
+	.label tk__shorten_bits = $10E // for quick shortening of packed candidate
+	.label tk__nibble_flag  = $10F // $00 = start from new byte, $FF = start from high nibble
+	.label tk__byte_offset  = $110 // offset of the current byte in tk__packed
 
 	// Initialize variables
 
 	lda #$00
-	ldy #$13
+	ldy #$10
 !:
 	sta tk__packed, y
 	dey
@@ -112,18 +109,20 @@ tk_pack_nibble:
 	asl
 	asl
 
-	ldy tk__full_packed
+	ldy tk__byte_offset
 	ora tk__packed, y
 	sta tk__packed, y
 
 	// Adjust remaining counters / flags
 
-	inc tk__full_packed
+	inc tk__byte_offset
 	inc tk__nibble_flag                // $FF -> $00
 
 	// FALLTROUGH
 
 tk_pack_nibble_done:
+
+	// Put the bit mark
 
 	clc
 	ror tk__shorten_bits
@@ -132,7 +131,7 @@ tk_pack_nibble_done:
 
 tk_pack_loop_next:
 
-	// Prepare for next loop iteration - increment counters
+	// Prepare for the next loop iteration - increment counters
 
 	inx
 	inc tk__len_unpacked
@@ -147,7 +146,11 @@ tk_pack_loop_next:
 
 tk_pack_nibble_new_byte:
 
-	// XXX
+	// Store in the low nibble of the next byte
+
+	tya
+	ldy tk__byte_offset
+	sta tk__packed, y
 
 	// Adjust remaining counters / flags
 
@@ -161,11 +164,32 @@ tk_pack_byte:
 	bit tk__nibble_flag
 	bcc tk_pack_byte_new_byte
 
-	// XXX
+	// Store byte mark (0xF) in the high nibble of the current byte
+
+	phy_trash_a
+
+	lda #$F0
+	ldy tk__byte_offset
+	ora tk__packed, y
+	sta tk__packed, y
+
+	// Store byte in the next byte
+
+	iny
+	pla
+	sta tk__packed, y
+
+	// Adjust remaining counters / flags
+
+	iny
+	sty tk__byte_offset
+	inc tk__nibble_flag                // $FF -> $00
 
 	// FALLTROUGH
 
 tk_pack_byte_done:
+
+	// Put the byte mark
 
 	sec
 	ror tk__shorten_bits
@@ -174,4 +198,30 @@ tk_pack_byte_done:
 
 tk_pack_byte_new_byte:
 
-	// XXX
+	// First store everything in the current byte, we will set '0xF' byte mark later
+
+	tya
+	ldy tk__byte_offset
+	sta tk__packed, y
+
+	// Now store just the low nibble in the next byte
+
+	iny
+	and #$0F
+	sta tk__packed, y
+
+	// Go back for a moment and set the '0xF' byte mark in the low nibble
+
+	dey
+	lda tk__packed, y
+	ora #$0F
+	sta tk__packed, y
+	iny
+
+	// Adjust remaining counters / flags
+
+	iny
+	sty tk__byte_offset
+	dec tk__nibble_flag                // $00 -> $FF
+
+	bmi tk_pack_byte_done              // branch always
