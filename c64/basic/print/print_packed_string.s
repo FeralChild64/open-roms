@@ -31,20 +31,20 @@ print_packed_keyword_V2:
 
 print_packed_error:                    // .X - error string index
 
-	lda #<packed_errors
-	ldy #>packed_errors
+	lda #<packed_str_errors
+	ldy #>packed_str_errors
 	bne print_freq_packed_string       // branch always
 
 print_packed_misc_str:                 // .X - misc string index
 
-	lda #<packed_misc
-	ldy #>packed_misc
+	lda #<packed_str_misc
+	ldy #>packed_str_misc
 	bne print_freq_packed_string       // branch always
 
 print_packed_keyword_V2:               // .X - token number
 
-	lda #<packed_keywords_V2
-	ldy #>packed_keywords_V2
+	lda #<packed_str_keywords_V2
+	ldy #>packed_str_keywords_V2
 
 	// FALLTROUGH
 

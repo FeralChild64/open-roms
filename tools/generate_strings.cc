@@ -59,6 +59,39 @@ typedef std::vector<StringEncoded> StringEncodedList;
 
 // BASIC keywords - V2 dialect
 
+/*
+  The URLs here provide examples of other BASIC dialects that include the specified commands
+  or keywords.
+  All except VERIFY are known with certainty to be part of other BASIC dialects, and thus
+  cannot be subject to copyright infringement when implemented on a C64.
+
+  The VERIFY Command however appears in other programming languages, and as a single word,
+  is the obvious complement to LOAD and SAVE when considering the following storage functions:
+
+  1. Load a file from storage into memory.
+  2. Save a file from memory to storage.
+  3. Verify that a file has been correctly written from memory to storage.
+
+  Note that verify is the key verb in the behaviour of this function. Therefore it is the
+  obvious choice for the name for such a function, taking into account the convention of
+  LOAD and SAVE. Indeed, that this is so is highlighted by the fact that it was used in the
+  C64 ROM.  Therefore there is no exercise of creativity here, and a reasonable person would
+  likely select this name independently. Also, single words cannot be copyright.
+
+  Further, the list is a list of facts, and thus not copyrightable.
+
+  We sourced the list from a public source, https://www.c64-wiki.com/wiki/BASIC, which has
+  been public on the internet for a long time, as have many other similar sources.
+  That website offers the page under the GFDL license, and we can therefore take the list
+  under those license terms if we wish, should the need arise.
+
+  Note that in providing these justifications above, we do not in any way acknowledge that 
+  without these conditions that the BASIC keyword list could be copyright, but provide this
+  information as a further layer of defence against any claims that it could somehow 
+  infringe on the copyrights of the C64/C65/C128 etc ROMs.
+
+*/
+
 const StringEntryList GLOBAL_Keywords_V2 = { "keywords_V2",
 {
     // STD    M65    X16 
@@ -160,6 +193,16 @@ const StringEntryList GLOBAL_Keywords_X2 =  { "keywords_X2",
 
 // BASIC errors - all dialects
 
+/*
+  These error messages are generally so well known, that it seems silly to have to even point out that they are
+  so widely used and known, if not completely genericised.
+  The most of them are inherited from the MICROSOFT BASIC on which the C64's BASIC is based, so for those, there
+  cannot even be any claim to copyright over them in any exclusive way.
+
+  However, copyright of such short phrases that express ideas in short form cannot be copyrighted:
+  https://fairuse.stanford.edu/2003/09/09/copyright_protection_for_short/
+ */
+
 const StringEntryList GLOBAL_Errors =  { "errors",
 {
 	// STD    M65    X16   --- error strings compatible with CBM BASIC V2
@@ -194,18 +237,18 @@ const StringEntryList GLOBAL_Errors =  { "errors",
 	{ true,  true,  true,  "EV2_1D", "LOAD"                     },
 	{ true,  true,  true,  "EV2_1E", "BREAK"                    },
 	// STD    M65    X16   --- error strings compatible with CBM BASIC V7
-	{ false, false, false, "EV7_1F", "CAN'T RESUME"             },
-	{ false, false, false, "EV7_20", "LOOP NOT FOUND"           },
-	{ false, false, false, "EV7_21", "LOOP WITHOUT DO"          },
-	{ false, false, false, "EV7_22", "DIRECT MODE ONLY"         },
-	{ false, false, false, "EV7_23", "NO GRAPHICS AREA"         },
-	{ false, false, false, "EV7_24", "BAD DISK"                 },
-	{ false, false, false, "EV7_25", "BEND NOT FOUND"           },
-	{ false, false, false, "EV7_26", "LINE NUMBER TOO LARGE"    },
-	{ false, false, false, "EV7_27", "UNRESOLVED REFERENCE"     },
+	{ false, false, false, "EV7_1F", "CAN'T RESUME"             }, // not used for now
+	{ false, false, false, "EV7_20", "LOOP NOT FOUND"           }, // not used for now
+	{ false, false, false, "EV7_21", "LOOP WITHOUT DO"          }, // not used for now
+	{ false, false, false, "EV7_22", "DIRECT MODE ONLY"         }, // not used for now
+	{ false, false, false, "EV7_23", "NO GRAPHICS AREA"         }, // not used for now
+	{ false, false, false, "EV7_24", "BAD DISK"                 }, // not used for now
+	{ false, false, false, "EV7_25", "BEND NOT FOUND"           }, // not used for now
+	{ false, false, false, "EV7_26", "LINE NUMBER TOO LARGE"    }, // not used for now
+	{ false, false, false, "EV7_27", "UNRESOLVED REFERENCE"     }, // not used for now
 	{ true,   true,  true, "EV7_28", "NOT IMPLEMENTED"          }, // this is actually different message than V7 dialect prints
-	{ false, false, false, "EV7_29", "FILE READ"                },
-	// STD    M65    X16   --- error strings specific to OpenROMs
+	{ false, false, false, "EV7_29", "FILE READ"                }, // not used for now
+	// STD    M65    X16   --- error strings specific to OpenROMs, not present in CBM BASIC dialects
 	{ true,  true,  true,  "EOR_2A", "MEMORY CORRUPT"           },	
 } };
 
@@ -214,11 +257,11 @@ const StringEntryList GLOBAL_Errors =  { "errors",
 const StringEntryList GLOBAL_MiscStrings =  { "misc",
 {
 	// STD    M65    X16   --- misc strings as on CBM machines
-	{ true,  true,  true,  "STR_BYTES",   " BASIC BYTES FREE"   },
-	{ true,  true,  true,  "STR_READY",   "READY.\r"            },
-	{ true,  true,  true,  "STR_ERROR",   " ERROR"              },
+	{ true,  true,  true,  "STR_BYTES",   " BASIC BYTES FREE"   }, // https://github.com/stefanhaustein/expressionparser
+	{ true,  true,  true,  "STR_READY",   "READY.\r"            }, // https://www.ibm.com/support/knowledgecenter/zosbasics/com.ibm.zos.zconcepts/zconc_whatistsonative.htm https://github.com/stefanhaustein/expressionparser
+	{ true,  true,  true,  "STR_ERROR",   " ERROR"              }, // simply the word error that is attached to the other parts of messages https://fjkraan.home.xs4all.nl/comp/apple2faq/app2asoftfaq.html
 	{ true,  true,  true,  "STR_IN",      " IN "                },
-	// STD    M65    X16   --- misc strings specific to OpenROMs
+	// STD    M65    X16   --- misc strings specific to OpenROMs, not present in CBM ROMs
 	{ true,  true,  true,  "STR_BRK_AT",  "BRK AT $"            },
 } };
 

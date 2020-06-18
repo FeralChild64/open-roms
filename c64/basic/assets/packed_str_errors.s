@@ -4,6 +4,6 @@
 // #LAYOUT# *   *       #IGNORE
 
 
-packed_errors:
+packed_str_errors:
 
 	put_freq_packed_errors()

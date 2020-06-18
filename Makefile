@@ -55,7 +55,7 @@ SRC_TOOLS  = $(wildcard tools/*.c,tools/*.cc)
 
 # Generated files
 
-GEN_BASIC  = build/,generated/packed_messages.s build/,generated/packed_strings.s build/,generated/float_constants.s
+GEN_BASIC  = build/,generated/packed_strings.s build/,generated/float_constants.s
 GEN_KERNAL =
 
 # List of build directories
@@ -84,7 +84,6 @@ DEP_KERNAL = $(SRC_KERNAL) $(SRCDIR_KERNAL) $(GEN_KERNAL)
 # List of tools
 
 TOOL_COLLECT_DATA       = build/tools/collect_data
-TOOL_COMPRESS_TEXT      = build/tools/compress_text
 TOOL_GENERATE_CONSTANTS = build/tools/generate_constants
 TOOL_GENERATE_STRINGS   = build/tools/generate_strings
 TOOL_PATCH_CHARGEN      = build/tools/patch_chargen
@@ -169,10 +168,6 @@ updatebin:
 $(TOOL_PNGPREPARE): tools/pngprepare.c
 	@mkdir -p build/tools
 	$(CC) -O2 -Wall -I/usr/local/include -L/usr/local/lib -o $@ $< -lpng
-
-$(TOOL_COMPRESS_TEXT): tools/compress_text.c
-	@mkdir -p build/tools
-	$(CC) -O2 -Wall -I/usr/local/include -L/usr/local/lib -o $@ $< -lm
 
 build/tools/%: tools/%.c
 	@mkdir -p build/tools
@@ -259,10 +254,6 @@ build/symbols_testing.vs:         $(DIR_TST)/BASIC_combined.vs    $(DIR_TST)/KER
 build/symbols_ultimate64.vs:      $(DIR_U64)/BASIC_combined.vs    $(DIR_U64)/KERNAL_combined.vs
 
 # Rules - BASIC and KERNAL intermediate files
-
-build/,generated/packed_messages.s: $(TOOL_COMPRESS_TEXT)
-	@mkdir -p build/,generated
-	$(TOOL_COMPRESS_TEXT) > build/,generated/packed_messages.s
 
 build/,generated/packed_strings.s: $(TOOL_GENERATE_STRINGS)
 	@mkdir -p build/,generated
