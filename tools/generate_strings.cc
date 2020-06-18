@@ -7,6 +7,7 @@
 // XXX add error message if we have not enough characters to fill-in nibbles
 // XXX sort nibbles and bytes starting from the least probable character, this will speed up the tokenizer
 // XXX align values in generated file for better output readability
+// XXX tk__packed_as_bytes should be used to select characters only relevant for the tokenizer
 // XXX interpret the config file to select the string set (STD, M65, X16) and generate feature string
 // XXX use dictionary compression by finding the set of non-overlapping strings that can be concatenated
 //     to produce full set of strings; some idea for the algorithm (not sure if proper one) is available here
@@ -520,6 +521,7 @@ void DataSet::prepareOutput()
 
 	stream << "}" << std::endl;
 
+	stream << std::endl << ".label tk__packed_as_bytes = " << std::dec << asByte.size() << std::endl << std::endl;
 
 	// Export frequency-encoded strings
 
