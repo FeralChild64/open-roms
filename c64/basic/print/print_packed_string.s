@@ -99,12 +99,12 @@ print_freq_packed_string_nibble_lo:
 	// Not the end - check if this is a common character, encoded by a single nibble
 
 	cmp #$0F
-	beq print_freq_packed_string_byte_split
+	beq print_freq_packed_string_3n_split
 
 	// Character is encoded by a single nibble - fetch it and display
 
 	tax
-	lda packed_as_nibbles-1, x
+	lda packed_as_1n-1, x
 	jsr JCHROUT                        // preserves .Y
 
 	// FALLTROUGH
@@ -120,7 +120,7 @@ print_freq_packed_string_nibble_hi:
 	// Not the end - check if this is a common character, encoded by a single nibble
 
 	cmp #$F0
-	beq print_freq_packed_string_byte_single
+	beq print_freq_packed_string_3n_single
 
 	// Character is encoded by a single nibble - fetch it and display
 
@@ -130,29 +130,29 @@ print_freq_packed_string_nibble_hi:
 	lsr
 
 	tax
-	lda packed_as_nibbles-1, x
+	lda packed_as_1n-1, x
 	jmp !+                             // XXX should be bra on some CPUs
 
-print_freq_packed_string_byte_single:
+print_freq_packed_string_3n_single:
 
-	// Character is encoded using a byte - which is stored normally
+	// Character is encoded using 3 nibbles (1st is a mark, already interpreted)
 
 	iny
 	lda (FRESPC), y
 	tax
-	lda packed_as_bytes-1, x
+	lda packed_as_3n-1, x
 !:
 	jsr JCHROUT                        // preserves .Y
 
-	// Advance to next nibble/byte
+	// Advance to next nibble
 
 	iny
 	bne print_freq_packed_string_nibble_lo  // branch always
 
-print_freq_packed_string_byte_split:
+print_freq_packed_string_3n_split:
 
-	// Character is encoded using a byte, but its nibbles are stored
-	// in two neighbour bytes; use a stack to combine them
+	// Character is encoded using 3 nibbles (1st is a mark, already interpreted),
+	// but the 2 remaining nibbles are in two neighbour bytes; use a stack to combine them
 
 	lda (FRESPC), y
 	and #$F0
@@ -169,7 +169,7 @@ print_freq_packed_string_byte_split:
 	txs                                // one cycle faster than PLA
 
 	tax
-	lda packed_as_bytes-1, x
+	lda packed_as_3n-1, x
 	jsr JCHROUT                        // preserves .Y
                            
 	jmp print_freq_packed_string_nibble_hi

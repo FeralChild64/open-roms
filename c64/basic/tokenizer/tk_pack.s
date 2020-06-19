@@ -32,7 +32,7 @@ tk_pack:
 	.label tk__len_unpacked = $10D // length of unpacked data
 	.label tk__shorten_bits = $10E // for quick shortening of packed candidate
 	.label tk__nibble_flag  = $10F // $00 = start from new byte, $FF = start from high nibble
-	.label tk__byte_offset  = $110 // offset of the current byte in tk__packed
+	.label tk__byte_offset  = $110 // offset of the current byte (to place new data) in tk__packed
 
 	// Initialize variables
 
@@ -69,18 +69,18 @@ tk_pack_loop:
 
 	ldy #$0E
 !:
-	cmp packed_as_nibbles-1, y 
-	beq tk_pack_nibble
+	cmp packed_as_1n-1, y 
+	beq tk_pack_1n
 
 	dey
 	bne !-
 
-	// Try to find a byte to encode the character
+	// Try to find a 3-nibble sequence to encode the character (1st nibble is always 0xF in this case)
 
-	ldy #tk__packed_as_bytes
+	ldy #tk__packed_as_3n
 !:
-	cmp packed_as_bytes-1, y 
-	beq tk_pack_byte
+	cmp packed_as_3n-1, y 
+	beq tk_pack_3n
 
 	dey
 	bne !-
@@ -93,12 +93,12 @@ tk_pack_done:
 
 	rts
 
-tk_pack_nibble:
+tk_pack_1n:
 
 	// .Y contains our nibble; check whether we should start a new encoded byte
 
 	bit tk__nibble_flag
-	bcc tk_pack_nibble_new_byte
+	bcc tk_pack_1n_new_byte
 
 	// Store in the high nibble of the current byte
 
@@ -120,9 +120,9 @@ tk_pack_nibble:
 
 	// FALLTROUGH
 
-tk_pack_nibble_done:
+tk_pack_1n_done:
 
-	// Put the bit mark
+	// Put the bit mark - to indicate 1-nibble encoding
 
 	clc
 	ror tk__shorten_bits
@@ -144,7 +144,7 @@ tk_pack_loop_next:
 	bne tk_pack_loop
 	rts
 
-tk_pack_nibble_new_byte:
+tk_pack_1n_new_byte:
 
 	// Store in the low nibble of the next byte
 
@@ -155,16 +155,16 @@ tk_pack_nibble_new_byte:
 	// Adjust remaining counters / flags
 
 	dec tk__nibble_flag                // $00 -> $FF
-	bmi tk_pack_nibble_done
+	bmi tk_pack_1n_done
 
-tk_pack_byte:
+tk_pack_3n:
 
-	// .Y contains our byte; check whether we should start a new encoded byte
+	// .Y contains 2 nibbles to encode; check whether we should start a new encoded byte
 
 	bit tk__nibble_flag
-	bcc tk_pack_byte_new_byte
+	bcc tk_pack_3n_new_byte
 
-	// Store byte mark (0xF) in the high nibble of the current byte
+	// Store 1st nibble (alwys 0xF) in the high nibble of the current byte
 
 	phy_trash_a
 
@@ -187,18 +187,18 @@ tk_pack_byte:
 
 	// FALLTROUGH
 
-tk_pack_byte_done:
+tk_pack_3n_done:
 
-	// Put the byte mark
+	// Put the bit mark - to indicate 3-nibble encoding
 
 	sec
 	ror tk__shorten_bits
 
 	bcc tk_pack_loop_next              // branch always
 
-tk_pack_byte_new_byte:
+tk_pack_3n_new_byte:
 
-	// First store everything in the current byte, we will set '0xF' byte mark later
+	// First store everything in the current byte, we will set '0xF' mark later
 
 	tya
 	ldy tk__byte_offset
@@ -210,7 +210,7 @@ tk_pack_byte_new_byte:
 	and #$0F
 	sta tk__packed, y
 
-	// Go back for a moment and set the '0xF' byte mark in the low nibble
+	// Go back for a moment and set the '0xF' mark in the low nibble
 
 	dey
 	lda tk__packed, y
@@ -224,4 +224,4 @@ tk_pack_byte_new_byte:
 	sty tk__byte_offset
 	dec tk__nibble_flag                // $00 -> $FF
 
-	bmi tk_pack_byte_done              // branch always
+	bmi tk_pack_3n_done                // branch always

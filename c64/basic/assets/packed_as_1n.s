@@ -4,6 +4,6 @@
 // #LAYOUT# *   *       #IGNORE
 
 
-packed_as_bytes:
+packed_as_1n:
 
-	put_packed_as_bytes()
+	put_packed_as_1n()

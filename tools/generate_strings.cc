@@ -4,10 +4,8 @@
 
 // XXX this is a next-generation replacement of 'compress_text.c', still under development!
 // XXX freq packed string should not be longer than 255 bytes, add error message
-// XXX add error message if we have not enough characters to fill-in nibbles
-// XXX sort nibbles and bytes starting from the least probable character, this will speed up the tokenizer
+// XXX add error message if we have not enough characters to fill-in 1-nibble encoding table
 // XXX align values in generated file for better output readability
-// XXX tk__packed_as_bytes should be used to select characters only relevant for the tokenizer
 // XXX interpret the config file to select the string set (STD, M65, X16) and generate feature string
 // XXX use dictionary compression by finding the set of non-overlapping strings that can be concatenated
 //     to produce full set of strings; some idea for the algorithm (not sure if proper one) is available here
@@ -45,8 +43,15 @@ typedef struct StringEntry
 	uint8_t     abbrevLen = 0;  // length of token abbreviation
 } StringEntry;
 
+enum class ListType
+{
+	KEYWORDS,
+	STRINGS_BASIC
+};
+
 typedef struct StringEntryList
 {
+	ListType                 type;
 	std::string              name;
 	std::vector<StringEntry> list;
 } StringEntryList;
@@ -92,7 +97,7 @@ typedef std::vector<StringEncoded> StringEncodedList;
 
 */
 
-const StringEntryList GLOBAL_Keywords_V2 = { "keywords_V2",
+const StringEntryList GLOBAL_Keywords_V2 = { ListType::KEYWORDS, "keywords_V2",
 {
     // STD    M65    X16 
 	{ true,  true,  true,  "KV2_80",   "END",        2 }, // https://www.landsnail.com/a2ref.htm
@@ -177,7 +182,7 @@ const StringEntryList GLOBAL_Keywords_V2 = { "keywords_V2",
 
 // BASIC keywords - extended keywords list #1 - commands only, for now just for testing
 
-const StringEntryList GLOBAL_Keywords_X1 =  { "keywords_X1",
+const StringEntryList GLOBAL_Keywords_X1 =  { ListType::KEYWORDS, "keywords_X1",
 {
     // STD    M65    X16 
 	{ false, true,  false, "KX1_01",   "TESTCMD",      },
@@ -185,7 +190,7 @@ const StringEntryList GLOBAL_Keywords_X1 =  { "keywords_X1",
 
 // BASIC keywords - extended keywords list #2 - functions only, for now just for testing
 
-const StringEntryList GLOBAL_Keywords_X2 =  { "keywords_X2",
+const StringEntryList GLOBAL_Keywords_X2 =  { ListType::KEYWORDS, "keywords_X2",
 {
     // STD    M65    X16 
 	{ false, true,  false, "KX2_01",   "TESTFUN",      },
@@ -203,7 +208,7 @@ const StringEntryList GLOBAL_Keywords_X2 =  { "keywords_X2",
   https://fairuse.stanford.edu/2003/09/09/copyright_protection_for_short/
  */
 
-const StringEntryList GLOBAL_Errors =  { "errors",
+const StringEntryList GLOBAL_Errors =  { ListType::STRINGS_BASIC, "errors",
 {
 	// STD    M65    X16   --- error strings compatible with CBM BASIC V2
 	{ true,  true,  true,  "EV2_01", "TOO MANY FILES"           },
@@ -246,7 +251,7 @@ const StringEntryList GLOBAL_Errors =  { "errors",
 	{ false, false, false, "EV7_25", "BEND NOT FOUND"           }, // not used for now
 	{ false, false, false, "EV7_26", "LINE NUMBER TOO LARGE"    }, // not used for now
 	{ false, false, false, "EV7_27", "UNRESOLVED REFERENCE"     }, // not used for now
-	{ true,   true,  true, "EV7_28", "NOT IMPLEMENTED"          }, // this is actually different message than V7 dialect prints
+	{ true,   true,  true, "EV7_28", "UNIMPPLEMENTED"           },
 	{ false, false, false, "EV7_29", "FILE READ"                }, // not used for now
 	// STD    M65    X16   --- error strings specific to OpenROMs, not present in CBM BASIC dialects
 	{ true,  true,  true,  "EOR_2A", "MEMORY CORRUPT"           },	
@@ -254,7 +259,7 @@ const StringEntryList GLOBAL_Errors =  { "errors",
 
 // BASIC errors - miscelaneous strings
 
-const StringEntryList GLOBAL_MiscStrings =  { "misc",
+const StringEntryList GLOBAL_MiscStrings =  { ListType::STRINGS_BASIC, "misc",
 {
 	// STD    M65    X16   --- misc strings as on CBM machines
 	{ true,  true,  true,  "STR_BYTES",   " BASIC BYTES FREE"   }, // https://github.com/stefanhaustein/expressionparser
@@ -288,7 +293,7 @@ private:
 
 	void prepareOutput();
 
-	void putCharEncoding(std::ostringstream &stream, uint8_t encoded, char character, bool isByte);
+	void putCharEncoding(std::ostringstream &stream, uint8_t idx, char character, bool is3n);
 
 	virtual bool isRelevant(const StringEntry &entry) const = 0;
 	virtual std::string layoutName() const = 0;
@@ -296,8 +301,8 @@ private:
 	std::vector<StringEntryList>          stringEntryLists;
 	std::vector<StringEncodedList>        stringEncodedLists;
 
-	std::vector<char>                     asNibble;
-	std::vector<char>                     asByte;
+	std::vector<char>                     as1n; // list of bytes to be encoded as 1 nibble
+	std::vector<char>                     as3n; // list of bytes to be encoded as 3 nibbles
 	
 	std::string outFileContent;
 };
@@ -367,12 +372,13 @@ const std::string &DataSet::getOutput()
 
 void DataSet::calculateFrequencies()
 {
-	asNibble.clear();
-	asByte.clear();
+	as1n.clear();
+	as3n.clear();
 	
-	std::map<char, uint16_t> freqMap;
-	
-	// Calculate frequencies
+	std::map<char, uint16_t> freqMap;         // general frequency map
+	std::map<char, uint16_t> freqMapKeywords; // frequency map for keywords
+
+	// Calculate frequencies of characters in the strings
 
 	for (const auto &stringEntryList : stringEntryLists)
 	{
@@ -388,11 +394,12 @@ void DataSet::calculateFrequencies()
 				}
 				
 				freqMap[character]++;
+				if (stringEntryList.type == ListType::KEYWORDS) freqMapKeywords[character]++;
 			}
 		}
 	}
 	
-	// Sort characters
+	// Sort characters by frequency
 	
 	std::vector<std::pair<char, uint16_t>> freqVector;
 	
@@ -405,19 +412,24 @@ void DataSet::calculateFrequencies()
 	          [](std::pair<char, uint16_t> e1, std::pair<char, uint16_t> e2)
 			  { return e2.second < e1.second; });
 
-	// Extract 14 most frequent characters to be encoded as nibble, remaining as byte
+	// XXX tk__packed_as_3n should be used to select characters only relevant for the tokenizer
+	// XXX now characters should be ordered based on their frequency in tokens
+
+	// Extract 14 most frequent characters to be encoded as 1 nibble, remaining - as 3 nibbles
 
 	uint8_t counter = 0;
 	
 	for (const auto &freqPair : freqVector)
 	{
+		// Put characters in reverse order - this will speed-up the tokenizer a little
+
 		if (counter < 14)
 		{
-			asNibble.push_back(freqPair.first);
+			as1n.insert(as1n.begin(), freqPair.first);
 		}
 		else
 		{
-			asByte.push_back(freqPair.first);
+			as3n.insert(as3n.begin(), freqPair.first);
 		}
 		
 		counter++;
@@ -428,7 +440,7 @@ void DataSet::encodeByFreq(const std::string &plain, StringEncoded &encoded) con
 {
 	bool fullByte = true;
 
-	auto putNibble = [&](uint8_t val)
+	auto push1n = [&](uint8_t val) // push 1 nibble - encoded character or 0xF mark
 	{
 		if (fullByte)
 		{
@@ -442,7 +454,7 @@ void DataSet::encodeByFreq(const std::string &plain, StringEncoded &encoded) con
 		}
 	};
 
-	auto putByte = [&](uint8_t val)
+	auto push2n = [&](uint8_t val) // push the remaining nibbles for 3-niobble encoded characters
 	{
 		if (fullByte)
 		{
@@ -460,21 +472,21 @@ void DataSet::encodeByFreq(const std::string &plain, StringEncoded &encoded) con
 
 	for (const char &character : plain)
 	{
-		auto iterNibble = std::find(asNibble.begin(), asNibble.end(), character);
-		if (iterNibble != asNibble.end())
+		auto iterEncoding1 = std::find(as1n.begin(), as1n.end(), character);
+		if (iterEncoding1 != as1n.end())
 		{
-			putNibble(std::distance(asNibble.begin(), iterNibble) + 1);
+			push1n(std::distance(as1n.begin(), iterEncoding1) + 1);
 		}
 		else
 		{
-			putNibble(0x0F);
+			push1n(0x0F);
 
-			auto iterByte = std::find(asByte.begin(), asByte.end(), character);
-			if (iterByte == asByte.end())
+			auto iterEncoding3 = std::find(as3n.begin(), as3n.end(), character);
+			if (iterEncoding3 == as3n.end())
 			{
 				ERROR("internal error in 'encodeByFreq'");
 			}
-			putByte(std::distance(asByte.begin(), iterByte) + 1);
+			push2n(std::distance(as3n.begin(), iterEncoding3) + 1);
 		}
 	}
 
@@ -487,7 +499,7 @@ void DataSet::encodeStrings()
 {
 	stringEncodedLists.clear();
 
-	// Encode every relevant string from every list by frequency
+	// Encode every relevant string from every list - by character frequency
 
 	for (const auto &stringEntryList : stringEntryLists)
 	{
@@ -507,11 +519,11 @@ void DataSet::encodeStrings()
 	}
 }
 
-void DataSet::putCharEncoding(std::ostringstream &stream, uint8_t encoded, char character, bool isByte)
+void DataSet::putCharEncoding(std::ostringstream &stream, uint8_t idx, char character, bool is3n)
 {
 	stream << "\t.byte $" << std::uppercase << std::hex <<
 	          std::setfill('0') << std::setw(2) << +character <<
-	          "    // " << std::setfill(isByte ? '0' : ' ') << std::setw(2) << +encoded;
+	          "    // " << std::setfill(is3n ? '0' : ' ') << std::setw(2) << +idx;
 
 	std::string petscii;
 
@@ -538,33 +550,33 @@ void DataSet::prepareOutput()
 	std::ostringstream stream;
 	stream << std::endl << "#if ROM_LAYOUT_" << layoutName() << std::endl;
 
-	uint8_t encoded;
+	uint8_t idx;
 
 	// Export all nibble-encoded characters
 
-	stream << std::endl << ".macro put_packed_as_nibbles()" << std::endl << "{" << std::endl;
+	stream << std::endl << ".macro put_packed_as_1n()" << std::endl << "{" << std::endl;
 	
-	encoded = 0;
-	for (const auto& nibble : asNibble)
+	idx = 0;
+	for (const auto& encoding : as1n)
 	{
-		putCharEncoding(stream, ++encoded, nibble, false);
+		putCharEncoding(stream, ++idx, encoding, false);
 	} 
 	
 	stream << "}" << std::endl;
 
 	// Export all byte-encoded characters
 
-	stream << std::endl << ".macro put_packed_as_bytes()" << std::endl << "{" << std::endl;
+	stream << std::endl << ".macro put_packed_as_3n()" << std::endl << "{" << std::endl;
 
-	encoded = 0;
-	for (const auto& byte : asByte)
+	idx = 0;
+	for (const auto& encoding : as3n)
 	{
-		putCharEncoding(stream, ++encoded, byte, true);
+		putCharEncoding(stream, ++idx, encoding, true);
 	} 
 
 	stream << "}" << std::endl;
 
-	stream << std::endl << ".label tk__packed_as_bytes = " << std::dec << asByte.size() << std::endl << std::endl;
+	stream << std::endl << ".label tk__packed_as_3n = " << std::dec << as3n.size() << std::endl << std::endl;
 
 	// Export frequency-encoded strings
 

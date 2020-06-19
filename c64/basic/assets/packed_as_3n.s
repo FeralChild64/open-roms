@@ -4,6 +4,6 @@
 // #LAYOUT# *   *       #IGNORE
 
 
-packed_as_nibbles:
+packed_as_3n:
 
-	put_packed_as_nibbles()
+	put_packed_as_3n()
