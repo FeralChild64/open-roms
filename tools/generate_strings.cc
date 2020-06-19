@@ -676,6 +676,14 @@ void DataSet::prepareOutput()
 			}
 		}
 
+		// For the token list - pu the 'end of keywords' mark
+
+		if (stringEntryList.type == ListType::KEYWORDS)
+		{
+			stream << std::endl << "\t// Marker - end of the keyword list" << std::endl;
+			stream << "\t.byte $FF, $FF" << std::endl;
+		}
+
 		stream << "}" << std::endl;
 	}
 
