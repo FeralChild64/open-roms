@@ -77,7 +77,7 @@ tk_pack_loop:
 
 	// Try to find a 3-nibble sequence to encode the character (1st nibble is always 0xF in this case)
 
-	ldy #tk__packed_as_3n
+	ldy #TK__PACKED_AS_3N
 !:
 	cmp packed_as_3n-1, y 
 	beq tk_pack_3n

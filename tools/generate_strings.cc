@@ -2,11 +2,7 @@
 // Utility to generate compressed messages and BASIC tokens
 //
 
-// XXX this is a next-generation replacement of 'compress_text.c', still under development!
-// XXX freq packed string should not be longer than 255 bytes, add error message
-// XXX add error message if we have not enough characters to fill-in 1-nibble encoding table
-// XXX align values in generated file for better output readability
-// XXX interpret the config file to select the string set (STD, M65, X16) and generate feature string
+// XXX parse the config file to select the string set (STD, M65, X16) and generate feature string
 // XXX use dictionary compression by finding the set of non-overlapping strings that can be concatenated
 //     to produce full set of strings; some idea for the algorithm (not sure if proper one) is available here
 //     https://stackoverflow.com/questions/9195676/finding-the-smallest-number-of-substrings-to-represent-a-set-of-strings
@@ -303,8 +299,11 @@ private:
 
 	std::vector<char>                     as1n; // list of bytes to be encoded as 1 nibble
 	std::vector<char>                     as3n; // list of bytes to be encoded as 3 nibbles
+
+	uint8_t                               tk__packed_as_3n;
 	
-	std::string outFileContent;
+	size_t                                maxAliasLen;
+	std::string                           outFileContent;
 };
 
 class DataSetSTD : public DataSet
@@ -375,7 +374,7 @@ void DataSet::calculateFrequencies()
 	as1n.clear();
 	as3n.clear();
 	
-	std::map<char, uint16_t> freqMap;         // general frequency map
+	std::map<char, uint16_t> freqMapGeneral;  // general character frequency map
 	std::map<char, uint16_t> freqMapKeywords; // frequency map for keywords
 
 	// Calculate frequencies of characters in the strings
@@ -386,6 +385,12 @@ void DataSet::calculateFrequencies()
 		{
 			if (!isRelevant(stringEntry)) continue;
 
+			// Check for maximum allowed string length
+			if (stringEntry.string.length() > 255) ERROR("string cannot be longer than 255 characters");
+
+			// Update maximum alias length too
+			maxAliasLen = std::max(maxAliasLen, stringEntry.alias.length());
+
 			for (const auto &character : stringEntry.string)
 			{
 				if (character >= 0x80)
@@ -393,7 +398,7 @@ void DataSet::calculateFrequencies()
 					ERROR(std::string("character above 0x80 in string '") + stringEntry.string + "'");
 				}
 				
-				freqMap[character]++;
+				freqMapGeneral[character]++;
 				if (stringEntryList.type == ListType::KEYWORDS) freqMapKeywords[character]++;
 			}
 		}
@@ -401,39 +406,62 @@ void DataSet::calculateFrequencies()
 	
 	// Sort characters by frequency
 	
-	std::vector<std::pair<char, uint16_t>> freqVector;
+	std::vector<char> freqVector1;
 	
-	for (auto iter = freqMap.begin(); iter != freqMap.end(); ++iter)
+	for (auto iter = freqMapGeneral.begin(); iter != freqMapGeneral.end(); ++iter)
 	{
-		freqVector.push_back(*iter);
+		freqVector1.push_back(iter->first);
 	}
 	
-	std::sort(freqVector.begin(), freqVector.end(),
-	          [](std::pair<char, uint16_t> e1, std::pair<char, uint16_t> e2)
-			  { return e2.second < e1.second; });
+	std::sort(freqVector1.begin(), freqVector1.end(), [&freqMapGeneral](char e1, char e2)
+		      { return freqMapGeneral[e2] < freqMapGeneral[e1]; });
 
-	// XXX tk__packed_as_3n should be used to select characters only relevant for the tokenizer
-	// XXX now characters should be ordered based on their frequency in tokens
+	// Check if minimal amount of characters needed, below 15 is not supported by the 6502 side code
 
-	// Extract 14 most frequent characters to be encoded as 1 nibble, remaining - as 3 nibbles
+	if (freqVector1.size() < 15) ERROR(std::string("not enough distinct characters in layout '") + layoutName() + "', at least 15 needed");
 
-	uint8_t counter = 0;
+	// Extract 14 most frequent characters to be encoded as 1 nibble
 	
-	for (const auto &freqPair : freqVector)
+	for (uint8_t idx = 0; idx < 14; idx++)
 	{
-		// Put characters in reverse order - this will speed-up the tokenizer a little
+		as1n.push_back(freqVector1[idx]);
+	}
+	
+	// Now sort them by frequency in keywords, in descending order - this will speed up the tokenizer a little
+	
+	std::sort(as1n.begin(), as1n.end(), [&freqMapKeywords](char e1, char e2) { return freqMapKeywords[e2] > freqMapKeywords[e1]; });
 
-		if (counter < 14)
+	// Extract characters to be encoded as 3 nibbles, which actually exist in keywords
+
+	std::vector<char> freqVector2;
+
+	tk__packed_as_3n = 0;
+	for (uint8_t idx = 14; idx < freqVector1.size(); idx++)
+	{
+		const auto &character = freqVector1[idx];
+		
+		if (freqMapKeywords[character] > 0)
 		{
-			as1n.insert(as1n.begin(), freqPair.first);
+			as3n.push_back(character);
+			tk__packed_as_3n++;
 		}
 		else
 		{
-			as3n.insert(as3n.begin(), freqPair.first);
+			freqVector2.push_back(character);
 		}
-		
-		counter++;
-	}	
+	}
+	tk__packed_as_3n = std::max(tk__packed_as_3n, (uint8_t) 1);
+
+	// Again, sort them by frequency in keywords, in descending order - this will speed up the tokenizer a little
+	
+	std::sort(as3n.begin(), as3n.end(), [&freqMapKeywords](char e1, char e2) { return freqMapKeywords[e2] > freqMapKeywords[e1]; });
+
+	// Finally extract the remaining characters to be encoded as 3 nibbles
+
+	for (const auto &character : freqVector2)
+	{
+		as3n.push_back(character);
+	}
 }
 
 void DataSet::encodeByFreq(const std::string &plain, StringEncoded &encoded) const
@@ -527,11 +555,15 @@ void DataSet::putCharEncoding(std::ostringstream &stream, uint8_t idx, char char
 
 	std::string petscii;
 
-	if (character == ' ')
+	if (character == 0x20)
 	{
 		petscii = " = SPACE";
 	}
-	else if (character == '\r')
+	else if (character == 0x27)
+	{
+		petscii = " = APOSTROPHE";
+	}
+	else if (character == 0x0D)
 	{
 		petscii = " = RETURN";
 	}
@@ -566,6 +598,7 @@ void DataSet::prepareOutput()
 
 	// Export all byte-encoded characters
 
+	stream << std::endl << ".label TK__PACKED_AS_3N = $" << std::hex << +tk__packed_as_3n << std::endl;
 	stream << std::endl << ".macro put_packed_as_3n()" << std::endl << "{" << std::endl;
 
 	idx = 0;
@@ -575,8 +608,6 @@ void DataSet::prepareOutput()
 	} 
 
 	stream << "}" << std::endl;
-
-	stream << std::endl << ".label tk__packed_as_3n = " << std::dec << as3n.size() << std::endl << std::endl;
 
 	// Export frequency-encoded strings
 
@@ -593,8 +624,8 @@ void DataSet::prepareOutput()
 
 			if (!stringEncoded.empty())
 			{
-				stream << ".label IDX__" << stringEntry.alias << " = $" << std::uppercase << std::hex <<
-				          std::setfill('0') << std::setw(2) << +idxString << std::endl;
+				stream << ".label IDX__" << stringEntry.alias << std::string(maxAliasLen - stringEntry.alias.length(), ' ') << 
+				          " = $" << std::uppercase << std::hex << std::setfill('0') << std::setw(2) << +idxString << std::endl;
 			}
 		}
 
