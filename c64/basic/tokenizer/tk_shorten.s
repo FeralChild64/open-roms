@@ -41,12 +41,12 @@ tk_shorten_1n:
 
 	// FALLTROUGH
 
-tk_shorten_1n_hi:
+tk_shorten_1n_hi:                      // tk__nibble_flag = $00, both nibbles free
 
-    // Clear the high nibble only
+    // Go back one byte and clear the high nibble only
 
     dey
-    sta tk__byte_offset
+    sty tk__byte_offset
 
 	lda tk__packed, y
 	and #$F0
@@ -59,7 +59,7 @@ tk_shorten_1n_hi:
 	clc
 	rts
 
-tk_shorten_1n_lo:
+tk_shorten_1n_lo:                      // tk__nibble_flag = $FF, only the high nibble is free
 
 	// Clear the whole byte, it will be faster
 
@@ -76,6 +76,7 @@ tk_shorten_1n_lo:
 tk_shorten_3n:
 
 	ldy tk__byte_offset                // will be needed in both cases
+	lda #$00
 
 	// Now we need to check which nibble to cut away
 
@@ -84,18 +85,30 @@ tk_shorten_3n:
 
 	// FALLTROUGH
 
-tk_shorten_3n_byte_nibble:
+tk_shorten_3n_byte_nibble:             // tk__nibble_flag = $00, both nibbles free
 
-	// Clear a byte and high nibble
+    // Go back one byte, clear it, go back and clear the high nibble only
 
-	// XXX
+	dey
+	sta tk__packed, y
 
-tk_shorten_3n_2bytes:
+	// Reuse 'tk_shorten_1n_hi'
 
-    // Clear the whole two bytes 
+	sty tk__byte_offset
+	jmp tk_shorten_1n_hi               // XXX should be BRA on some CPUs
 
+tk_shorten_3n_2bytes:                  // tk__nibble_flag = $FF, only the high nibble is free
 
-	// XXX
+    // Clear the byte, go back, clear one more byte
+
+	sta tk__packed, y
+	dey
+	sta tk__packed, y
+
+	// Adjust remaining counters / flags, and quit
+
+	sty tk__byte_offset
+	inc tk__nibble_flag                // $FF -> $00
 
 	clc
 	rts
