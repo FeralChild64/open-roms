@@ -3,6 +3,7 @@
 //
 
 // XXX parse the config file to select the string set (STD, M65, X16) and generate feature string
+// XXX use DualStream class for logging
 // XXX use dictionary compression by finding the set of non-overlapping strings that can be concatenated
 //     to produce full set of strings; some idea for the algorithm (not sure if proper one) is available here
 //     https://stackoverflow.com/questions/9195676/finding-the-smallest-number-of-substrings-to-represent-a-set-of-strings
@@ -300,9 +301,9 @@ private:
 	std::vector<char>                     as1n; // list of bytes to be encoded as 1 nibble
 	std::vector<char>                     as3n; // list of bytes to be encoded as 3 nibbles
 
-	uint8_t                               tk__packed_as_3n;
+	uint8_t                               tk__packed_as_3n = 0;
 	
-	size_t                                maxAliasLen;
+	size_t                                maxAliasLen      = 0;
 	std::string                           outFileContent;
 };
 
@@ -354,6 +355,8 @@ void DataSet::addStrings(const StringEntryList &stringList)
 
 void DataSet::process()
 {
+	std::cout << "Processing layout '" << layoutName() << "'" << std::endl;
+
 	calculateFrequencies();
 	encodeStrings();
 	prepareOutput();
@@ -586,7 +589,7 @@ void DataSet::prepareOutput()
 
 	// Export all nibble-encoded characters
 
-	stream << std::endl << ".macro put_packed_as_1n()" << std::endl << "{" << std::endl;
+	stream << std::endl << ".macro put_packed_as_1n() // characters encoded as 1 nibble" << std::endl << "{" << std::endl;
 	
 	idx = 0;
 	for (const auto& encoding : as1n)
@@ -599,11 +602,14 @@ void DataSet::prepareOutput()
 	// Export all byte-encoded characters
 
 	stream << std::endl << ".label TK__PACKED_AS_3N = $" << std::hex << +tk__packed_as_3n << std::endl;
-	stream << std::endl << ".macro put_packed_as_3n()" << std::endl << "{" << std::endl;
+	stream << std::endl << ".macro put_packed_as_3n() // characters encoded as 3 nibbles" << std::endl << "{" << std::endl;
 
 	idx = 0;
 	for (const auto& encoding : as3n)
 	{
+		if (idx == tk__packed_as_3n) stream << std::endl <<
+            "\t// Characters below are not used by any BASIC keyword" << std::endl << std::endl;
+
 		putCharEncoding(stream, ++idx, encoding, true);
 	} 
 
