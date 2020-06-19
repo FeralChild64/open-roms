@@ -32,12 +32,68 @@ tk_shorten:
 
 tk_shorten_1n:
 
-	// XXX
+	ldy tk__byte_offset                // will be needed in both cases
+
+	// Now we need to check which nibble to cut away
+
+	bit tk__nibble_flag
+	bcs tk_shorten_1n_lo
+
+	// FALLTROUGH
+
+tk_shorten_1n_hi:
+
+    // Clear the high nibble only
+
+    dey
+    sta tk__byte_offset
+
+	lda tk__packed, y
+	and #$F0
+	sta tk__packed, y
+
+	// Adjust remaining counters / flags, and quit
+
+	dec tk__nibble_flag                // $00 -> $FF
+
+	clc
+	rts
+
+tk_shorten_1n_lo:
+
+	// Clear the whole byte, it will be faster
+
+	lda #$00
+	sta tk__packed, y
+
+	// Adjust remaining counters / flags, and quit
+
+	inc tk__nibble_flag                // $FF -> $00
 
 	clc
 	rts
 
 tk_shorten_3n:
+
+	ldy tk__byte_offset                // will be needed in both cases
+
+	// Now we need to check which nibble to cut away
+
+	bit tk__nibble_flag
+	bcs tk_shorten_3n_2bytes
+
+	// FALLTROUGH
+
+tk_shorten_3n_byte_nibble:
+
+	// Clear a byte and high nibble
+
+	// XXX
+
+tk_shorten_3n_2bytes:
+
+    // Clear the whole two bytes 
+
 
 	// XXX
 
