@@ -26,20 +26,21 @@
 
 tk_pack:
 
-	// Output - reuse the CPU stack
+	// Reuse the CPU stack - addresses below $102 are used by 'tokenise_line.s'
 
-	.label tk__packed       = $100 // packed candidate, 13 bytes is enough for worst case 8 byte keyword
-	.label tk__len_unpacked = $10D // length of unpacked data; it could replace 'tk__nibble_flag', but at the cost of code size/performance
-	.label tk__shorten_bits = $10E // for quick shortening of packed candidate
-	.label tk__nibble_flag  = $10F // $00 = start from new byte, $FF = start from high nibble
-	.label tk__byte_offset  = $110 // offset of the current byte (to place new data) in tk__packed
+	.label tk__len_unpacked = $103 // length of unpacked data; it could replace 'tk__nibble_flag', but at the cost of code size/performance
+	.label tk__shorten_bits = $104 // for quick shortening of packed candidate
+	.label tk__nibble_flag  = $105 // $00 = start from new byte, $FF = start from high nibble
+	.label tk__byte_offset  = $106 // offset of the current byte (to place new data) in tk__packed
+
+	.label tk__packed       = $107 // packed candidate, 13 bytes is enough for worst case - 8 byte keyword
 
 	// Initialize variables
 
 	lda #$00
-	ldy #$10
+	ldy #(tk__packed - tk__len_unpacked + 13)    // XXX maybe do not clear that much, just put 0 at the end while compressing
 !:
-	sta tk__packed, y
+	sta tk__len_unpacked, y
 	dey
 	bpl !-
 

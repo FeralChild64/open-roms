@@ -8,8 +8,6 @@
 //
 // Input:
 // - uses same variables as 'tk_pack'
-// Output:
-// - sets Carry if no longer possible to shorten keyword candidate
 //
 
 
@@ -18,11 +16,8 @@ tk_shorten:
 	// First make sure we actually can shorten anything
 
 	dec tk__len_unpacked
-	bne !+
+	beq tk_shorten_end
 
-	sec
-	rts
-!:
 	// Now check if the last character was encoded as 1 nibble or 3 nibbles
 
 	asl tk__nibble_flag
@@ -56,7 +51,10 @@ tk_shorten_1n_hi:                      // tk__nibble_flag = $00, both nibbles fr
 
 	dec tk__nibble_flag                // $00 -> $FF
 
-	clc
+	// FALLTROUGH
+
+tk_shorten_end:
+
 	rts
 
 tk_shorten_1n_lo:                      // tk__nibble_flag = $FF, only the high nibble is free
@@ -69,8 +67,6 @@ tk_shorten_1n_lo:                      // tk__nibble_flag = $FF, only the high n
 	// Adjust remaining counters / flags, and quit
 
 	inc tk__nibble_flag                // $FF -> $00
-
-	clc
 	rts
 
 tk_shorten_3n:
@@ -109,6 +105,4 @@ tk_shorten_3n_2bytes:                  // tk__nibble_flag = $FF, only the high n
 
 	sty tk__byte_offset
 	inc tk__nibble_flag                // $FF -> $00
-
-	clc
 	rts

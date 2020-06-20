@@ -295,7 +295,7 @@ const StringEntryList GLOBAL_Errors =  { ListType::STRINGS_BASIC, "errors",
 	{ false, false, false, "EV7_25", "BEND NOT FOUND"           }, // not used for now
 	{ false, false, false, "EV7_26", "LINE NUMBER TOO LARGE"    }, // not used for now
 	{ false, false, false, "EV7_27", "UNRESOLVED REFERENCE"     }, // not used for now
-	{ true,   true,  true, "EV7_28", "UNIMPPLEMENTED"           },
+	{ true,   true,  true, "EV7_28", "NOT IMPLEMENTED"          }, // this message actually differs rom CBM one
 	{ false, false, false, "EV7_29", "FILE READ"                }, // not used for now
 	// STD    M65    X16   --- error strings specific to OpenROMs, not present in CBM BASIC dialects
 	{ true,  true,  true,  "EOR_2A", "MEMORY CORRUPT"           },	
