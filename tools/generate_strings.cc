@@ -177,21 +177,69 @@ const StringEntryList GLOBAL_Keywords_V2 = { ListType::KEYWORDS, "keywords_V2",
 	{ true,  true,  true,  "KV2_CB",   "GO",         0 }, // https://en.wikipedia.org/wiki/Goto
 } };
 
-// BASIC keywords - extended keywords list #1 - commands only, for now just for testing
+// extended BASIC keywords - reserved for generic (hardware independent) BASIC commands
 
-const StringEntryList GLOBAL_Keywords_X1 =  { ListType::KEYWORDS, "keywords_X1",
+const StringEntryList GLOBAL_Keywords_CC =  { ListType::KEYWORDS, "keywords_CC",
 {
     // STD    M65    X16 
-	{ false, true,  false, "KX1_01",   "TESTCMD",      },
+	{ false, false, false, "KCC_01",   "BLOAD",        }, // http://www.antonis.de/qbebooks/gwbasman/bload.html
+	{ false, false, false, "KCC_02",   "BSAVE",        }, // http://www.antonis.de/qbebooks/gwbasman/bload.html
+	{ false, false, false, "KCC_03",   "BVERIFY",      },
 } };
 
-// BASIC keywords - extended keywords list #2 - functions only, for now just for testing
+// extended BASIC keywords - reserved for BASIC commands likely making sense on most C64-compatible machines
 
-const StringEntryList GLOBAL_Keywords_X2 =  { ListType::KEYWORDS, "keywords_X2",
+const StringEntryList GLOBAL_Keywords_CD =  { ListType::KEYWORDS, "keywords_CD",
 {
     // STD    M65    X16 
-	{ false, true,  false, "KX2_01",   "TESTFUN",      },
+	{ false, false, false, "KCD_01",   "SLOW",         }, // https://en.wikipedia.org/wiki/Sinclair_BASIC - ZX81 variant
+	{ false, false, false, "KCD_02",   "FAST",         }, // https://en.wikipedia.org/wiki/Sinclair_BASIC - ZX81 variant
 } };
+
+// extended BASIC keywords - reserved for board-specific BASIC commands
+
+const StringEntryList GLOBAL_Keywords_CE =  { ListType::KEYWORDS, "keywords_CE",
+{
+    // STD    M65    X16 
+	{ false, false, false, "KCE_01",   "TESTCMD",      },
+} };
+
+const StringEntryList GLOBAL_Keywords_CF =  { ListType::KEYWORDS, "keywords_CF",
+{
+    // STD    M65    X16 
+	{ false, false, false, "KCF_01",   "TESTCMD",      },
+} };
+
+// extended BASIC keywords - reserved for generic (hardware independent) BASIC functions
+
+const StringEntryList GLOBAL_Keywords_D0 =  { ListType::KEYWORDS, "keywords_D0",
+{
+    // STD    M65    X16 
+	{ false, false, false, "KD0_01",   "TESTFUN",      },
+} };
+
+// extended BASIC keywords - reserved for BASIC functions likely making sense on most C64-compatible machines
+
+const StringEntryList GLOBAL_Keywords_D1 =  { ListType::KEYWORDS, "keywords_D1",
+{
+    // STD    M65    X16 
+	{ false, false, false, "KD1_01",   "TESTFUN",       },
+} };
+
+// extended BASIC keywords - reserved for board-specific BASIC functions
+
+const StringEntryList GLOBAL_Keywords_D2 =  { ListType::KEYWORDS, "keywords_D2",
+{
+    // STD    M65    X16 
+	{ false, false, false, "KD2_01",   "TESTFUN",      },
+} };
+
+const StringEntryList GLOBAL_Keywords_D3 =  { ListType::KEYWORDS, "keywords_D3",
+{
+    // STD    M65    X16 
+	{ false, false, false, "KD3_01",   "TESTFUN",      },
+} };
+
 
 // BASIC errors - all dialects
 
@@ -266,6 +314,136 @@ const StringEntryList GLOBAL_MiscStrings =  { ListType::STRINGS_BASIC, "misc",
 	// STD    M65    X16   --- misc strings specific to OpenROMs, not present in CBM ROMs
 	{ true,  true,  true,  "STR_BRK_AT",  "BRK AT $"            },
 } };
+
+
+/* NOTE: below are the BASIC V7/V10 keywords, see:
+         - https://sites.google.com/site/h2obsession/CBM/basic/tokens
+         - http://www.zimmers.net/anonftp/pub/cbm/programming/cbm-basic-tokens.txt
+
+	"RGR"         // $CC
+	"RCLR"        // $CD
+
+	"JOY"         // $CF                         // https://www.qsl.net/hb9xch/computer/amstrad/locomotivebasic.html
+	"RDOT"        // $D0
+	"DEC"         // $D1                         // Amos Professional Manual, Command Index
+	"HEX$"        // $D2                         // http://www.antonis.de/qbebooks/gwbasman/hexs.html
+	"ERR$"        // $D3                         // Amos Professional Manual, Command Index
+	"INSTR"       // $D4                         // Amos Professional Manual, Command Index
+	"ELSE"        // $D5                         // Amos Professional Manual, Command Index
+	"RESUME"      // $D6                         // Amos Professional Manual, Command Index
+	"TRAP"        // $D7                         // Amos Professional Manual, Command Index
+	"TRON"        // $D8                         // https://www.qsl.net/hb9xch/computer/amstrad/locomotivebasic.html
+	"TROFF"       // $D9                         // https://www.qsl.net/hb9xch/computer/amstrad/locomotivebasic.html
+	"SOUND"       // $DA                         // https://www.qsl.net/hb9xch/computer/amstrad/locomotivebasic.html
+	"VOL"         // $DB
+	"AUTO"        // $DC                         // http://www.antonis.de/qbebooks/gwbasman/auto.html
+	"PUDEF"       // $DD
+	"GRAPHIC"     // $DE
+	"PAINT"       // $DF                         // Amos Professional Manual, Command Index
+	"CHAR"        // $E0                         // https://www.c64-wiki.com/wiki/Screen_Graphics_64
+	"BOX"         // $E1                         // Amos Professional Manual, Command Index
+	"CIRCLE"      // $E2                         // https://en.wikipedia.org/wiki/Sinclair_BASIC
+	"PASTE"       // $E3                         // Amos Professional Manual, Command Index
+	"CUT"         // $E4
+	"LINE"        // $E5                         // https://en.wikipedia.org/wiki/Sinclair_BASIC
+	"LOCATE"      // $E6                         // https://www.qsl.net/hb9xch/computer/amstrad/locomotivebasic.html
+	"COLOR"       // $E7
+	"SCNCLR"      // $E8
+	"SCALE"       // $E9                         // https://www.c64-wiki.com/wiki/Super_Expander_64
+	"HELP"        // $EA                         // http://www.classic-games.com/commodore64/cbmtoken.html, Speech Basic 2.7
+	"DO"          // $EB                         // Amos Professional Manual, Command Index
+	"LOOP"        // $EC                         // Amos Professional Manual, Command Index
+	"EXIT"        // $ED                         // Amos Professional Manual, Command Index
+	"DIR"         // $EE                         // Amos Professional Manual, Command Index
+	"DSAVE"       // $EF                         // http://www.classic-games.com/commodore64/cbmtoken.html, AtBasic (@Basic)
+	"DLOAD"       // $F0                         // http://www.classic-games.com/commodore64/cbmtoken.html, AtBasic (@Basic)
+	"HEADER"      // $F1                         // http://www.classic-games.com/commodore64/cbmtoken.html, AtBasic (@Basic)
+	"SCRATCH"     // $F2                         // http://www.classic-games.com/commodore64/cbmtoken.html, AtBasic (@Basic)
+	"COLLECT"     // $F3
+	"COPY"        // $F4                         // https://en.wikipedia.org/wiki/Sinclair_BASIC
+	"RENAME"      // $F5                         // Amos Professional Manual, Command Index
+	"BACKUP"      // $F6                         // http://www.classic-games.com/commodore64/cbmtoken.html, AtBasic (@Basic)
+	"DELETE"      // $F7                         // http://www.classic-games.com/commodore64/cbmtoken.html, AtBasic (@Basic)
+	"RENUMBER"    // $F8                         // http://www.classic-games.com/commodore64/cbmtoken.html, AtBasic (@Basic)
+	"KEY"         // $F9                         // https://www.qsl.net/hb9xch/computer/amstrad/locomotivebasic.html
+	"MONITOR"     // $FA                         // Amos Professional Manual, Command Index
+	"USING"       // $FB                         // http://www.antonis.de/qbebooks/gwbasman/printusing.html
+	"UNTIL"       // $FC                         // Amos Professional Manual, Command Index
+	"WHILE"       // $FD                         // https://www.qsl.net/hb9xch/computer/amstrad/locomotivebasic.html
+
+	"POT"         // $CE $02
+	"BUMP"        // $CE $03
+	"PEN"         // $CE $04                     // https://www.qsl.net/hb9xch/computer/amstrad/locomotivebasic.html
+	"RSPPOS"      // $CE $05                     // https://www.c64-wiki.com/wiki/Super_Expander_64
+	"RSPRITE"     // $CE $06
+	"RSPCOLOR"    // $CE $07
+	"XOR"         // $CE $08
+	"RWINDOW"     // $CE $09
+	"POINTER"     // $CE $0A
+
+	"BANK"        // $FE $02                     // Amos Professional Manual, Command Index
+	"FILTER"      // $FE $03                     // https://www.c64-wiki.com/wiki/Super_Expander_64
+	"PLAY"        // $FE $04                     // Amos Professional Manual, Command Index
+	"TEMPO"       // $FE $05                     // Amos Professional Manual, Command Index
+	"MOVSPR"      // $FE $06
+	"SPRITE"      // $FE $07                     // Amos Professional Manual, Command Index
+	"SPRCOLOR"    // $FE $08
+	"RREG"        // $FE $09
+	"ENVELOPE"    // $FE $0A
+	"SLEEP"       // $FE $0B
+	"CATALOG"     // $FE $0C                     // http://www.classic-games.com/commodore64/cbmtoken.html, AtBasic (@Basic)
+	"DOPEN"       // $FE $0D
+	"APPEND"      // $FE $0E                     // Amos Professional Manual, Command Index
+	"DCLOSE"      // $FE $0F
+	"BSAVE"       // $FE $10                     // http://www.antonis.de/qbebooks/gwbasman/bsave.html
+	"BLOAD"       // $FE $11                     // http://www.antonis.de/qbebooks/gwbasman/bload.html
+	"RECORD"      // $FE $12
+	"CONCAT"      // $FE $13
+	"DVERIFY"     // $FE $14                     // http://www.classic-games.com/commodore64/cbmtoken.html, AtBasic (@Basic)
+	"DCLEAR"      // $FE $15
+	"SPRSAV"      // $FE $16                     // https://www.c64-wiki.com/wiki/Super_Expander_64
+	"COLLISION"   // $FE $17
+	"BEGIN"       // $FE $18
+	"BEND"        // $FE $19
+	"WINDOW"      // $FE $1A                     // http://www.antonis.de/qbebooks/gwbasman/window.html
+	"BOOT"        // $FE $1B
+	"WIDTH"       // $FE $1C                     // http://www.antonis.de/qbebooks/gwbasman/width.html
+	"SPRDEF"      // $FE $1D                     // https://www.c64-wiki.com/wiki/Super_Expander_64
+	"QUIT"        // $FE $1E                     // http://www.classic-games.com/commodore64/cbmtoken.html, Speech Basic 2.7
+
+	"STASH"       // $FE $1F - v7
+	"FETCH"       // $FE $21 - v7
+	"SWAP"        // $FE $23 - v7                // http://www.antonis.de/qbebooks/gwbasman/swap.html
+
+	"DMA"         // $FE $17/$21/$23 - v10               
+
+	"OFF"         // $FE $24                     // http://www.classic-games.com/commodore64/cbmtoken.html, Speech Basic 2.7
+	"FAST"        // $FE $25                     // https://en.wikipedia.org/wiki/Sinclair_BASIC - ZX81 variant
+	"SLOW"        // $FE $26                     // https://en.wikipedia.org/wiki/Sinclair_BASIC - ZX81 variant
+	"TYPE"        // $FE $27                
+	"BVERIFY"     // $FE $28                
+	"DIRECTORY"   // $FE $29                     // http://www.classic-games.com/commodore64/cbmtoken.html, AtBasic (@Basic)
+	"ERASE"       // $FE $2A                     // https://en.wikipedia.org/wiki/Sinclair_BASIC
+	"FIND"        // $FE $2B                     // http://www.classic-games.com/commodore64/cbmtoken.html, AtBasic (@Basic)
+	"CHANGE"      // $FE $2C                
+	"SET"         // $FE $2D                
+	"SCREEN"      // $FE $2E                     // http://www.antonis.de/qbebooks/gwbasman/screens.html
+	"POLYGON"     // $FE $2F                     // Amos Professional Manual, Command Index
+	"ELLIPSE"     // $FE $30                     // Amos Professional Manual, Command Index
+	"VIEWPORT"    // $FE $31                
+	"GCOPY"       // $FE $32                
+	"PEN"         // $FE $33                     // Amos Professional Manual, Command Index
+	"PALETTE"     // $FE $34                     // Amos Professional Manual, Command Index
+	"DMODE"       // $FE $35                
+	"DPAT"        // $FE $36                
+	"PIC"         // $FE $37                
+	"GENLOCK"     // $FE $38                
+	"FOREGROUND"  // $FE $39                
+
+	"BACKGROUND"  // $FE $3B                
+	"BORDER"      // $FE $3C                     // https://en.wikipedia.org/wiki/Sinclair_BASIC
+	"HIGHLIGHT"   // $FE $3D                
+*/
 
 //
 // Work class definitions
@@ -740,8 +918,6 @@ void writeStrings()
 	dataSetSTD.addStrings(GLOBAL_MiscStrings);
 
 	dataSetM65.addStrings(GLOBAL_Keywords_V2);
-	dataSetM65.addStrings(GLOBAL_Keywords_X1);
-	dataSetM65.addStrings(GLOBAL_Keywords_X2);
 	dataSetM65.addStrings(GLOBAL_Errors);
 	dataSetM65.addStrings(GLOBAL_MiscStrings);
 

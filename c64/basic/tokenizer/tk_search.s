@@ -74,7 +74,7 @@ tk_search_not_matching:
 
 tk_search_next:
 
-	// Update FRESPC
+	// Update FRESPC - advance by .Y
 
 	iny
 	tya
