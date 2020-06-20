@@ -91,7 +91,6 @@ typedef std::vector<StringEncoded> StringEncodedList;
   without these conditions that the BASIC keyword list could be copyright, but provide this
   information as a further layer of defence against any claims that it could somehow 
   infringe on the copyrights of the C64/C65/C128 etc ROMs.
-
 */
 
 const StringEntryList GLOBAL_Keywords_V2 = { ListType::KEYWORDS, "keywords_V2",
@@ -479,8 +478,9 @@ private:
 	std::vector<char>                     as1n; // list of bytes to be encoded as 1 nibble
 	std::vector<char>                     as3n; // list of bytes to be encoded as 3 nibbles
 
-	uint8_t                               tk__packed_as_3n = 0;
-	
+	uint8_t                               tk__packed_as_3n    = 0;
+	uint8_t                               tk__max_keyword_len = 0;
+
 	size_t                                maxAliasLen      = 0;
 	std::string                           outFileContent;
 };
@@ -568,6 +568,13 @@ void DataSet::calculateFrequencies()
 
 			// Check for maximum allowed string length
 			if (stringEntry.string.length() > 255) ERROR("string cannot be longer than 255 characters");
+
+			// Check mor maximum keyword length
+			if (stringEntryList.type == ListType::KEYWORDS)
+			{
+				if (stringEntry.string.length() > 8) ERROR("keyword cannot be longer than 8 characters");
+				tk__max_keyword_len = std::max(tk__max_keyword_len, (uint8_t) stringEntry.string.length());
+			}
 
 			// Update maximum alias length too
 			maxAliasLen = std::max(maxAliasLen, stringEntry.alias.length());
@@ -779,7 +786,6 @@ void DataSet::prepareOutput()
 
 	// Export all byte-encoded characters
 
-	stream << std::endl << ".label TK__PACKED_AS_3N = $" << std::hex << +tk__packed_as_3n << std::endl;
 	stream << std::endl << ".macro put_packed_as_3n() // characters encoded as 3 nibbles" << std::endl << "{" << std::endl;
 
 	idx = 0;
@@ -792,6 +798,11 @@ void DataSet::prepareOutput()
 	} 
 
 	stream << "}" << std::endl;
+
+	// Export additional data for the tokenizer
+
+	stream << std::endl << ".label TK__PACKED_AS_3N    = $" << std::hex << +tk__packed_as_3n <<
+              std::endl << ".label TK__MAX_KEYWORD_LEN = "  << std::dec << +tk__max_keyword_len << std::endl;
 
 	// Export frequency-encoded strings
 

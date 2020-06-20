@@ -139,7 +139,7 @@ tk_pack_loop_next:
 	// Check length, if it is OK to pack one more byte; quit if not
 
 	lda tk__len_unpacked
-	cmp #$07                           // for now max keyword length is 7 bytes, this encoder supports up to 8
+	cmp #TK__MAX_KEYWORD_LEN
 
 	bne tk_pack_loop
 	rts
