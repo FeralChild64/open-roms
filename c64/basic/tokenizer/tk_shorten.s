@@ -91,7 +91,11 @@ tk_shorten_3n_byte_nibble:             // tk__nibble_flag = $00, both nibbles fr
 	// Reuse 'tk_shorten_1n_hi'
 
 	sty tk__byte_offset
-	jmp tk_shorten_1n_hi               // XXX should be BRA on some CPUs
+#if HAS_OPCODES_65C02
+	bra tk_shorten_1n_hi
+#else
+	jmp tk_shorten_1n_hi
+#endif
 
 tk_shorten_3n_2bytes:                  // tk__nibble_flag = $FF, only the high nibble is free
 

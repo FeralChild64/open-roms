@@ -30,7 +30,6 @@ tokenise_line:
 
 	lda #$00
 	sta tk__offset
-	sta QTSW
 
 	ldx __tokenise_work1
 	stx tk__length
@@ -64,11 +63,6 @@ tokenise_line_loop:
 	cmp #$3F
 	beq tokenize_line_question_mark              // shortcut for PRINT command
 
-	// Check for quote mode - in such case do not truy to tokenize 
-
-	lda QTSW
-	bne tokenize_line_char
-
 	// Try to tokenize
 
 	jsr tk_pack
@@ -89,42 +83,69 @@ tokenise_line_loop:
 	// Shorten packed keyword candidate and try again
 
 	jsr tk_shorten
-	jmp !-                                       // XXX BRA on some CPUs
+
+#if HAS_OPCODES_65C02
+	bra !-
+#else
+	jmp !-
+#endif
 
 tokenise_line_done:
 
-	// XXX
+	// Update line length and quit
 
-	// Update line length
 	lda tk__length
 	sta __tokenise_work1
-
-	// Clear quote mode flag that is also used by KERNAL for screen display
-	lda #$00
-	sta QTSW
 
 	rts
 
 tokenize_line_keyword_V2:
 
+	// .X contains a token ID, starting from 0
+
+	// XXX we need also a token length here
+
 	// XXX
+
+	// XXX add special handling for REM token
+
+#if HAS_OPCODES_65C02
+	bra tokenize_line_char
+#else
+	jmp tokenize_line_char
+#endif
 
 tokenize_line_quote:
 
-	// XXX
+	// For the quote, we advance without tokenizing, until the next quote is found
+
+	inc tk__offset
+	ldx tk__offset
+
+	lda BUF, x
+	beq tokenise_line_done
+
+	cmp #$22
+	beq tokenize_line_char
+	bne tokenize_line_quote                      // branch always
 
 tokenize_line_pi:
 
-	// XXX
+	lda #$FF                                     // token for PI
+	skip_2_bytes_trash_nvz
+
+	// FALLTROUGH
 
 tokenize_line_question_mark:
 
-	// XXX
+	lda #$99                                     // token for PRINT
+	sta BUF, x
+
+	// FALLTROUGH
 
 tokenize_line_char:
 
-	ldx tk__offset
-
-	// XXX
+	inc tk__offset
+	bne tokenise_line_loop
 
 #endif // ROM layout
