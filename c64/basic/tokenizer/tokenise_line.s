@@ -55,20 +55,20 @@ tokenise_line_loop:
 	lda BUF, x
 
 	cmp #$22
-	beq tokenize_line_quote
+	beq tokenise_line_quote
 
 	cmp #$DE
-	beq tokenize_line_pi
+	beq tokenise_line_pi
 
 	cmp #$3F
-	beq tokenize_line_question_mark              // shortcut for PRINT command
+	beq tokenise_line_question_mark              // shortcut for PRINT command
 
-	// Try to tokenize
+	// Try to tokenise
 
 	jsr tk_pack
 !:
 	lda tk__len_unpacked
-	beq tokenize_line_char                       // branch if attempt to tokenize failed
+	beq tokenise_line_char                       // branch if attempt to tokenise failed
 
 	lda #<packed_str_keywords_V2
 	sta FRESPC+0
@@ -76,7 +76,7 @@ tokenise_line_loop:
 	sta FRESPC+1
 
 	jsr tk_search
-	bcc tokenize_line_keyword_V2                 // branch if keyword identified
+	bcc tokenise_line_keyword_V2                 // branch if keyword identified
 
 	// XXX add support for additional keyword lists here
 
@@ -99,23 +99,53 @@ tokenise_line_done:
 
 	rts
 
-tokenize_line_keyword_V2:
+tokenise_line_keyword_V2:
 
 	// .X contains a token ID, starting from 0
 
-	// XXX we need also a token length here
+	txa
+	pha                                          // store the token on the stack, we will need it for REM support
 
-	// XXX
+	// Store the token
 
-	// XXX add special handling for REM token
+	ldx tk__offset
+	clc
+	adc #$80
+	sta BUF, x
+
+	// Cut away unnecessary bytes
+
+	inc tk__offset
+	ldx tk__offset
+
+	dec tk__len_unpacked                         // keyword length, afterwards number of bytes to cut away
+	lda tk__len_unpacked
+	clc
+	adc tk__offset
+	tay
+!:
+	lda BUF, y
+	sta BUF, x
+	beq !+
+
+	inx
+	iny
+	bne !-	
+!:
+	// Special handling for REM command - after this one nothing more should be tokenised
+
+	pla
+	cmp #$0F                                     // REM token
+
+	// XXX add special handling for REM token here
 
 #if HAS_OPCODES_65C02
-	bra tokenize_line_char
+	bra tokenise_line_loop
 #else
-	jmp tokenize_line_char
+	jmp tokenise_line_loop
 #endif
 
-tokenize_line_quote:
+tokenise_line_quote:
 
 	// For the quote, we advance without tokenizing, until the next quote is found
 
@@ -126,26 +156,26 @@ tokenize_line_quote:
 	beq tokenise_line_done
 
 	cmp #$22
-	beq tokenize_line_char
-	bne tokenize_line_quote                      // branch always
+	beq tokenise_line_char
+	bne tokenise_line_quote                      // branch always
 
-tokenize_line_pi:
+tokenise_line_pi:
 
 	lda #$FF                                     // token for PI
 	skip_2_bytes_trash_nvz
 
 	// FALLTROUGH
 
-tokenize_line_question_mark:
+tokenise_line_question_mark:
 
 	lda #$99                                     // token for PRINT
 	sta BUF, x
 
 	// FALLTROUGH
 
-tokenize_line_char:
+tokenise_line_char:
 
 	inc tk__offset
-	bne tokenise_line_loop
+	jmp tokenise_line_loop
 
 #endif // ROM layout
