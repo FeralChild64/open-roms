@@ -99,7 +99,7 @@ tk_pack_1n:
 	// .Y contains our nibble; check whether we should start a new encoded byte
 
 	bit tk__nibble_flag
-	bcc tk_pack_1n_new_byte
+	bpl tk_pack_1n_new_byte
 
 	// Store in the high nibble of the current byte
 
@@ -163,7 +163,7 @@ tk_pack_3n:
 	// .Y contains 2 nibbles to encode; check whether we should start a new encoded byte
 
 	bit tk__nibble_flag
-	bcc tk_pack_3n_new_byte
+	bpl tk_pack_3n_new_byte
 
 	// Store 1st nibble (alwys 0xF) in the high nibble of the current byte
 
