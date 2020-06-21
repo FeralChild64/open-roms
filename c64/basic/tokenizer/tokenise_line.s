@@ -90,15 +90,6 @@ tokenise_line_loop:
 	jmp !-
 #endif
 
-tokenise_line_done:
-
-	// Update line length and quit
-
-	lda tk__length
-	sta __tokenise_work1
-
-	rts
-
 tokenise_line_keyword_V2:
 
 	// .X contains a token ID, starting from 0
@@ -135,15 +126,19 @@ tokenise_line_keyword_V2:
 	// Special handling for REM command - after this one nothing more should be tokenised
 
 	pla
-	cmp #$0F                                     // REM token
+	cmp #$0F                                     // REM token index
+	bne tokenise_line_loop
 
-	// XXX add special handling for REM token here
+	// FALLTROUGH
 
-#if HAS_OPCODES_65C02
-	bra tokenise_line_loop
-#else
-	jmp tokenise_line_loop
-#endif
+tokenise_line_done:
+
+	// Update line length and quit
+
+	lda tk__length
+	sta __tokenise_work1
+
+	rts
 
 tokenise_line_quote:
 
