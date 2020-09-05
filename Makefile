@@ -64,6 +64,10 @@ SRC_DOS_M65 = $(foreach dir,$(SRCDIR_DOS_M65),$(wildcard $(dir)/*.s))
 SRC_KERNAL  = $(foreach dir,$(SRCDIR_KERNAL),$(wildcard $(dir)/*.s))
 SRC_TOOLS   = $(wildcard tools/*.c,tools/*.cc)
 
+OUT_ACME    = $(wildcard assembler/acme/src/_*.c) $(wildcard assembler/acme/src/_*.h)
+SRC_ACME    = $(filter-out $(OUT_ACME),$(wildcard assembler/acme/src/*.c))
+HDR_ACME    = $(filter-out $(OUT_ACME),$(wildcard assembler/acme/src/*.h))
+
 # Generated files
 
 GEN_BASIC   = build/,generated/float_constants.s
@@ -112,7 +116,7 @@ TOOL_PNGPREPARE         = build/tools/pngprepare
 TOOL_BUILD_SEGMENT      = build/tools/build_segment
 TOOL_RELEASE            = build/tools/release
 TOOL_SIMILARITY         = build/tools/similarity
-TOOL_ASSEMBLER          = assembler/KickAss.jar
+TOOL_ASSEMBLER          = build/tools/acme
 
 TOOLS_LIST = $(pathsubst tools/%,build/tools/%,$(basename $(SRC_TOOLS)))
 
@@ -186,6 +190,11 @@ updatebin:
 	cp build/chargen_openroms.rom bin/chargen_openroms.rom
 
 # Rules - tools
+
+$(TOOL_ASSEMBLER): $(SRC_ACME) $(HDR_ACME)
+	@mkdir -p build/tools
+	echo $(OUT_ACME)
+	$(CC) -o $(TOOL_ASSEMBLER) $(SRC_ACME) -lm -I./assembler/acme/src
 
 $(TOOL_PNGPREPARE): tools/pngprepare.c
 	@mkdir -p build/tools
