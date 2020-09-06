@@ -1,10 +1,10 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// RS-232 part of the CLOSE routine
-//
+;
+; RS-232 part of the CLOSE routine
+;
 
 
 #if HAS_RS232
@@ -17,19 +17,19 @@
 
 close_rs232:
 
-	// First check how many RS-232 channels are currently allocated.
-	// If more than one, skip deallocation (other channels still uses the buffer).
+	; First check how many RS-232 channels are currently allocated.
+	; If more than one, skip deallocation (other channels still uses the buffer).
 
 	jsr rs232_count_channels
-	cpx #$02                           // set Carry if more than one is open
+	cpx #$02                           ; set Carry if more than one is open
 	bcs close_rs232_end
 
-	// Deallocate buffer
+	; Deallocate buffer
 
 	inc MEMSIZK+1
 	inc MEMSIZK+1
 
-	// XXX is this needed? check with original ROM what it actually does
+	; XXX is this needed? check with original ROM what it actually does
 
 	lda #$00
 	sta ROBUF+0
@@ -42,4 +42,4 @@ close_rs232_end:
 	jmp close_remove_from_table
 
 
-#endif // HAS_RS232
+#endif ; HAS_RS232

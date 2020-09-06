@@ -1,10 +1,10 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// IEC part of the CHROUT routine
-//
+;
+; IEC part of the CHROUT routine
+;
 
 
 chrout_iec:

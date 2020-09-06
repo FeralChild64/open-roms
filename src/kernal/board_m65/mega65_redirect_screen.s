@@ -1,9 +1,9 @@
-// #LAYOUT# M65 KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// ROM routine call redirect for MEGA65 screen routines
-//
+;
+; ROM routine call redirect for MEGA65 screen routines
+;
 
 
 m65_chrout_screen:

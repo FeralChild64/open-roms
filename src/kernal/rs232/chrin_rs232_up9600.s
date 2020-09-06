@@ -1,12 +1,12 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// RS-232 part of the CHRIN routine
-//
+;
+; RS-232 part of the CHRIN routine
+;
 
-// Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
+; Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
 
 
 #if CONFIG_RS232_UP9600
@@ -25,7 +25,7 @@ chrin_rs232:
 	plx_trash_a
 	ply_trash_a
 	
-	lda #$08    // XXX don't we have some routine for this?
+	lda #$08    ; XXX don't we have some routine for this?
 	sta RSSTAT
     lda #$00
     clc
@@ -43,4 +43,4 @@ XXX_DOGET4:
 	rts
 
 
-#endif // CONFIG_RS232_UP9600
+#endif ; CONFIG_RS232_UP9600

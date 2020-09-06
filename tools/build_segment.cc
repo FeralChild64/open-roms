@@ -20,8 +20,6 @@
 #include <set>
 #include <vector>
 
-const std::string ASM_CMD       = "java -jar ";
-
 const std::string LAB_OUT_START = "__routine_START_";
 const std::string LAB_OUT_END   = "__routine_END_";
 const std::string LAB_IN_START  = ".label __routine_START_";
@@ -31,7 +29,7 @@ const std::string LAB_IN_END    = ".label __routine_END_";
 // Command line settings
 //
 
-std::string CMD_assFile   = "KickAss.jar";
+std::string CMD_assembler = "./acme";
 std::string CMD_outFile   = "OUT.BIN";
 std::string CMD_outDir    = "./out";
 std::string CMD_segName   = "MAIN";
@@ -49,7 +47,7 @@ std::list<std::string> CMD_inList;
 void printUsage()
 {
     std::cout << "\n" <<
-        "usage: build_segment [-a <assembler jar file>] [-o <out file>] [-d <out dir>]" << "\n" <<
+        "usage: build_segment [-a <assembler command>] [-o <out file>] [-d <out dir>]" << "\n" <<
         "                     [-l <start/low address>] [-h <end/high address>]" << "\n" <<
         "                     [-s <segment name>] [-i <segment display info>]" << "\n" <<
         "                     [-r <rom layout>]" << "\n" <<
@@ -68,6 +66,16 @@ void printBannerBinCompile()
     printBannerLineTop();
     std::cout << "// Segment '" << CMD_segInfo << "' - binning and compiling the assembly" << "\n";
     printBannerLineBottom();
+}
+
+std::string toZoneName(const std::string &fileName)
+{
+    std::string retVal = fileName;
+
+    std::replace(retVal.begin(), retVal.end(), ',', '_');
+    std::replace(retVal.begin(), retVal.end(), '.', '_');
+
+    return retVal;
 }
 
 //
@@ -166,7 +174,7 @@ void parseCommandLine(int argc, char **argv)
     {
         switch(opt)
         {
-            case 'a': CMD_assFile   = optarg; break;
+            case 'a': CMD_assembler = optarg; break;
             case 'o': CMD_outFile   = optarg; break;
             case 'd': CMD_outDir    = optarg; break;
             case 's': CMD_segName   = optarg; break;
@@ -291,15 +299,15 @@ void calcRoutineSizes()
     // Start at $100, so that no local data gets accesses using ZP addressing modes
     // during this pass, which would otherwise upset things later
 
-    outFile << "\n" << ".segment " << CMD_segName << " [start=$100, min=$100, max=$FFFF]" << "\n";
-    outFile << "#define SEGMENT_" << CMD_segName << "\n";
-    outFile << "#define ROM_LAYOUT_" << CMD_romLayout << "\n";
+    outFile << "\n" << "*=$100" << "\n";
+    outFile << "!set SEGMENT_" << CMD_segName << " = 1\n";
+    outFile << "!set ROM_LAYOUT_" << CMD_romLayout << " = 1\n";
 
     for (const auto &sourceFile : GLOBAL_sourceFiles)
     {
         outFile << "\n\n\n\n";
-        outFile << "/* Source file: " << sourceFile.fileName << " */" << "\n\n";
-        outFile << ".memblock \"" << sourceFile.fileName << "\"" << "\n";
+        outFile << ";--- Source file" << sourceFile.fileName << "\n\n";
+        outFile << "!zone " << toZoneName(sourceFile.fileName) << "\n\n";
         outFile << LAB_OUT_START << sourceFile.label << ":" << "\n\n";
 
         outFile << std::string(sourceFile.content.begin(), sourceFile.content.end());
@@ -313,7 +321,7 @@ void calcRoutineSizes()
 
     // All written - now launch the assembler
 
-    const std::string cmd = "cd " + filePath + " && " + ASM_CMD + CMD_assFile + " " +
+    const std::string cmd = "cd " + filePath + " && " + CMD_assembler + " " +
                             outFileNameBare + " -symbolfile -o /dev/null";
     std::cout << "command: " << cmd << "\n" << std::flush;
     if (0 != system(cmd.c_str()))
@@ -509,8 +517,8 @@ void compileSegment()
                ", max=$" << std::hex << CMD_hiAddress <<
                ", outBin=\"" << CMD_outFile << "\", fill]" <<
                "\n";
-    outFile << "#define SEGMENT_" << CMD_segName << "\n";
-    outFile << "#define ROM_LAYOUT_" << CMD_romLayout << "\n";
+    outFile << "!set SEGMENT_" << CMD_segName << " = 1\n";
+    outFile << "!set ROM_LAYOUT_" << CMD_romLayout << " = 1\n";
     outFile << ".namespace " << CMD_segName << " {" << "\n\n";
 
     // Write files which only contain definitions (no routines)
@@ -518,8 +526,8 @@ void compileSegment()
     for (const auto &sourceFile : GLOBAL_sourceFiles_noCode)
     {
         outFile << "\n\n\n\n";
-        outFile << "/* Source file: " << sourceFile.fileName << " */" << "\n\n";
-        outFile << ".memblock \"" << sourceFile.fileName << "\"" << "\n";
+        outFile << ";--- Source file" << sourceFile.fileName << "\n\n";
+        outFile << "!zone " << toZoneName(sourceFile.fileName) << "\n\n";
         outFile << std::string(sourceFile.content.begin(), sourceFile.content.end());
         outFile << "\n";
     }
@@ -529,8 +537,8 @@ void compileSegment()
     for (const auto &routine : GLOBAL_binningProblem.fixedRoutines)
     {
         outFile << "\n\n\n\n";
-        outFile << "/* Source file: " << routine.second->fileName << " */" << "\n\n";
-        outFile << ".memblock \"" << routine.second->fileName << "\"" << "\n";
+        outFile << ";--- Source file" << routine.second->fileName << "\n\n";
+        outFile << "!zone " << toZoneName(routine.second->fileName) << "\n\n";
         outFile << "\t* = $" << std::hex << routine.first << "\n\n";
         outFile << std::string(routine.second->content.begin(), routine.second->content.end());
         outFile << "\n";
@@ -543,7 +551,7 @@ void compileSegment()
 
     // All written - now launch the assembler
 
-    const std::string cmd = "cd " + filePath + " && " + ASM_CMD + CMD_assFile + " " +
+    const std::string cmd = "cd " + filePath + " && " + CMD_assembler + " " +
                             outFileNameBare + " -symbolfile -vicesymbols -o " + CMD_outFile;
     std::cout << "command: " << cmd << "\n" << std::flush;
     if (0 != system(cmd.c_str()))
@@ -682,7 +690,7 @@ bool SourceFile::preprocessLine(const std::string &line)
 
     // Injest the comment token
 
-    if ((iter++)->compare("//") != 0 || iter == tokens.end()) return true;
+    if ((iter++)->compare(";;") != 0 || iter == tokens.end()) return true;
 
     // Check if supported directive
 

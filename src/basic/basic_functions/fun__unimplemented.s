@@ -1,12 +1,12 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Default handler for all not-yet-implemented functions
-//
-// Note: NOPs are here just to make debugging easier (no duplicated labels)!
-//
+;
+; Default handler for all not-yet-implemented functions
+;
+; Note: NOPs are here just to make debugging easier (no duplicated labels)!
+;
 
 
 fun_sgn:
@@ -56,6 +56,6 @@ fun_right:
 fun_mid:
 	nop
 
-	// Unimplemented tokens
+	; Unimplemented tokens
 
 	jmp do_NOT_IMPLEMENTED_error

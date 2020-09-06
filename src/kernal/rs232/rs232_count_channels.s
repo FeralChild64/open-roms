@@ -1,10 +1,10 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Sets .X to number of open RS-232 channels
-//
+;
+; Sets .X to number of open RS-232 channels
+;
 
 
 #if HAS_RS232
@@ -21,7 +21,7 @@ rs232_count_channels:
 	cmp #$02
 	bne !-
 	inx
-	bpl !- // branch always
+	bpl !- ; branch always
 !:
 	rts
 

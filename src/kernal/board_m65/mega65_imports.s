@@ -1,9 +1,9 @@
-// #LAYOUT# M65 KERNAL_1 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_1 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Definitions for calling MEGA65 segment KERNAL_0 routines from KERNAL_1
-//
+;
+; Definitions for calling MEGA65 segment KERNAL_0 routines from KERNAL_1
+;
 
 #import "KERNAL_0_combined.sym"
 

@@ -1,11 +1,11 @@
-// #LAYOUT# M65 BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# M65 BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
 #if CONFIG_MEMORY_MODEL_38K
 
 helper_if_mega65:
 
-	// Injest all spaces
+	; Injest all spaces
 
 	ldy #$00
 !:
@@ -16,7 +16,7 @@ helper_if_mega65:
 	bra !-
 !:
 
-	// Check for MEGA65 untokenized keyword
+	; Check for MEGA65 untokenized keyword
 
 	ldy #$05
 !:
@@ -26,7 +26,7 @@ helper_if_mega65:
 	dey
 	bpl !-
 
-	// Increment TXTPTR by 6
+	; Increment TXTPTR by 6
 
 	clc
 	lda TXTPTR+0
@@ -35,7 +35,7 @@ helper_if_mega65:
 	bcc !+
 	inc TXTPTR+1
 !:
-	// Report successful check
+	; Report successful check
 
 	clc
 	rts

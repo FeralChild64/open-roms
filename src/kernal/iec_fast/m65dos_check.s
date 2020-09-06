@@ -1,9 +1,9 @@
-// #LAYOUT# M65 KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// MEGA65 pseudo-IEC internal DOS support - check if the current device is already handled by internal DOS
-//
+;
+; MEGA65 pseudo-IEC internal DOS support - check if the current device is already handled by internal DOS
+;
 
 
 m65dos_check:

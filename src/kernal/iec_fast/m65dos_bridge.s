@@ -1,9 +1,9 @@
-// #LAYOUT# M65 KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// MEGA65 pseudo-IEC internal DOS support
-//
+;
+; MEGA65 pseudo-IEC internal DOS support
+;
 
 
 .label VDOS_INIT    = $4000 +  0 * 2
@@ -21,27 +21,27 @@
 
 m65dos_init:
 
-	// Initializes the DOS internal variables
+	; Initializes the DOS internal variables
 
 	jsr map_DOS_1
 	jsr_ind VDOS_INIT
 	jmp_8 !+
 
-m65dos_chkunit:                        // XXX expose to BASIC
+m65dos_chkunit:                        ; XXX expose to BASIC
 
-	// Checks is the unit number is supported by the internal DOS
-	// Input:  .A - unit number to check
-	// Output: Carry set if not supported, otherwise .A contains unit type (0 = SD card, 1 = internal floppy, 2 = RAM disk)
+	; Checks is the unit number is supported by the internal DOS
+	; Input:  .A - unit number to check
+	; Output: Carry set if not supported, otherwise .A contains unit type (0 = SD card, 1 = internal floppy, 2 = RAM disk)
 
 	jsr map_DOS_1
 	jsr_ind VDOS_CHKUNIT
 	jmp_8 !+
 
-m65dos_setunit:                        // XXX expose to BASIC
+m65dos_setunit:                        ; XXX expose to BASIC
 
-	// Set the unit number
-	// Input:  .A - unit number, .X - unit type (as in m65dos_chkunit)
-	// Output: Carry set means error
+	; Set the unit number
+	; Input:  .A - unit number, .X - unit type (as in m65dos_chkunit)
+	; Output: Carry set means error
 
 	jsr map_DOS_1
 	jsr_ind VDOS_SETUNIT
@@ -52,14 +52,14 @@ m65dos_acptr:
 	jsr map_DOS_1
 	jsr_ind VDOS_ACPTR
 !:
-	jmp map_NORMAL_from_DOS_1          // ACPTR is slightly faster
+	jmp map_NORMAL_from_DOS_1          ; ACPTR is slightly faster
 
 m65dos_ciout:
 
 	jsr map_DOS_1
 	jsr_ind VDOS_CIOUT
 !:
-	jmp map_NORMAL_from_DOS_1          // CIOUT is slightly faster
+	jmp map_NORMAL_from_DOS_1          ; CIOUT is slightly faster
 
 m65dos_listen:
 

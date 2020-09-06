@@ -1,10 +1,10 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Calculate the VARTAB value - to mark the end of BASIC program code. Also clears all variables.
-//
+;
+; Calculate the VARTAB value - to mark the end of BASIC program code. Also clears all variables.
+;
 
 update_VARTAB_do_clr:
 
@@ -22,9 +22,9 @@ update_VARTAB_do_clr:
 
 	lda OLDTXT+0
 	ora OLDTXT+1
-	bne !-                                       // branch if pointer not NULL
+	bne !-                                       ; branch if pointer not NULL
 
-	// Correct VARTAB by 2 bytes NULL pointer
+	; Correct VARTAB by 2 bytes NULL pointer
 
 #if HAS_OPCODES_65CE02
 
@@ -42,6 +42,6 @@ update_VARTAB_do_clr:
 !:
 #endif
 
-	// Call CLR to set-up remaining variables
+	; Call CLR to set-up remaining variables
 
 	jmp do_clr

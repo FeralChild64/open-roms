@@ -1,9 +1,9 @@
-// #LAYOUT# M65 KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Proxies for calling MEGA65 segment KERNAL_0 routines from KERNAL_1
-//
+;
+; Proxies for calling MEGA65 segment KERNAL_0 routines from KERNAL_1
+;
 
 
 proxy_K1_chrin_programmable_keys:

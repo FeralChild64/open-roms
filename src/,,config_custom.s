@@ -1,96 +1,92 @@
 
-.const CONFIG_ID = $00 // should be 1 byte, different for each config file!
-.encoding "petscii_upper"
+CONFIG_ID = $00 ; should be 1 byte, different for each config file!
 
-//
-// Please read CONFIG.md before modifying this file!
-//
+;
+; Please read CONFIG.md before modifying this file!
+;
 
-// Idea:
-// - configuration for custom builds and for development
-// - file contains options to enable unfinished functionalities
-
+; Idea:
+; - configuration for custom builds and for development
+; - file contains options to enable unfinished functionalities
 
 
-// Hardware platform and brand
 
-#define CONFIG_PLATFORM_COMMODORE_64
+; Hardware platform and brand
 
-// #define CONFIG_MB_MEGA_65
-// #define CONFIG_MB_ULTIMATE_64
+CONFIG_PLATFORM_COMMODORE_64 = 1
 
-#define CONFIG_BRAND_CUSTOM_BUILD
-// #define CONFIG_BRAND_GENERIC
-// #define CONFIG_BRAND_TESTING
-// #define CONFIG_BRAND_ULTIMATE_64
+CONFIG_BRAND_CUSTOM_BUILD = 1
+; CONFIG_BRAND_GENERIC = 1
+; CONFIG_BRAND_TESTING = 1
+; CONFIG_BRAND_ULTIMATE_64 = 1
 
 .const CONFIG_CUSTOM_BRAND = @"CUSTOM BUILD"
 
 
-// Processor instruction set
+; Processor instruction set
 
-#define CONFIG_CPU_MOS_6502
-// #define CONFIG_CPU_WDC_65C02
-// #define CONFIG_CPU_CSG_65CE02
-// #define CONFIG_CPU_M65_45GS02
-// #define CONFIG_CPU_WDC_65816
-
-
-// Memory model
-
-// #define CONFIG_MEMORY_MODEL_38K
-// #define CONFIG_MEMORY_MODEL_46K
-#define CONFIG_MEMORY_MODEL_50K
-// #define CONFIG_MEMORY_MODEL_60K
+CONFIG_CPU_MOS_6502 = 1
+; CONFIG_CPU_WDC_65C02 = 1
+; CONFIG_CPU_CSG_65CE02 = 1
+; CONFIG_CPU_M65_45GS02 = 1
+; CONFIG_CPU_WDC_65816 = 1
 
 
-// I/O devices
+; Memory model
 
-#define CONFIG_IEC
-#define CONFIG_IEC_DOLPHINDOS
-#define CONFIG_IEC_DOLPHINDOS_FAST
-#define CONFIG_IEC_JIFFYDOS
-// #define CONFIG_IEC_JIFFYDOS_BLANK
-// #define CONFIG_IEC_BURST_CIA1                 // please keep disabled for now
-// #define CONFIG_IEC_BURST_CIA2                 // please keep disabled for now
-// #define CONFIG_IEC_BURST_MEGA_65              // please keep disabled for now
-
-#define CONFIG_TAPE_NORMAL
-#define CONFIG_TAPE_TURBO
-#define CONFIG_TAPE_AUTODETECT
-// #define CONFIG_TAPE_NO_KEY_SENSE
-// #define CONFIG_TAPE_NO_MOTOR_CONTROL
-
-// #define CONFIG_RS232_UP2400                   // please keep disabled for now
-// #define CONFIG_RS232_UP9600                   // please keep disabled for now
+; CONFIG_MEMORY_MODEL_38K = 1
+; CONFIG_MEMORY_MODEL_46K = 1
+CONFIG_MEMORY_MODEL_50K = 1
+; CONFIG_MEMORY_MODEL_60K = 1
 
 
-// Multiple SID support
+; I/O devices
 
-// #define CONFIG_SID_2ND
-.const CONFIG_SID_2ND_ADDRESS = $D420
+CONFIG_IEC = 1
+CONFIG_IEC_DOLPHINDOS = 1
+CONFIG_IEC_DOLPHINDOS_FAST = 1
+CONFIG_IEC_JIFFYDOS = 1
+; CONFIG_IEC_JIFFYDOS_BLANK = 1
+; CONFIG_IEC_BURST_CIA1 = 1                 ; please keep disabled for now
+; CONFIG_IEC_BURST_CIA2 = 1                 ; please keep disabled for now
+; CONFIG_IEC_BURST_MEGA_65 = 1              ; please keep disabled for now
 
-// #define CONFIG_SID_3RD 
-.const CONFIG_SID_3RD_ADDRESS = $D440
+CONFIG_TAPE_NORMAL = 1
+CONFIG_TAPE_TURBO = 1
+CONFIG_TAPE_AUTODETECT = 1
+; CONFIG_TAPE_NO_KEY_SENSE = 1
+; CONFIG_TAPE_NO_MOTOR_CONTROL = 1
 
-// #define CONFIG_SID_D4XX
-// #define CONFIG_SID_D5XX
+; CONFIG_RS232_UP2400 = 1                   ; please keep disabled for now
+; CONFIG_RS232_UP9600 = 1                   ; please keep disabled for now
 
 
-// Keyboard settings
+; Multiple SID support
 
-// #define CONFIG_LEGACY_SCNKEY
-// #define CONFIG_KEYBOARD_C128
-// #define CONFIG_KEYBOARD_C128_CAPS_LOCK
-// #define CONFIG_KEYBOARD_C65              // untested
-// #define CONFIG_KEYBOARD_C65_CAPS_LOCK    // untested
-// #define CONFIG_KEY_REPEAT_DEFAULT
-// #define CONFIG_KEY_REPEAT_ALWAYS
-#define CONFIG_KEY_FAST_SCAN
-// #define CONFIG_JOY1_CURSOR
-// #define CONFIG_JOY2_CURSOR
+; CONFIG_SID_2ND = 1
+CONFIG_SID_2ND_ADDRESS = $D420
 
-#define CONFIG_PROGRAMMABLE_KEYS
+; CONFIG_SID_3RD = 1 
+CONFIG_SID_3RD_ADDRESS = $D440
+
+; CONFIG_SID_D4XX = 1
+; CONFIG_SID_D5XX = 1
+
+
+; Keyboard settings
+
+; CONFIG_LEGACY_SCNKEY = 1
+; CONFIG_KEYBOARD_C128 = 1
+; CONFIG_KEYBOARD_C128_CAPS_LOCK = 1
+; CONFIG_KEYBOARD_C65 = 1              ; untested
+; CONFIG_KEYBOARD_C65_CAPS_LOCK = 1    ; untested
+; CONFIG_KEY_REPEAT_DEFAULT = 1
+; CONFIG_KEY_REPEAT_ALWAYS = 1
+CONFIG_KEY_FAST_SCAN = 1
+; CONFIG_JOY1_CURSOR = 1
+; CONFIG_JOY2_CURSOR = 1
+
+CONFIG_PROGRAMMABLE_KEYS = 1
 
 .const CONFIG_KEYCMD_RUN  = @"\$5FL"
 
@@ -113,33 +109,33 @@
 .const CONFIG_KEYCMD_F14  = @""
 
 
-// Screen editor
+; Screen editor
 
-#define CONFIG_EDIT_STOPQUOTE
-// #define CONFIG_EDIT_TABULATORS
-
-
-// Software features
-
-#define CONFIG_PANIC_SCREEN
-#define CONFIG_DOS_WEDGE
-#define CONFIG_TAPE_WEDGE
-// #define CONFIG_TAPE_HEAD_ALIGN
-#define CONFIG_BCD_SAFE_INTERRUPTS
-
-// Eye candy
-
-// #define CONFIG_COLORS_BRAND
-// #define CONFIG_BANNER_SIMPLE
-#define CONFIG_BANNER_FANCY
-#define CONFIG_SHOW_FEATURES
+CONFIG_EDIT_STOPQUOTE = 1
+; CONFIG_EDIT_TABULATORS = 1
 
 
-// Debug options
+; Software features
 
-// #define CONFIG_DBG_STUBS_BRK
-// #define CONFIG_DBG_PRINTF
+CONFIG_PANIC_SCREEN = 1
+CONFIG_DOS_WEDGE = 1
+CONFIG_TAPE_WEDGE = 1
+; CONFIG_TAPE_HEAD_ALIGN = 1
+CONFIG_BCD_SAFE_INTERRUPTS = 1
 
-// Other
+; Eye candy
 
-// #define CONFIG_COMPRESSION_LVL_2
+; CONFIG_COLORS_BRAND = 1
+; CONFIG_BANNER_SIMPLE = 1
+CONFIG_BANNER_FANCY = 1
+CONFIG_SHOW_FEATURES = 1
+
+
+; Debug options
+
+; CONFIG_DBG_STUBS_BRK = 1
+; CONFIG_DBG_PRINTF = 1
+
+; Other
+
+; CONFIG_COMPRESSION_LVL_2 = 1

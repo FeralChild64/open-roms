@@ -1,10 +1,10 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# M65 KERNAL_1 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# M65 KERNAL_1 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Tape (normal) helper routine - checksum calculation
-//
+;
+; Tape (normal) helper routine - checksum calculation
+;
 
 
 #if CONFIG_TAPE_NORMAL

@@ -1,11 +1,11 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# X16 *        #IGNORE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# X16 *        #IGNORE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Helper routine - check character in .A, toggles quote flag if needed
-//
+;
+; Helper routine - check character in .A, toggles quote flag if needed
+;
 
 screen_check_toggle_quote:
 
@@ -16,6 +16,6 @@ screen_check_toggle_quote:
 	eor #$80
 	sta QTSW
 
-	lda #$22                           // restore previous .A valuee
+	lda #$22                           ; restore previous .A valuee
 !:
 	rts

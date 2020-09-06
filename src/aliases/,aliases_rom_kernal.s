@@ -1,7 +1,7 @@
-// #LAYOUT# * BASIC_1 #IGNORE
-// #LAYOUT# * *       #TAKE
+;; #LAYOUT# * BASIC_1 #IGNORE
+;; #LAYOUT# * *       #TAKE
 
-	// Kernal jump table
+	; Kernal jump table
 
 	.label JCINT    = $FF81
 	.label JIOINIT  = $FF84

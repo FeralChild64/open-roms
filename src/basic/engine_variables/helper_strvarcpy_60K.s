@@ -1,10 +1,10 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Helper routine to copy string descriptor
-//
+;
+; Helper routine to copy string descriptor
+;
 
 
 #if CONFIG_MEMORY_MODEL_60K
@@ -13,7 +13,7 @@ helper_strvarcpy:
 
 	ldx #<VARPNT
 
-	// Retrieve pointer to destination
+	; Retrieve pointer to destination
 
 	ldy #$02
 	jsr peek_under_roms
@@ -23,7 +23,7 @@ helper_strvarcpy:
 	sta DSCPNT+1
 	dey
 
-	// .Y is now 0 - copy the content
+	; .Y is now 0 - copy the content
 !:
 
 	ldx #<__FAC1+1

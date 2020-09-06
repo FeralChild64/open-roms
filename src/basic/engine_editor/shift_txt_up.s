@@ -1,16 +1,16 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
 
-//
-// Shift the BASIC program up to make space for a new line
-//
+;
+; Shift the BASIC program up to make space for a new line
+;
 
 
 shift_txt_up:
 	
-	// Last byte of source is VARTAB-1
+	; Last byte of source is VARTAB-1
 
 #if !HAS_OPCODES_65CE02
 
@@ -22,7 +22,7 @@ shift_txt_up:
 	sbc #$00
 	sta memmove__src+1	
 
-#else // HAS_OPCODES_65CE02
+#else ; HAS_OPCODES_65CE02
 
 	lda VARTAB+0
 	sta memmove__src+0
@@ -32,7 +32,7 @@ shift_txt_up:
 
 #endif
 
-	// Last byte of destination is memmove__src + .X
+	; Last byte of destination is memmove__src + .X
 
 	clc
 	txa
@@ -43,7 +43,7 @@ shift_txt_up:
 	adc #$00
 	sta memmove__dst+1
 
-	// Size is distance from OLDTXT to the end of BASIC text (VARTAB)
+	; Size is distance from OLDTXT to the end of BASIC text (VARTAB)
 
 	lda VARTAB+0
 	sec
@@ -53,6 +53,6 @@ shift_txt_up:
 	sbc OLDTXT+1
 	sta memmove__size+1
 
-	// Perform the copy
+	; Perform the copy
 
 	jmp shift_mem_up

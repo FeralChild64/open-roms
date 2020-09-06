@@ -1,9 +1,9 @@
-// #LAYOUT# M65 KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// ROM routine call redirect for MEGA65 API routines
-//
+;
+; ROM routine call redirect for MEGA65 API routines
+;
 
 M65_MODESET:
 
@@ -34,7 +34,7 @@ M65_CLRWIN:
 	jsr     map_KERNAL_1
 	jsr_ind VK1__M65_CLRWIN
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 m65_api_end:
 

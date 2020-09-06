@@ -1,10 +1,10 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# M65 BASIC_0 #TAKE
-// #LAYOUT# X16 BASIC_0 #TAKE-OFFSET 2000
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# M65 BASIC_0 #TAKE
+;; #LAYOUT# X16 BASIC_0 #TAKE-OFFSET 2000
+;; #LAYOUT# *   *       #IGNORE
 
 
-// Routines imported from Kernal - our private API
+; Routines imported from Kernal - our private API
 
 #if ROM_LAYOUT_STD
 	#import "KERNAL_combined.sym"

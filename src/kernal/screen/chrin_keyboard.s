@@ -1,11 +1,11 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# X16 *        #IGNORE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# X16 *        #IGNORE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Keyboard part of the CHRIN routine
-//
+;
+; Keyboard part of the CHRIN routine
+;
 
 
 chrin_keyboard:
@@ -17,36 +17,36 @@ chrin_keyboard:
 
 #endif
 
-	// Preserve .X and .Y registers
+	; Preserve .X and .Y registers
 
 	stx XSAV
 	phy_trash_a
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 chrin_keyboard_repeat:
 
-	// Do we have a line of input we are currently returning?
-	// If so, return the next byte, and clear the flag when we reach the end.
+	; Do we have a line of input we are currently returning?
+	; If so, return the next byte, and clear the flag when we reach the end.
 
 	lda CRSW
 	beq chrin_keyboard_read
 
-	// We have input waiting at (LSXP)+CRSW
-	// When CRSW = INDX, then we return a carriage return and clear the flag
+	; We have input waiting at (LSXP)+CRSW
+	; When CRSW = INDX, then we return a carriage return and clear the flag
 	cmp INDX
 	bne chrin_keyboard_not_end_of_input
 
-	// Clear pending input and quote flags
+	; Clear pending input and quote flags
 	lda #$00
 	sta CRSW
 	sta QTSW
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 chrin_keyboard_empty_line:
 
-	// For an empty line, just return the carriage return
+	; For an empty line, just return the carriage return
 
 	ply_trash_a
 	ldx XSAV
@@ -56,12 +56,12 @@ chrin_keyboard_empty_line:
 
 chrin_keyboard_not_end_of_input:
 
-	// Advance index, return the next byte
+	; Advance index, return the next byte
 	
 	inc CRSW
 	tay
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 chrin_keyboard_return_byte:
 
@@ -79,7 +79,7 @@ chrin_keyboard_read:
 
 	jsr cursor_enable
 
-	// Wait for a key
+	; Wait for a key
 	lda NDX
 	beq chrin_keyboard_repeat
 
@@ -87,7 +87,7 @@ chrin_keyboard_read:
 	cmp #$0D
 	bne chrkn_keyboard_not_enter
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 chrin_keyboard_enter:
 
@@ -95,19 +95,19 @@ chrin_keyboard_enter:
 	jsr pop_keyboard_buffer
 	jsr cursor_hide_if_visible
 
-	// It was enter. Note that we have a line of input to return, and return the first byte
-	// after computing and storing its length (Computes Mapping the 64, p96)
+	; It was enter. Note that we have a line of input to return, and return the first byte
+	; after computing and storing its length (Computes Mapping the 64, p96)
 
-	// Set pointer to line of input
+	; Set pointer to line of input
 	lda PNT+0
 	sta LSXP+0
 	lda PNT+1
 	sta LSXP+1
 
-	// If the current line is a continuation of the previous one, decrease LSXP by 40
+	; If the current line is a continuation of the previous one, decrease LSXP by 40
 	ldy TBLX
 	lda LDTB1, y
-	bmi chrin_enter_calc_length        // branch if not continuation
+	bmi chrin_enter_calc_length        ; branch if not continuation
 	lda LSXP+0
 	sec
 	sbc #40
@@ -116,17 +116,17 @@ chrin_keyboard_enter:
 	dec LSXP+1
 !:
 	ldy #80
-	bne chrin_enter_loop               // branch always
+	bne chrin_enter_loop               ; branch always
 
 chrin_enter_calc_length:
 
-	// Get the logical line length
+	; Get the logical line length
 	jsr screen_get_logical_line_end_ptr
 	iny
 
 chrin_enter_loop:
 
-	// Skip spaces at the end of line
+	; Skip spaces at the end of line
 	dey
 	bmi chrin_keyboard_empty_line
 	lda (LSXP),y
@@ -135,16 +135,16 @@ chrin_enter_loop:
 	iny
 	sty INDX
 
-	// Set mark informing that we are returning a line
+	; Set mark informing that we are returning a line
 	ldy #$01
 	sty CRSW
 
-	// Clear quote mode mark
-	dey                                // set .Y to 0
+	; Clear quote mode mark
+	dey                                ; set .Y to 0
 	sty QTSW
 
-	// Return first char of line
-	beq chrin_keyboard_return_byte     // branch always
+	; Return first char of line
+	beq chrin_keyboard_return_byte     ; branch always
 
 chrkn_keyboard_not_enter:
 
@@ -155,9 +155,9 @@ chrkn_keyboard_not_enter:
 	jsr chrin_programmable_keys
 	bcc chrin_keyboard_enter
 
-#endif // CONFIG_PROGRAMMABLE_KEYS
+#endif ; CONFIG_PROGRAMMABLE_KEYS
 
-	// Print character, keep looking for input from keyboard until carriage return
+	; Print character, keep looking for input from keyboard until carriage return
 	jsr CHROUT
 	jsr pop_keyboard_buffer
 	jmp chrin_keyboard_repeat

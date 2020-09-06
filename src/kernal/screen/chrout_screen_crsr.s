@@ -1,11 +1,11 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# X16 *        #IGNORE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# X16 *        #IGNORE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Cursor keys handling within CHROUT
-//
+;
+; Cursor keys handling within CHROUT
+;
 
 
 chrout_screen_CRSR_UP:
@@ -14,7 +14,7 @@ chrout_screen_CRSR_UP:
 	beq chrout_screen_CRSR_done
 	dec TBLX
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 chrout_screen_CRSR_done:
 
@@ -41,7 +41,7 @@ chrout_screen_CRSR_RIGHT:
 	iny
 !:
 	sty PNTR
-	bpl chrout_screen_CRSR_done        // branch always
+	bpl chrout_screen_CRSR_done        ; branch always
 
 
 chrout_screen_CRSR_LEFT:
@@ -56,4 +56,4 @@ chrout_screen_CRSR_LEFT:
 	dec TBLX
 	lda #39
 	sta PNTR
-	bne chrout_screen_CRSR_done        // branch always
+	bne chrout_screen_CRSR_done        ; branch always

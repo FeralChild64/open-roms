@@ -1,9 +1,9 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
 
-// CHR$ codes for the 16 colours
+; CHR$ codes for the 16 colours
 
 colour_codes:
 	.byte 144,5,28,159,156,30,31,158

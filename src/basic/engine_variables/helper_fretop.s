@@ -1,12 +1,12 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Helper routines for FRETOP handling
-//
+;
+; Helper routines for FRETOP handling
+;
 
-helper_FRETOP_down_A:                  // .A - bytes to lower FRETOP, uses DSCPNT+0
+helper_FRETOP_down_A:                  ; .A - bytes to lower FRETOP, uses DSCPNT+0
 
 	sta DSCPNT+0 
 
@@ -17,9 +17,9 @@ helper_FRETOP_down_A:                  // .A - bytes to lower FRETOP, uses DSCPN
 	bcs !+
 	dec FRETOP+1
 !:
-	// FALLTROUGH
+	; FALLTROUGH
 
-helper_FRETOP_check:                   // check if FRETOP > STREND, Carry set if not
+helper_FRETOP_check:                   ; check if FRETOP > STREND, Carry set if not
 
 	lda STREND+1
 	cmp FRETOP+1

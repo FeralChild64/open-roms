@@ -1,9 +1,9 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# X16 *        #IGNORE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# X16 *        #IGNORE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-// Short helper jump-via-vector routine, to set the keyboard matrix
+; Short helper jump-via-vector routine, to set the keyboard matrix
 
 #if !HAS_OPCODES_65CE02
 

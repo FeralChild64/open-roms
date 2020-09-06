@@ -1,15 +1,15 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Jumptable for BASIC V2 dialect commands
-//
+;
+; Jumptable for BASIC V2 dialect commands
+;
 
 
 .const command_list = List().add(
 
-	// $80 - $8F
+	; $80 - $8F
 
 	cmd_end,
 	cmd_for,
@@ -17,18 +17,18 @@
 	cmd_data,
 	cmd_inputhash,
 	cmd_input,
-	array_create,                      // cmd_dim
+	array_create,                      ; cmd_dim
 	cmd_read,
-	assign_variable,                   // cmd_let
+	assign_variable,                   ; cmd_let
 	cmd_goto,
 	cmd_run,
 	cmd_if,
-	do_restore,                        // cmd_restore
+	do_restore,                        ; cmd_restore
 	cmd_gosub,
 	cmd_return,
 	cmd_rem,
 
-	// $90-$9F
+	; $90-$9F
 
 	cmd_stop,
 	cmd_on,
@@ -42,25 +42,25 @@
 	cmd_print,
 	cmd_cont,
 	cmd_list,
-	do_clr,                            // cmd_clr
+	do_clr,                            ; cmd_clr
 	cmd_cmd,
 	cmd_sys,
 	cmd_open,
 
-	// $A0-$A6
+	; $A0-$A6
 
 	cmd_close,
 	cmd_get,
 	cmd_new,
-	cmd_tab,                           // XXX this token probably does not belong here
-	do_SYNTAX_error,                   // 'TO' is not a standalone command
-	do_SYNTAX_error,                   // 'FN' is not a standalone command
-	cmd_spc                            // XXX this token probably does not belong here
+	cmd_tab,                           ; XXX this token probably does not belong here
+	do_SYNTAX_error,                   ; 'TO' is not a standalone command
+	do_SYNTAX_error,                   ; 'FN' is not a standalone command
+	cmd_spc                            ; XXX this token probably does not belong here
 	
-	// 'THEN' ($A7) and 'STEP' ($A9) are not standalone commands
-	// 'NOT' ($A8) is an operator, not a command
+	; 'THEN' ($A7) and 'STEP' ($A9) are not standalone commands
+	; 'NOT' ($A8) is an operator, not a command
 
-	// 'GO' ($CB) is handled separately
+	; 'GO' ($CB) is handled separately
 )
 
 
@@ -77,18 +77,18 @@ command_jumptable_hi:
 	put_jumptable_hi(command_list)
 
 
-#else // HAS_OPCODES_65C02
+#else ; HAS_OPCODES_65C02
 
 
 __before_command_jumptable:
 
-.if (mod(*, $2) == 1) { brk }          // align code so that vector never crosses page boundary
+.if (mod(*, $2) == 1) { brk }          ; align code so that vector never crosses page boundary
 
 command_jumptable:
 
 	put_jumptable(command_list)
 
-	// Make sure routine size is always the same - build system limitation
+	; Make sure routine size is always the same - build system limitation
 
 .if (__before_command_jumptable == command_jumptable) { brk }
 

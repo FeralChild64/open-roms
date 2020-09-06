@@ -1,10 +1,10 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# M65 *       #TAKE
-// #LAYOUT# X16 BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# M65 *       #TAKE
+;; #LAYOUT# X16 BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
 
-// See https://www.c64-wiki.com/wiki/Memory_(BASIC) for BASIC memory organization
+; See https://www.c64-wiki.com/wiki/Memory_(BASIC) for BASIC memory organization
 
 
 do_new:	
@@ -29,7 +29,7 @@ do_restore:
 
 #else
 
-	// See Computes Mapping the Commodore 64 - page 96
+	; See Computes Mapping the Commodore 64 - page 96
 
 	ldy #$00
 	tya
@@ -37,7 +37,7 @@ do_restore:
 	iny
 	sta (TXTTAB),y
 
-	// The book does not mention this, but IMHO it is necessary to initialize VARTAB here too
+	; The book does not mention this, but IMHO it is necessary to initialize VARTAB here too
 
 	clc
 	lda TXTTAB+0
@@ -49,9 +49,9 @@ do_restore:
 
 do_clr:
 
-	// See Computes Mapping the Commodore 64 - page 96
+	; See Computes Mapping the Commodore 64 - page 96
 
-	// XXX check if original ROM does this too
+	; XXX check if original ROM does this too
 	jsr JCLALL
 
 	lda MEMSIZ+0
@@ -59,7 +59,7 @@ do_clr:
 	lda MEMSIZ+1
 	sta FRETOP+1 
 
-	// The book is not precise here $31-$32 is definitely not the end of BASIC text
+	; The book is not precise here $31-$32 is definitely not the end of BASIC text
 
 	lda VARTAB+0
 	sta ARYTAB+0
@@ -69,16 +69,16 @@ do_clr:
 	sta ARYTAB+1
 	sta STREND+1	
 
-	// This is a good place to reset the temporary string stack
+	; This is a good place to reset the temporary string stack
 
 	jsr tmpstr_free_all_reset
 
-	// FALLTROUGH (confirmed on real C64 that CLR indeed resets DATPTR)
+	; FALLTROUGH (confirmed on real C64 that CLR indeed resets DATPTR)
 
 do_restore:
 
-	// See Computes Mapping the Commodore 64 - page 98
-	// Initial DATPTR value checked on real C64
+	; See Computes Mapping the Commodore 64 - page 98
+	; Initial DATPTR value checked on real C64
 
 #if HAS_OPCODES_65CE02
 
@@ -104,4 +104,4 @@ do_restore:
 	rts
 
 
-#endif // ROM layout
+#endif ; ROM layout

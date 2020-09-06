@@ -1,16 +1,16 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Common EAL update routine
-//
+;
+; Common EAL update routine
+;
 
 
 #if (CONFIG_IEC_JIFFYDOS || CONFIG_IEC_DOLPHINDOS) && !CONFIG_MEMORY_MODEL_60K
 
 
-iec_update_EAL_by_Y: // note: Carry has to be set by caller!
+iec_update_EAL_by_Y: ; note: Carry has to be set by caller!
 
 	tya
 	adc EAL+0

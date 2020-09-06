@@ -1,14 +1,14 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# X16 BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# X16 BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
 
-// Routine is too long to fit in the original location
+; Routine is too long to fit in the original location
 
 
 initmsg_real:
 
-	// Clear the screen first, some cartridges (like IEEE-488) are leaving a mess on the screen
+	; Clear the screen first, some cartridges (like IEEE-488) are leaving a mess on the screen
 	lda #147
 	jsr JCHROUT
 
@@ -28,7 +28,7 @@ initmsg_real:
 	ldy #>rom_revision_basic_string
 	jsr STROUT
 
-#endif // no CONFIG_BRAND_CUSTOM_BUILD
+#endif ; no CONFIG_BRAND_CUSTOM_BUILD
 
 #if !CONFIG_BRAND_CUSTOM_BUILD
 	ldx #$03
@@ -80,7 +80,7 @@ initmsg_real:
 	ldy #>rom_revision_basic_string
 	jsr STROUT
 
-#endif // no CONFIG_BRAND_CUSTOM_BUILD
+#endif ; no CONFIG_BRAND_CUSTOM_BUILD
 
 #if !CONFIG_BRAND_CUSTOM_BUILD
 	ldx #$03

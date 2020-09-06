@@ -1,10 +1,10 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# X16 BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# X16 BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Startup banner, to be displayed during cold start
-//
+;
+; Startup banner, to be displayed during cold start
+;
 
 .encoding "petscii_upper"
 

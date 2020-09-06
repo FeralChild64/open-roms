@@ -1,12 +1,12 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
 
 oper_add:
 
-	// This operator can be used either with two strings, or with two floats
-	// First check whether arguments match and then choose the variant
+	; This operator can be used either with two strings, or with two floats
+	; First check whether arguments match and then choose the variant
 
 	pla
 	eor VALTYP
@@ -15,33 +15,33 @@ oper_add:
 	lda VALTYP
 	bmi oper_add_strings
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 oper_add_floats:
 
-	// XXX implement this
+	; XXX implement this
 
 	jmp do_NOT_IMPLEMENTED_error
 
 oper_add_strings:
 
-	// Retrieve string address
+	; Retrieve string address
 
 	pla
 	sta __FAC2+2
 	pla
 	sta __FAC2+1
 
-	// Pull string length
+	; Pull string length
 
 	pla
 	sta __FAC2+0
 
-	// If string 2 is empty, release it and quit
+	; If string 2 is empty, release it and quit
 
 	beq oper_add_strings_end
 
-	// If string 1 is empty, just copy the metadata
+	; If string 1 is empty, just copy the metadata
 
 	lda __FAC1+0
 	bne !+
@@ -57,7 +57,7 @@ oper_add_strings:
 
 	jmp FRMEVL_continue
 !:
-	// Allocate memory for the concatenated string
+	; Allocate memory for the concatenated string
 
 	clc
 	adc __FAC2+0
@@ -65,7 +65,7 @@ oper_add_strings:
 
 	jsr tmpstr_alloc
 
-	// Copy the temporary string pointer to INDEX
+	; Copy the temporary string pointer to INDEX
 
 	ldy #$01
 	lda (VARPNT), y
@@ -74,11 +74,11 @@ oper_add_strings:
 	lda (VARPNT), y
 	sta INDEX+1
 
-	// Perform the concatenation
+	; Perform the concatenation
 
 #if CONFIG_MEMORY_MODEL_60K
 	
-	// Copy data from the first string
+	; Copy data from the first string
 
 	ldy #$00
 !:
@@ -90,12 +90,12 @@ oper_add_strings:
 	cpy __FAC2+0
 	bne !-
 
-	// Increase INDEX pointer by the size of the 1st string
+	; Increase INDEX pointer by the size of the 1st string
 
 	tya
 	jsr helper_INDEX_up_A
 
-	// Copy data from the second string
+	; Copy data from the second string
 
 	ldy #$00
 !:
@@ -111,9 +111,9 @@ oper_add_strings:
 
 	jsr helper_strconcat
 
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 
-	// Copy data from the first string
+	; Copy data from the first string
 
 	ldy #$00
 !:
@@ -123,12 +123,12 @@ oper_add_strings:
 	cpy __FAC2+0
 	bne !-
 
-	// Increase INDEX pointer by the size of the 1st string
+	; Increase INDEX pointer by the size of the 1st string
 
 	tya
 	jsr helper_INDEX_up_A
 
-	// Copy data from the second string
+	; Copy data from the second string
 
 	ldy #$00
 !:
@@ -140,11 +140,11 @@ oper_add_strings:
 
 #endif
 
-	// Free old FAC1 string - if it was temporary
+	; Free old FAC1 string - if it was temporary
 
 	jsr tmpstr_free_FAC1
 
-	// Copy the descriptor to __FAC1
+	; Copy the descriptor to __FAC1
 
 	ldy #$02
 !:
@@ -153,7 +153,7 @@ oper_add_strings:
 	dey
 	bpl !-
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 oper_add_strings_end:
 

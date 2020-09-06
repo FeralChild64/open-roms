@@ -1,12 +1,12 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# X16 *        #IGNORE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# X16 *        #IGNORE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Jumptable for screen control codes support. To improve performance, should be sorted
-// starting from the least probable routine.
-//
+;
+; Jumptable for screen control codes support. To improve performance, should be sorted
+; starting from the least probable routine.
+;
 
 
 chrout_screen_jumptable_codes:
@@ -81,11 +81,11 @@ chrout_screen_jumptable_hi:
 	put_jumptable_hi(chrout_list)
 
 
-#else // HAS_OPCODES_65C02
+#else ; HAS_OPCODES_65C02
 
 chrout_screen_jumptable:
 
-	// Note: 65C02 has the page boundary vector bug fixed!
+	; Note: 65C02 has the page boundary vector bug fixed!
 	put_jumptable(chrout_list)
 
 #endif

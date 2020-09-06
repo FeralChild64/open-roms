@@ -1,7 +1,7 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# M65 *       #TAKE
-// #LAYOUT# X16 BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# M65 *       #TAKE
+;; #LAYOUT# X16 BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
 
 #if !HAS_SMALL_BASIC
@@ -10,11 +10,11 @@
 
 cmd_mem:
 
-	// First perform the garbage collection - to be able to determine real values
+	; First perform the garbage collection - to be able to determine real values
 
 	jsr varstr_garbage_collect
 
-#endif // ROM layout
+#endif ; ROM layout
 
 #if (ROM_LAYOUT_M65 && SEGMENT_BASIC_0)
 
@@ -30,28 +30,28 @@ cmd_mem_cont:
 
 #endif
 
-	// Print header
+	; Print header
 
 	lda #$12
 	jsr JCHROUT
 	ldx #IDX__STR_MEM_HDR
 	jsr print_packed_misc_str
 
-	// Print all the information, in a loop, in reverse order
+	; Print all the information, in a loop, in reverse order
 
 	ldy #$04
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 cmd_mem_loop:
 
-	// First print the information string
+	; First print the information string
 
 	ldx helper_mem_tab_str, y
 	phy_trash_a
 	jsr print_packed_misc_str
 
-	// Print start address
+	; Print start address
 
 	ldx #IDX__STR_MEM_1
 	jsr print_packed_misc_str	
@@ -84,7 +84,7 @@ cmd_mem_loop:
 	ldx #IDX__STR_MEM_2
 	jsr print_packed_misc_str
 
-	// Fetch addresses of zeropage variables
+	; Fetch addresses of zeropage variables
 
 #if HAS_OPCODES_65C02
 	ply
@@ -99,7 +99,7 @@ cmd_mem_loop:
 	lda helper_mem_tab_y, y
 	tay
 
-	// Print difference between two zeropage variables
+	; Print difference between two zeropage variables
 
     sec
 	lda $00, x
@@ -119,7 +119,7 @@ cmd_mem_loop:
 	tya
 #endif
 
-	// Before printing, make sure the result is not negative
+	; Before printing, make sure the result is not negative
 
 	bcs !+
 	lda #$3F
@@ -129,21 +129,21 @@ cmd_mem_loop:
 !:
 	jsr print_integer
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 cmd_mem_next:
 
-	// Check if more iterations needed
+	; Check if more iterations needed
 
 	ply_trash_a
 	dey
 	bpl cmd_mem_loop
 
-	// Finish
+	; Finish
 
 	jmp print_return
 
 
-#endif // ROM layout
+#endif ; ROM layout
 
-#endif // !HAS_SMALL_BASIC
+#endif ; !HAS_SMALL_BASIC

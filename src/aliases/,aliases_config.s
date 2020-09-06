@@ -1,13 +1,13 @@
 
-//
-// Various configuration dependent aliases/macros/checks
-//
+;
+; Various configuration dependent aliases/macros/checks
+;
 
 .encoding "petscii_upper"
 
 
 
-// Check that platform configuration is correct
+; Check that platform configuration is correct
 {
 	.var selected = 0;
 
@@ -23,7 +23,7 @@
 
 
 
-// Check that motherboard extras configuration is correct
+; Check that motherboard extras configuration is correct
 {
 	.var selected = 0;
 
@@ -50,7 +50,7 @@
 
 
 
-// Check that brand configuration is correct
+; Check that brand configuration is correct
 {
 	.var selected = 0;
 
@@ -85,7 +85,7 @@
 
 
 
-// Check that processor configuration is correct
+; Check that processor configuration is correct
 {
 	.var selected = 0;
 
@@ -110,7 +110,7 @@
 
 
 
-// Check that memory model and ROM layout configurations is correct
+; Check that memory model and ROM layout configurations is correct
 {
 #if ROM_LAYOUT_M65 && !CONFIG_CPU_M65_45GS02
 	.error "MEGA65 ROM layout requires CONFIG_CPU_M65_45GS02"
@@ -139,7 +139,7 @@
 
 
 
-// Check that IEC configuration is correct
+; Check that IEC configuration is correct
 {
 #if CONFIG_IEC_JIFFYDOS && !CONFIG_IEC
 	.error "CONFIG_IEC_JIFFYDOS requires CONFIG_IEC"
@@ -182,7 +182,7 @@
 
 
 
-// Check that tape configuration is correct
+; Check that tape configuration is correct
 {
 #if (!CONFIG_TAPE_NORMAL || !CONFIG_TAPE_TURBO) && CONFIG_TAPE_AUTODETECT
 	.error "CONFIG_TAPE_AUTODETECT requires both CONFIG_TAPE_NORMAL and CONFIG_TAPE_TURBO"
@@ -191,7 +191,7 @@
 
 
 
-// Check that RS-232 configuration is correct
+; Check that RS-232 configuration is correct
 {
 #if CONFIG_RS232_UP9600 && (CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO)
 	.error "CONFIG_RS232_UP9600 is not compatible with CONFIG_TAPE_*"
@@ -211,7 +211,7 @@
 
 
 
-// Check that startup banner configuration is correct
+; Check that startup banner configuration is correct
 {
 	.var selected = 0;
 
@@ -238,7 +238,7 @@
 
 
 
-// Check if keyboard options are correct
+; Check if keyboard options are correct
 .function CHECK_KEYCMD(keycmd)
 {
 	.if (keycmd.size() > 0) .return 1
@@ -301,7 +301,7 @@
 
 
 
-// Check that features are configured correctly
+; Check that features are configured correctly
 {
 #if CONFIG_TAPE_WEDGE && !CONFIG_TAPE_TURBO && !CONFIG_TAPE_NORMAL
 	.error "CONFIG_TAPE_WEDGE requires CONFIG_TAPE_TURBO or CONFIG_TAPE_NORMAL"
@@ -313,7 +313,7 @@
 
 
 
-// Handle I/O configuration
+; Handle I/O configuration
 
 #if CONFIG_RS232_UP2400 || CONFIG_RS232_UP9600
 #define HAS_RS232
@@ -321,7 +321,7 @@
 
 
 
-// Handle configuration of various features
+; Handle configuration of various features
 
 #if CONFIG_BCD_SAFE_INTERRUPTS
 #define HAS_BCD_SAFE_INTERRUPTS
@@ -329,7 +329,7 @@
 
 
 
-// Handle configuration of debug infrastructure
+; Handle configuration of debug infrastructure
 
 .macro STUB_IMPLEMENTATION_RTS() {
 	rts
@@ -353,7 +353,7 @@
 
 
 
-// Setup colors
+; Setup colors
 
 #if CONFIG_COLORS_BRAND && CONFIG_BRAND_ULTIMATE_64
 
@@ -368,7 +368,7 @@
 #endif
 
 
-// Determine if we need space-savings in BASIC code
+; Determine if we need space-savings in BASIC code
 
 #if !ROM_LAYOUT_M65
 #define HAS_SMALL_BASIC

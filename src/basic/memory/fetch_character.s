@@ -1,13 +1,13 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Fetches a single character
-//
+;
+; Fetches a single character
+;
 
 
-// For these configurations we have optimized version in another file
+; For these configurations we have optimized version in another file
 #if !(ROM_LAYOUT_M65 && (CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K))
 
 fetch_character:
@@ -23,7 +23,7 @@ fetch_character:
 
 	jsr peek_under_roms_via_TXTPTR
 
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 
 	lda (TXTPTR),y
 
@@ -31,20 +31,20 @@ fetch_character:
 
 #if !HAS_OPCODES_65CE02
 
-	// FALLTHROUGH
+	; FALLTHROUGH
 	
 consume_character:
 
-	// Advance basic text pointer
+	; Advance basic text pointer
 
 	inc TXTPTR+0
 	bne !+
 	inc TXTPTR+1
 !:
 
-#else // HAS_OPCODES_65CE02
+#else ; HAS_OPCODES_65CE02
 
-	// Advance basic text pointer
+	; Advance basic text pointer
 
 	inw TXTPTR
 

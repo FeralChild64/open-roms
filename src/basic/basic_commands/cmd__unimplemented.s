@@ -1,12 +1,12 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Default handler for all not-yet-implemented commands
-//
-// Note: NOPs are here just to make debugging easier (no duplicated labels)!
-//
+;
+; Default handler for all not-yet-implemented commands
+;
+; Note: NOPs are here just to make debugging easier (no duplicated labels)!
+;
 
 
 cmd_for:
@@ -50,6 +50,6 @@ cmd_tab:
 cmd_spc:
 	nop
 
-	// Unimplemented tokens
+	; Unimplemented tokens
 
 	jmp do_NOT_IMPLEMENTED_error

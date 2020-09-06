@@ -1,10 +1,10 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Helper power of 10s table (high buytes) for 'print_integer'
-//
+;
+; Helper power of 10s table (high buytes) for 'print_integer'
+;
 
 print_integer_tab_hi:
 

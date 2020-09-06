@@ -1,15 +1,15 @@
-// #LAYOUT# M65 KERNAL_0 #TAKE-FLOAT
-// #LAYOUT# M65 KERNAL_1 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_0 #TAKE-FLOAT
+;; #LAYOUT# M65 KERNAL_1 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Definitions for communication with MEGA65 segment KERNAL_1 from KERNAL_0
-//
+;
+; Definitions for communication with MEGA65 segment KERNAL_1 from KERNAL_0
+;
 
 
 #if SEGMENT_KERNAL_0
 
-	// Label definitions
+	; Label definitions
 
 	.label VK1__IOINIT                    = $4000 + 2 * 0
 	.label VK1__RAMTAS                    = $4000 + 2 * 1
@@ -29,7 +29,7 @@
 
 #else
 
-	// Vector table (Open ROMs private!)
+	; Vector table (Open ROMs private!)
 
 	.word IOINIT
 	.word RAMTAS

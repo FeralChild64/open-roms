@@ -1,10 +1,10 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Handle tape deck motor
-//
+;
+; Handle tape deck motor
+;
 
 
 #if CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO
@@ -14,7 +14,7 @@ tape_motor_off:
 
 	lda CPU_R6510
 	ora #$20
-	bne !+                             // branch always
+	bne !+                             ; branch always
 
 tape_motor_on:
 

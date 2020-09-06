@@ -1,9 +1,9 @@
-// #LAYOUT# M65 KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Tape (normal) helper routine - byte storage when banking change is needed
-//
+;
+; Tape (normal) helper routine - byte storage when banking change is needed
+;
 
 
 #if CONFIG_TAPE_NORMAL

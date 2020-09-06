@@ -1,5 +1,5 @@
 
-// Dummy implementations - XXX to be replaced with real ones
+; Dummy implementations - XXX to be replaced with real ones
 
 dos_ACPTR:
 	nop

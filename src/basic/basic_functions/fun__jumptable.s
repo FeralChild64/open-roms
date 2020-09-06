@@ -1,15 +1,15 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Jumptable for BASIC V2 dialect functions
-//
+;
+; Jumptable for BASIC V2 dialect functions
+;
 
 
 .const function_list = List().add(
 
-	// $B4-$BF
+	; $B4-$BF
 
 	fun_sgn,
 	fun_int,
@@ -24,7 +24,7 @@
 	fun_cos,
 	fun_sin,
 
-	// $C0-$CA
+	; $C0-$CA
 
 	fun_tan,
 	fun_atn,
@@ -53,11 +53,11 @@ function_jumptable_hi:
 	put_jumptable_hi(function_list)
 
 
-#else // HAS_OPCODES_65C02
+#else ; HAS_OPCODES_65C02
 
 function_jumptable:
 
-	// Note: 65C02 has the page boundary vector bug fixed!
+	; Note: 65C02 has the page boundary vector bug fixed!
 	put_jumptable(function_list)
 
 #endif

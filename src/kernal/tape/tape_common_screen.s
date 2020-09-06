@@ -1,11 +1,11 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# M65 KERNAL_1 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# M65 KERNAL_1 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Handle screen (visible/blanked) + tape deck motor (on/off),
-// store/restore screen color
-//
+;
+; Handle screen (visible/blanked) + tape deck motor (on/off),
+; store/restore screen color
+;
 
 
 #if CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO
@@ -26,7 +26,7 @@ tape_screen_on_motor_off:
 #else
 
 	jsr M65_MODEGET
-	bcs_16 screen_on                   // MEGA65 native mode does not have badlines, no need to enable/disable screen
+	bcs_16 screen_on                   ; MEGA65 native mode does not have badlines, no need to enable/disable screen
 	rts
 
 #endif
@@ -34,14 +34,14 @@ tape_screen_on_motor_off:
 
 tape_screen_off_motor_on:
 
-	// We do not want interrupts and CHROUT reenables them
+	; We do not want interrupts and CHROUT reenables them
 	sei
 
-	// Clear keyboard buffer
+	; Clear keyboard buffer
 	lda #$00
 	sta NDX	
 
-	// Set screen color
+	; Set screen color
 	lda VIC_EXTCOL
 	sta COLSTORE
 
@@ -52,8 +52,8 @@ tape_screen_off_motor_on:
 #else
 
 	jsr M65_MODEGET
-	// XXX optimize this
-	bcs !+                    	       // MEGA65 native mode does not have badlines, no need to enable/disable screen
+	; XXX optimize this
+	bcs !+                    	       ; MEGA65 native mode does not have badlines, no need to enable/disable screen
 	jsr screen_off
 !:
 

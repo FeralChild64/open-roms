@@ -1,5 +1,5 @@
 
-// A vector table to integrate DOS with the MEGA65 Kernal
+; A vector table to integrate DOS with the MEGA65 Kernal
 
 .word dos_INIT
 .word dos_CHKUNIT

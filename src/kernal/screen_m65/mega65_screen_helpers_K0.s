@@ -1,16 +1,16 @@
-// #LAYOUT# M65 KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Set the INDX variable - logical row length
-//
+;
+; Set the INDX variable - logical row length
+;
 
-m65_screen_set_indx: // leaves value in .A
+m65_screen_set_indx: ; leaves value in .A
 
     lda M65_SCRWINMODE
     bmi !+
 
-    // Non-windowed mode
+    ; Non-windowed mode
 
     phx
 	ldx M65_SCRMODE
@@ -20,7 +20,7 @@ m65_screen_set_indx: // leaves value in .A
 	plx
 	rts
 !:
-	// Windowed mode
+	; Windowed mode
 
 	sec
 	lda M65_TXTWIN_X1

@@ -1,13 +1,13 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Helper routine for FRETOP handling
-//
+;
+; Helper routine for FRETOP handling
+;
 
 
-helper_FRETOP_up:                    // DSCPNT+0 - bytes to increment FRETO
+helper_FRETOP_up:                    ; DSCPNT+0 - bytes to increment FRETO
 
 	clc
 	lda FRETOP+0

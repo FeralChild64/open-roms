@@ -1,5 +1,5 @@
-// #LAYOUT# M65 *       #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# M65 *       #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
 
 #if SEGMENT_BASIC_0
@@ -16,7 +16,7 @@ cmd_sysinfo:
 
 	jsr print_return
 
-	// Print mode and build information
+	; Print mode and build information
 
 	ldx #IDX__STR_SI_HEADER
 	jsr print_packed_misc_str
@@ -44,11 +44,11 @@ cmd_sysinfo:
 
 	jsr print_return
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 print_sysinfo_banner:
 
-	// Print board type (information not accessible in native mode)
+	; Print board type (information not accessible in native mode)
 
 	ldx #IDX__STR_SI_HDR_HW
 	jsr print_packed_misc_str
@@ -73,11 +73,11 @@ print_sysinfo_banner:
 	jsr print_hex_byte
 !:
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 print_sysinfo_video:
 
-	// Print video system information
+	; Print video system information
 
 	ldx #IDX__STR_SI_HDR_VID
 	jsr print_packed_misc_str
@@ -106,7 +106,7 @@ print_sysinfo_video:
 !:
 	jsr print_packed_misc_str
 
-	// Print build featires information
+	; Print build featires information
 
 	ldx #IDX__STR_SI_FEATURES
 	jmp print_packed_misc_str

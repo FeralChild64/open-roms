@@ -1,21 +1,21 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Math package - multiplies FAC1 by FAC2
-//
-// Input:
-// - .A - must load FAC1 exponent ($61) beforehand to set the zero flag
-//
-// Note:
-// - load FAC2 after FAC1, or mimic the Kernals sign comparison (XXX do we need it?)
-//
-// See also:
-// - [CM64] Computes Mapping the Commodore 64 - page 113 XXX address does not match
-// - https://www.c64-wiki.com/wiki/Floating_point_arithmetic
-// - https://codebase64.org/doku.php?id=base:kernal_floating_point_mathematics
-//
+;
+; Math package - multiplies FAC1 by FAC2
+;
+; Input:
+; - .A - must load FAC1 exponent ($61) beforehand to set the zero flag
+;
+; Note:
+; - load FAC2 after FAC1, or mimic the Kernals sign comparison (XXX do we need it?)
+;
+; See also:
+; - [CM64] Computes Mapping the Commodore 64 - page 113 XXX address does not match
+; - https://www.c64-wiki.com/wiki/Floating_point_arithmetic
+; - https://codebase64.org/doku.php?id=base:kernal_floating_point_mathematics
+;
 
 set_FAC1_zero:
 
@@ -28,7 +28,7 @@ mul_FAC2_FAC1_done:
 
 mul_FAC2_FAC1:
 
-	// First handle special case of multiplying by 0
+	; First handle special case of multiplying by 0
 	
 	lda FAC1_exponent
 	beq mul_FAC2_FAC1_done
@@ -38,13 +38,13 @@ mul_FAC2_FAC1:
 	sta FAC1_exponent
 	beq mul_FAC2_FAC1_done
 !:
-	// Multiply signs
+	; Multiply signs
 	
 	lda FAC1_sign
 	eor FAC2_sign
 	sta FAC1_sign
 	
-	// Add the exponents (subtract the bias) - XXX can this be optimized somehow?
+	; Add the exponents (subtract the bias) - XXX can this be optimized somehow?
 
 	jsr muldiv_RESHO_set_0
 
@@ -55,7 +55,7 @@ mul_FAC2_FAC1:
 	jsr muldiv_RESHO_01_add_A
 
 	lda RESHO+0
-	sbc #$80                           // we need to correct double BIAS
+	sbc #$80                           ; we need to correct double BIAS
 	sta RESHO+0
 	bcs !+
 	lda RESHO+1
@@ -64,17 +64,17 @@ mul_FAC2_FAC1:
 	sta RESHO+1
 !:
 	lda RESHO+1
-	bne_16 set_FAC1_max                // overflow
+	bne_16 set_FAC1_max                ; overflow
 
 	lda RESHO+0
 	sta FAC1_exponent
 
-	// Multiply the mantissas
+	; Multiply the mantissas
 
 	jsr muldiv_RESHO_set_0
 	clc
 
-	// XXX maybe we should preserve .X on stack? this will not cost us too much
+	; XXX maybe we should preserve .X on stack? this will not cost us too much
 
 	lda FACOV
 	jsr mul_FAC2_FAC1_by_A
@@ -106,7 +106,7 @@ mul_FAC2_FAC1:
 	bcc !+
 	inc RESHO+0
 !:
-	// Copy RESHO to FAC1 mantissa
+	; Copy RESHO to FAC1 mantissa
 
 	lda RESHO+4
 	sta FACOV
@@ -119,12 +119,12 @@ mul_FAC2_FAC1:
 	lda RESHO+0
 	sta FAC1_mantissa+0
 
-	// Correct the exponent
+	; Correct the exponent
 
 	lda FAC1_exponent
 	clc
 	adc #$08
-	bcs_16 set_FAC1_max                // branch if overflow
+	bcs_16 set_FAC1_max                ; branch if overflow
 	sta FAC1_exponent
 	jmp normal_FAC1
 
@@ -133,7 +133,7 @@ mul_FAC2_FAC1_by_A:
 	beq mul_FAC2_FAC1_by_A_done
 	sta INDEX+3
 
-	// Multiply FAC2_mantissa+3
+	; Multiply FAC2_mantissa+3
 
 	lda FAC2_mantissa+3
 	jsr mul_FAC2_FAC1_8x8
@@ -150,7 +150,7 @@ mul_FAC2_FAC1_by_A:
 	bne !+
 	inc RESHO+0
 !:
-	// Multiply FAC2_mantissa+2
+	; Multiply FAC2_mantissa+2
 
 	lda FAC2_mantissa+2
 	jsr mul_FAC2_FAC1_8x8
@@ -165,7 +165,7 @@ mul_FAC2_FAC1_by_A:
 	bne !+
 	inc RESHO+0
 !:
-	// Multiply FAC2_mantissa+1
+	; Multiply FAC2_mantissa+1
 
 	lda FAC2_mantissa+1
 	jsr mul_FAC2_FAC1_8x8
@@ -178,7 +178,7 @@ mul_FAC2_FAC1_by_A:
 	bcc !+
 	inc RESHO+0
 !:
-	// Multiply FAC2_mantissa+0
+	; Multiply FAC2_mantissa+0
 
 	lda FAC2_mantissa+0
 	jsr mul_FAC2_FAC1_8x8
@@ -188,7 +188,7 @@ mul_FAC2_FAC1_by_A:
 	adc RESHO+0
 	sta RESHO+0
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 mul_FAC2_FAC1_by_A_done:
 

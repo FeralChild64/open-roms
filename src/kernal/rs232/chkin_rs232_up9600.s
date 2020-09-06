@@ -1,18 +1,18 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// RS-232 part of the CHKIN routine
-//
+;
+; RS-232 part of the CHKIN routine
+;
 
-// Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
+; Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
 
 
 #if CONFIG_RS232_UP9600
 
 
-// XXX get rid of the ENABLE/DISABLE mechanism
+; XXX get rid of the ENABLE/DISABLE mechanism
 
 
 chkin_rs232:
@@ -21,16 +21,16 @@ chkin_rs232:
 	lda XXX_UPFLAG
 	bne !+
 	pla
-	jmp $F20E // XXX
+	jmp $F20E ; XXX
 	
 !:
 	pla
-	jsr $F30F // XXX
+	jsr $F30F ; XXX
 	beq !+
-	jmp $F701 // XXX
+	jmp $F701 ; XXX
 
 !:
-	jsr $F31F // XXX
+	jsr $F31F ; XXX
 	lda FA
 	cmp #$02
 	beq !+
@@ -45,7 +45,7 @@ chkin_rs232:
 	rts
 
 chkin_rs232_nochkin
-	jmp $F219 // XXX
+	jmp $F219 ; XXX
 
 
-#endif // CONFIG_RS232_UP9600
+#endif ; CONFIG_RS232_UP9600

@@ -1,10 +1,10 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Fetches 8-bit unsigned integer
-//
+;
+; Fetches 8-bit unsigned integer
+;
 
 
 fetch_coma_uint8:
@@ -12,11 +12,11 @@ fetch_coma_uint8:
 	jsr injest_comma
 	bcs !+
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 fetch_uint8:
 
-	lda #IDX__EV2_0E                             // 'ILLEGAL QUANTITY ERROR'
+	lda #IDX__EV2_0E                             ; 'ILLEGAL QUANTITY ERROR'
 	jsr fetch_uint16
 	bcs !+
 	lda LINNUM+1

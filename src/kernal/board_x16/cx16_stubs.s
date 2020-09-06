@@ -1,7 +1,7 @@
-// #LAYOUT# X16 KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# X16 KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-// Stubs for Commander X16 support
+; Stubs for Commander X16 support
 
 
 scnkey_set_keytab:

@@ -1,9 +1,9 @@
-// #LAYOUT# M65 BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# M65 BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Proxies for calling MEGA65 segment BASIC_0 and KERNAL_0 routines from BASIC_1
-//
+;
+; Proxies for calling MEGA65 segment BASIC_0 and KERNAL_0 routines from BASIC_1
+;
 
 
 proxy_B1_peek_via_OLDTXT:
@@ -15,7 +15,7 @@ proxy_B1_peek_via_OLDTXT:
 #elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	jsr peek_under_roms_via_OLDTXT
 	cmp #$00
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
 #endif
 !:
@@ -26,7 +26,7 @@ proxy_B1_poke_via_OLDTXT:
 	jsr map_NORMAL
 #if CONFIG_MEMORY_MODEL_60K
 	.error "not implemented"
-#else // CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	sta (OLDTXT),y
 #endif
 !:

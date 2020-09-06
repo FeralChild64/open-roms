@@ -1,12 +1,12 @@
 
-//
-// Unit number handling. For detailed description see 'm65dos_bridge.s' file
-//
+;
+; Unit number handling. For detailed description see 'm65dos_bridge.s' file
+;
 
 
 dos_CHKUNIT:
 
-	// Check for magic string
+	; Check for magic string
 
 	pha
 	phx
@@ -22,7 +22,7 @@ dos_CHKUNIT:
 	plx
 	pla
 
-	// Check for unit
+	; Check for unit
 
 	cmp UNIT_SDCARD
 	beq dos_CHKUNIT_sdcard
@@ -39,14 +39,14 @@ dos_CHKUNIT_sdcard:
 	lda #$00
 	skip_2_bytes_trash_nvz
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 dos_CHKUNIT_floppy:
 
 	lda #$01
 	skip_2_bytes_trash_nvz
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 dos_CHKUNIT_ramdisk:
 

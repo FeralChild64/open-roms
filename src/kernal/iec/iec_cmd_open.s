@@ -1,18 +1,18 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Kernal internal IEC routine
-//
-// - https://www.pagetable.com/?p=1031, https://github.com/mist64/cbmbus_doc
-//
+;
+; Kernal internal IEC routine
+;
+; - https://www.pagetable.com/?p=1031, https://github.com/mist64/cbmbus_doc
+;
 
 
 #if CONFIG_IEC
 
 
-iec_cmd_open: // similar to TKSA, but without turnaround
+iec_cmd_open: ; similar to TKSA, but without turnaround
 
 	jsr iec_check_channel_openclose
 	bcc !+
@@ -23,7 +23,7 @@ iec_cmd_open: // similar to TKSA, but without turnaround
 #if ROM_LAYOUT_M65
 
 	jsr m65dos_check
-	bcc_16 m65dos_second                 // branch if device is handeld by internal DOS
+	bcc_16 m65dos_second                 ; branch if device is handeld by internal DOS
 
 #endif
 
@@ -37,7 +37,7 @@ iec_cmd_open: // similar to TKSA, but without turnaround
 
 	sta TBTCNT
 	jsr iec_tx_command
-	bcs !+ // branch if error
+	bcs !+ ; branch if error
 
 	jsr dolphindos_detect
 
@@ -45,34 +45,34 @@ iec_cmd_open: // similar to TKSA, but without turnaround
 
 #else
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 #endif
 
-common_open_close_unlsn_second: // common part of several commands
+common_open_close_unlsn_second: ; common part of several commands
 
 	sta TBTCNT
 	jsr iec_tx_command
-	bcs !+ // branch if error
+	bcs !+ ; branch if error
 	jmp iec_tx_command_finalize
 !:
 	rts
 
 iec_check_channel_openclose:
-	// Due to OPEN/CLOSE/TKSA/SECOND command encoding (see https://www.pagetable.com/?p=1031),
-	// allowed channels are 0-15; report error if out of range
+	; Due to OPEN/CLOSE/TKSA/SECOND command encoding (see https://www.pagetable.com/?p=1031),
+	; allowed channels are 0-15; report error if out of range
 	cmp #$10
 	bcc !+ 
-	// Workaround to allow reading executable files and disk directory
-	// using OPEN routine - see https://www.pagetable.com/?p=273 for
-	// example usage
+	; Workaround to allow reading executable files and disk directory
+	; using OPEN routine - see https://www.pagetable.com/?p=273 for
+	; example usage
 	cmp #$60
 	beq !+
-	sec // mark unsuitable channel number
+	sec ; mark unsuitable channel number
 	rts
 !:
-	clc // mark suitable channel number
+	clc ; mark suitable channel number
 	rts
 
 
-#endif // CONFIG_IEC
+#endif ; CONFIG_IEC

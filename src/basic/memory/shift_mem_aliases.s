@@ -1,7 +1,7 @@
 
-//
-// Aliases for memory locations for memory block copy routines
-//
+;
+; Aliases for memory locations for memory block copy routines
+;
 
 .label memmove__src    = INDEX+2
 .label memmove__dst    = RESHO+0

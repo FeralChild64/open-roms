@@ -1,6 +1,6 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
 
 #if CONFIG_TAPE_WEDGE
@@ -8,23 +8,23 @@
 
 wedge_tape:
 
-	// Prepare for execution
+	; Prepare for execution
 
 	jsr prepare_direct_execution
 	jsr fetch_character
 
-	// First character is a 'left arrow', we can ignore it - determine the command
+	; First character is a 'left arrow', we can ignore it - determine the command
 
 	jsr fetch_character
 
-	cmp #$4C                           // 'L'
+	cmp #$4C                           ; 'L'
 	beq wedge_arrow_L
-	cmp #$4D                           // 'M'
+	cmp #$4D                           ; 'M'
 	beq wedge_arrow_M
 
 #if CONFIG_TAPE_HEAD_ALIGN
 
-	cmp #$48                           // 'H'
+	cmp #$48                           ; 'H'
 	beq wedge_arrow_H
 
 #endif
@@ -35,7 +35,7 @@ wedge_tape:
 
 wedge_arrow_H:
 
-	// Make sure the syntax is correct
+	; Make sure the syntax is correct
 
 	jsr fetch_character_skip_spaces
 
@@ -53,7 +53,7 @@ wedge_arrow_L:
 
 	jsr wedge_tape_prepare_load
 
-	// Perform loading
+	; Perform loading
 
 	jmp cmd_load_got_params
 
@@ -61,11 +61,11 @@ wedge_arrow_M:
 
 	jsr wedge_tape_prepare_load
 	ldy #$00
-	sty SA                             // for MERGE secondary address has to be 0!
+	sty SA                             ; for MERGE secondary address has to be 0!
 
-	// Perform merging
+	; Perform merging
 
 	jmp cmd_merge_got_params
 
 
-#endif // CONFIG_TAPE_WEDGE
+#endif ; CONFIG_TAPE_WEDGE

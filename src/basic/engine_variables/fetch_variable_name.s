@@ -1,20 +1,20 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Carry set = failure, not recognized variable name
-// sets FOUR6 and DIMFLG ($FF for array, $00 for regular variable)
+;
+; Carry set = failure, not recognized variable name
+; sets FOUR6 and DIMFLG ($FF for array, $00 for regular variable)
 
 
 fetch_variable_name:
 
-	// Set default second character and variable type
+	; Set default second character and variable type
 
 	lda #$00
 	sta VARNAM+1
 
-	// Fetch the first character of variable name
+	; Fetch the first character of variable name
 
 	jsr fetch_character_skip_spaces
 	jsr is_AZ
@@ -31,7 +31,7 @@ fetch_variable_name:
 !:
 	sta VARNAM+0
 
-	// Fetch the (optional) second character
+	; Fetch the (optional) second character
 
 	jsr fetch_character
 	jsr is_09_AZ
@@ -39,25 +39,25 @@ fetch_variable_name:
 
 	sta VARNAM+1
 
-	// Fetch the remaining variable characters - ignore them
+	; Fetch the remaining variable characters - ignore them
 !:
 	jsr fetch_character
 	jsr is_09_AZ
 	bcc !-
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 fetch_variable_check_type:
 
-	// Encode variable type within name, as documented in:
-	// - https://sites.google.com/site/h2obsession/CBM/basic/variable-format
+	; Encode variable type within name, as documented in:
+	; - https://sites.google.com/site/h2obsession/CBM/basic/variable-format
 
-	cmp #$24                           // '$'
+	cmp #$24                           ; '$'
 	beq fetch_variable_type_string
-	cmp #$25                           // '%'
+	cmp #$25                           ; '%'
 	beq fetch_variable_type_integer
 
-	// FALLTORUGH
+	; FALLTORUGH
 
 fetch_variable_type_float:
 
@@ -84,7 +84,7 @@ fetch_variable_type_integer:
 	sta VARNAM+0
 
 	lda #$00
-	beq !+                             // branch always
+	beq !+                             ; branch always
 
 fetch_variable_type_string:
 
@@ -98,15 +98,15 @@ fetch_variable_type_string:
 	ora #$80
 	sta VARNAM+1
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 fetch_variable_name_check_array:
 
 	jsr fetch_character_skip_spaces
-	cmp #$28                          // '('
+	cmp #$28                          ; '('
 	beq !+
 
-	// This is not an array
+	; This is not an array
 
 #if !HAS_OPCODES_65CE02
 	jsr unconsume_character
@@ -117,7 +117,7 @@ fetch_variable_name_check_array:
 	lda #$00
 	skip_2_bytes_trash_nvz
 !:
-	// This is an array
+	; This is an array
 
 	lda #$FF
 	sta DIMFLG

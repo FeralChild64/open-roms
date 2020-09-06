@@ -1,25 +1,25 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Refresh back-pointer to arrays
-//
+;
+; Refresh back-pointer to arrays
+;
 
 helper_array_refresh_bptrs:
 
-	// Refresh back-pointers to arrays
+	; Refresh back-pointers to arrays
 
 	lda ARYTAB+0
 	sta INDEX+0
 	lda ARYTAB+1
 	sta INDEX+1
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 helper_array_refresh_bptrs_loop_1:
 
-	// Check if we reached end of arays
+	; Check if we reached end of arays
 
 	lda INDEX+1
 	cmp STREND+1
@@ -29,7 +29,7 @@ helper_array_refresh_bptrs_loop_1:
 	bne !+
 	rts
 !:
-	// Calculate start address of the next array, store it in INDEX+2/+3
+	; Calculate start address of the next array, store it in INDEX+2/+3
 
 #if CONFIG_MEMORY_MODEL_60K
 
@@ -48,7 +48,7 @@ helper_array_refresh_bptrs_loop_1:
 	adc INDEX+1
 	sta INDEX+3
 
-	// Check if the current array is a string - if not, go to next array
+	; Check if the current array is a string - if not, go to next array
 
 	ldy #$00
 	jsr peek_under_roms
@@ -59,7 +59,7 @@ helper_array_refresh_bptrs_loop_1:
 	and #$80
 	bpl helper_array_refresh_bptrs_loop_next
 
-	// It's a string array - scroll INDEX+0/+1 to the first descriptor
+	; It's a string array - scroll INDEX+0/+1 to the first descriptor
 
 	ldy #$04
 	jsr peek_under_roms
@@ -73,7 +73,7 @@ helper_array_refresh_bptrs_loop_1:
 	jsr helper_array_refresh_bptrs_part1
 	bcs helper_array_refresh_bptrs_loop_next
 
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 
 	ldy #$02
 
@@ -86,7 +86,7 @@ helper_array_refresh_bptrs_loop_1:
 	adc INDEX+1
 	sta INDEX+3
 
-	// Check if the current array is a string - if not, go to next array
+	; Check if the current array is a string - if not, go to next array
 
 	ldy #$00
 	lda (INDEX+0), y
@@ -95,7 +95,7 @@ helper_array_refresh_bptrs_loop_1:
 	lda (INDEX+0), y
 	bpl helper_array_refresh_bptrs_loop_next
 
-	// It's a string array - scroll INDEX+0/+1 to the first descriptor
+	; It's a string array - scroll INDEX+0/+1 to the first descriptor
 
 	ldy #$04
 	lda (INDEX+0), y
@@ -106,11 +106,11 @@ helper_array_refresh_bptrs_loop_1:
 
 #endif
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 helper_array_refresh_bptrs_loop_2:
 
-	// Recreate the back-pointer
+	; Recreate the back-pointer
 
 #if CONFIG_MEMORY_MODEL_60K
 
@@ -118,7 +118,7 @@ helper_array_refresh_bptrs_loop_2:
 
 	ldy #$00
 	jsr peek_under_roms
-	beq !+                                       // skip empty strings
+	beq !+                                       ; skip empty strings
 
 	iny
 	sta INDEX+5
@@ -146,40 +146,40 @@ helper_array_refresh_bptrs_loop_2:
 
 	jsr helper_array_refresh_bptrs_part2
 
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 
 	ldy #$00
-	lda (INDEX+0), y // XXX
-	beq !+                                       // skip empty strings
+	lda (INDEX+0), y ; XXX
+	beq !+                                       ; skip empty strings
 
 	iny
 	clc
-	adc (INDEX+0), y // XXX
+	adc (INDEX+0), y ; XXX
 	sta INDEX+4
 	iny
 	lda #$00
-	adc (INDEX+0), y // XXX
+	adc (INDEX+0), y ; XXX
 	sta INDEX+5
 
 	ldy #$00
 	lda INDEX+0
-	sta (INDEX+4), y // XXX
+	sta (INDEX+4), y ; XXX
 	iny
 	lda INDEX+1
-	sta (INDEX+4), y // XXX
+	sta (INDEX+4), y ; XXX
 !:
 #endif
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 helper_array_refresh_bptrs_skip:
 
-	// Shift INDEX+0/+1 to the next string
+	; Shift INDEX+0/+1 to the next string
 
 	lda #$03
 	jsr helper_INDEX_up_A
 
-	// Check if this is the last string of the array
+	; Check if this is the last string of the array
 
 	lda INDEX+0
 	cmp INDEX+2

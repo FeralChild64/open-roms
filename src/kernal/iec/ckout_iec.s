@@ -1,10 +1,10 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// IEC part of the CKOUT routine
-//
+;
+; IEC part of the CKOUT routine
+;
 
 
 #if CONFIG_IEC
@@ -12,12 +12,12 @@
 
 ckout_iec:
 
-	// Fail if the file is open for reading (secondary address 0)
+	; Fail if the file is open for reading (secondary address 0)
 	
 	lda LAT, Y
 	beq_16 ckout_file_not_output
 
-	// Send LISTEN + SECOND first
+	; Send LISTEN + SECOND first
 	lda FAT,Y
 
 	jsr LISTEN
@@ -31,4 +31,4 @@ ckout_iec:
 	jmp ckout_set_device
 
 
-#endif // CONFIG_IEC
+#endif ; CONFIG_IEC

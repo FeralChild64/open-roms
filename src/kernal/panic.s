@@ -1,32 +1,32 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Something terrible happened - show the panic screen
-//
+;
+; Something terrible happened - show the panic screen
+;
 
 
 #if CONFIG_PANIC_SCREEN
 
 panic:
 
-	// Store error code on stack
+	; Store error code on stack
 
 	pha
 
-	// Reinitialize the hardware
+	; Reinitialize the hardware
 
 	sei
 	jsr IOINIT
 
 #if ROM_LAYOUT_M65
 
-	// Make sure we are in legacy mode with normal memory mapping
+	; Make sure we are in legacy mode with normal memory mapping
 
 	jsr map_NORMAL
 	sec
-	jsr M65_MODESET          // switch to legacy C64 compatibility mode
+	jsr M65_MODESET          ; switch to legacy C64 compatibility mode
 	sei
 
 #else
@@ -37,7 +37,7 @@ panic:
 
 	jsr clear_screen
 
-	// Disable NMIs
+	; Disable NMIs
 
 #if CONFIG_TAPE_HEAD_ALIGN
 
@@ -46,11 +46,11 @@ panic:
 #else
 
 	lda #$00
-	sta NMINV + 1            // our routine does not allow zeropage vectors
+	sta NMINV + 1            ; our routine does not allow zeropage vectors
 
 #endif
 
-	// Display KERNAL PANIC message
+	; Display KERNAL PANIC message
 
 	ldx #$14
 	ldy #$0E
@@ -59,7 +59,7 @@ panic:
 	ldx #__MSG_KERNAL_PANIC
 	jsr print_kernal_message
 
-	// Display error code and message (if known)
+	; Display error code and message (if known)
 
 	pla
 	beq kernal_panic_infinite_loop
@@ -80,7 +80,7 @@ panic:
 	ldx #__MSG_KERNAL_PANIC_ROM_MISMATCH
 	jsr print_kernal_message
 
-	// Display some raster effect in the infinitew loop
+	; Display some raster effect in the infinitew loop
 
 kernal_panic_infinite_loop:
 	ldx #$00
@@ -94,6 +94,6 @@ kernal_panic_infinite_loop:
 
 	nop
 
-	bne kernal_panic_infinite_loop // branch always
+	bne kernal_panic_infinite_loop ; branch always
 
-#endif // CONFIG_PANIC_SCREEN
+#endif ; CONFIG_PANIC_SCREEN

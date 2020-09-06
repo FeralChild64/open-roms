@@ -1,12 +1,12 @@
 
-	// Error codes for 'panic' pseudocommand
+	; Error codes for 'panic' pseudocommand
 
 	.const P_ERR_NONE                  = $00
-	.const P_ERR_ROM_MISMATCH          = $01 // this value has to be stable as long as possible
+	.const P_ERR_ROM_MISMATCH          = $01 ; this value has to be stable as long as possible
 
 
-	// Kernal error codes - returned in the A register
-	// Described in 'Commodore 64 Programmer's Reference Guide', page 306
+	; Kernal error codes - returned in the A register
+	; Described in 'Commodore 64 Programmer's Reference Guide', page 306
 
 	.const K_ERR_ROUTINE_TERMINATED     = $00
 	.const K_ERR_TOO_MANY_OPEN_FILES    = $01
@@ -20,15 +20,15 @@
 	.const K_ERR_ILLEGAL_DEVICE_NUMBER  = $09
 	.const K_ERR_TOP_MEM_RS232          = $F0
 
-	// Kernal status codes for READST routine (IOSTATUS)
-	// Described in 'Commodore 64 Programmer's Reference Guide', page 292
+	; Kernal status codes for READST routine (IOSTATUS)
+	; Described in 'Commodore 64 Programmer's Reference Guide', page 292
 
-	// For IEC devices
+	; For IEC devices
 	.const K_STS_TIMEOUT_WRITE          = $01
 	.const K_STS_TIMEOUT_READ           = $02
 	.const K_STS_EOI                    = $40
 	.const K_STS_DEVICE_NOT_FOUND       = $80
-	// For tape deck
+	; For tape deck
 	.const K_STS_SHORT_BLOCK            = $04
 	.const K_STS_LONG_BLOCK             = $08
 	.const K_STS_READ_ERROR             = $10
@@ -36,7 +36,7 @@
 	.const K_STS_END_OF_FILE            = $40
 	.const K_STS_END_OF_TAPE            = $80
 
-	// BASIC error codes, taken from http://sta.c64.org/cbm64baserr.html
+	; BASIC error codes, taken from http://sta.c64.org/cbm64baserr.html
 	.const B_ERR_TOO_MANY_FILES         = $01
 	.const B_ERR_FILE_OPEN              = $02
 	.const B_ERR_FILE_NOT_OPEN          = $03

@@ -1,12 +1,12 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// RS-232 IRQ handler part
-//
+;
+; RS-232 IRQ handler part
+;
 
-// Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
+; Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
 
 
 #if CONFIG_RS232_UP9600
@@ -14,16 +14,16 @@
 
 up9600_irq:
 
-	lda CIA1_ICR // $DC0D
+	lda CIA1_ICR ; $DC0D
 
 	lsr
-	lsr                                // move bit 1 (timer B flag) into Carry
-	and #$02                           // test SDR (shift register) status
+	lsr                                ; move bit 1 (timer B flag) into Carry
+	and #$02                           ; test SDR (shift register) status
 
 	beq up9600_irq_continue
 
 	ldx RINONE
-	beq !+                             // skip if not waiting for empty SDR
+	beq !+                             ; skip if not waiting for empty SDR
 	dex
 	stx RINONE
 !:
@@ -40,4 +40,4 @@ up9600_irq_end:
 	jmp return_from_interrupt
 
 
-#endif // CONFIG_RS232_UP9600
+#endif ; CONFIG_RS232_UP9600

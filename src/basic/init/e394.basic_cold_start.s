@@ -1,16 +1,16 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
 
-// BASIC Cold start entry point
-// Computes Mapping the 64 p211
+; BASIC Cold start entry point
+; Computes Mapping the 64 p211
 
 basic_cold_start:
 
-#if ROM_LAYOUT_STD // skip on non-sgtandard ROM layouts - they produce single image nevertheless
+#if ROM_LAYOUT_STD ; skip on non-sgtandard ROM layouts - they produce single image nevertheless
 
-	// Before doing anything, check if we have a compatible BASIC/KERNAL pair
+	; Before doing anything, check if we have a compatible BASIC/KERNAL pair
 
 	ldy #(__rom_revision_basic_end - rom_revision_basic - 1)
 !:
@@ -26,6 +26,6 @@ basic_cold_start:
 
 #endif
 
-	// Remaining part would not fit here
+	; Remaining part would not fit here
 
 	jmp basic_cold_start_internal

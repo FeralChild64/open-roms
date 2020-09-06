@@ -1,6 +1,6 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
 
 #if CONFIG_IEC
@@ -13,4 +13,4 @@ iec_wait_for_clk_release:
 	rts
 
 
-#endif // CONFIG_IEC
+#endif ; CONFIG_IEC

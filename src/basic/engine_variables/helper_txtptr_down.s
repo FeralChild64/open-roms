@@ -1,13 +1,13 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Helper routine, used by garbage collector
-//
+;
+; Helper routine, used by garbage collector
+;
 
 
-helper_TXTPTR_down_A:                  // .A - bytes to decrease TXTPTR, uses DSCPNT+0
+helper_TXTPTR_down_A:                  ; .A - bytes to decrease TXTPTR, uses DSCPNT+0
 
 	sta DSCPNT+0
 

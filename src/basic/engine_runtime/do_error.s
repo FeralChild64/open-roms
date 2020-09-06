@@ -1,61 +1,61 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# M65 BASIC_1 #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# M65 BASIC_1 #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-// As many errors are triggered from many places in the BASIC
-// interprettor, it is important to have an efficicent means of
-// calling them.
-// LDX #$nn / jmp do_basic_error
-// is the simplest, but takes 5 bytes.
-// Having a direct JMP address for each error is preferable, as
-// it reduces the overhead to 3 bytes, but at the cost of having
-// a jump table of some sort. The .byte $2C method can be used
-// to have a set of addresses that each execute a different
-// LDX #$nn command, reducing the cost of the jump table to 3
-// bytes per error number.
-// But we can do better with a bit of scullduggery and carnal
-// knowledge of ZP usage.
-// The INC $nn opcode is $E6. ZP location $E6 is one of the screen
-// link addresses.  In the original KERNAL, the lower bits of those
-// addresses have meaning, but in our KERNAL, we ignore them, and just
-// have them all zeroes.  So.... We can have a sequence of $E6 bytes,
-// and know exactly how many of them have been executed, by checking
-// the value of $E6.  Then all we need to worry about is if an odd
-// number is required, then we have to have an exit that has a $E6
-// opcode with some other address as target, but where the byte value
-// of that argument can be safely executed as a CPU instruction.
-// NOP = $EA is the obvious choice, as if used as an argument to
-// $E6 will increment location $EA, which is another of the screen
-// link addresses.
+; As many errors are triggered from many places in the BASIC
+; interprettor, it is important to have an efficicent means of
+; calling them.
+; LDX #$nn / jmp do_basic_error
+; is the simplest, but takes 5 bytes.
+; Having a direct JMP address for each error is preferable, as
+; it reduces the overhead to 3 bytes, but at the cost of having
+; a jump table of some sort. The .byte $2C method can be used
+; to have a set of addresses that each execute a different
+; LDX #$nn command, reducing the cost of the jump table to 3
+; bytes per error number.
+; But we can do better with a bit of scullduggery and carnal
+; knowledge of ZP usage.
+; The INC $nn opcode is $E6. ZP location $E6 is one of the screen
+; link addresses.  In the original KERNAL, the lower bits of those
+; addresses have meaning, but in our KERNAL, we ignore them, and just
+; have them all zeroes.  So.... We can have a sequence of $E6 bytes,
+; and know exactly how many of them have been executed, by checking
+; the value of $E6.  Then all we need to worry about is if an odd
+; number is required, then we have to have an exit that has a $E6
+; opcode with some other address as target, but where the byte value
+; of that argument can be safely executed as a CPU instruction.
+; NOP = $EA is the obvious choice, as if used as an argument to
+; $E6 will increment location $EA, which is another of the screen
+; link addresses.
 
-// This gives a total overhead of 18 bytes + 1 byte per error
-// message.  This compares favourably to the 3 bytes per error
-// message that the $2C method would result in.
+; This gives a total overhead of 18 bytes + 1 byte per error
+; message.  This compares favourably to the 3 bytes per error
+; message that the $2C method would result in.
 
 
-	// Error messages reported by KERNAL
+	; Error messages reported by KERNAL
 
-do_kernal_error:                       // .A = KERNAL error code, also almost matches BASIC error codes
+do_kernal_error:                       ; .A = KERNAL error code, also almost matches BASIC error codes
 
-	// Convert to BASIC error code
+	; Convert to BASIC error code
 
 	tax
-	beq do_BREAK_error                 // XXX is 0 really a proper error code?
+	beq do_BREAK_error                 ; XXX is 0 really a proper error code?
 
 	dex
 #if (ROM_LAYOUT_M65 && SEGMENT_BASIC_1)
 	jmp do_basic_error
 #else
-	bpl do_basic_error                 // branch always
+	bpl do_basic_error                 ; branch always
 #endif
 
-	// Error messages specific to Open ROMs BASIC dialect
+	; Error messages specific to Open ROMs BASIC dialect
 
 do_MEMORY_CORRUPT_error:
 	.byte $E6
 
-	// Error messages compatible with CBM BASIC V7 dialect
+	; Error messages compatible with CBM BASIC V7 dialect
 
 do_FILE_READ_error:
 	.byte $E6
@@ -80,7 +80,7 @@ do_LOOP_NOT_FOUND_error:
 do_CANT_RESUME_error:
 	.byte $E6
 
-	// Error messages compatible with CBM BASIC V2 dialect
+	; Error messages compatible with CBM BASIC V2 dialect
 
 do_BREAK_error:
 	.byte $E6
@@ -149,40 +149,40 @@ do_TO_MANY_FILES_error:
 
 #else
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 do_error_fetch:
 
-	// Now get the error id and restore $E6 to its correct value
+	; Now get the error id and restore $E6 to its correct value
 	
 	lda $E6
 	pha
 	and #$80
 	sta $E6
 	pla
-	// $E6 has even part
+	; $E6 has even part
 	asl
 	ora $EA
 	and #$7F
 	tax
 
-	// Restore $EA to correct value in case the NOP above is used
-	// as an argument to the preceeding INC $nn (opcode $E6).
+	; Restore $EA to correct value in case the NOP above is used
+	; as an argument to the preceeding INC $nn (opcode $E6).
 	
 	lda $EA
 	and #$80
 	sta $EA
 
-	// FALLTHROUGH
+	; FALLTHROUGH
 
-do_basic_error:                        // error code in .X
+do_basic_error:                        ; error code in .X
 
 #if ROM_LAYOUT_M65
-	// Make sure we are back with normal memory map
+	; Make sure we are back with normal memory map
 	jsr map_NORMAL
 #endif
 
-	// Clear all temporary variables, print "?"
+	; Clear all temporary variables, print "?"
 	
 	phx_trash_a
 	jsr tmpstr_free_all
@@ -190,20 +190,20 @@ do_basic_error:                        // error code in .X
 	jsr print_packed_misc_str
 	plx_trash_a
 
-	// Error message text + " ERROR"
+	; Error message text + " ERROR"
 
 	jsr print_packed_error
 
 	ldx #IDX__STR_ERROR
 	jsr print_packed_misc_str
 
-	// Check if direct mode
+	; Check if direct mode
 
 	lda CURLIN+1
 	cmp #$FF
 	beq !+
 
-	// We were in a program, so show IN <line>
+	; We were in a program, so show IN <line>
 
 	ldx #IDX__STR_IN
 	jsr print_packed_misc_str
@@ -212,11 +212,11 @@ do_basic_error:                        // error code in .X
 	ldx CURLIN+0
 	jsr print_integer
 !:
-	// Reset stack, and go back to main loop
+	; Reset stack, and go back to main loop
 
 	ldx #$FE
 	txs
 
 	jmp shell_main_loop
 
-#endif // ROM layout
+#endif ; ROM layout

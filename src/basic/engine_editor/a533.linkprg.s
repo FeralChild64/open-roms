@@ -1,15 +1,15 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# M65 BASIC_0 #TAKE
-// #LAYOUT# M65 BASIC_1 #TAKE-FLOAT
-// #LAYOUT# X16 BASIC_0 #TAKE-OFFSET 2000
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# M65 BASIC_0 #TAKE
+;; #LAYOUT# M65 BASIC_1 #TAKE-FLOAT
+;; #LAYOUT# X16 BASIC_0 #TAKE-OFFSET 2000
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Well-known BASIC routine, described in:
-//
-// - [CM64] Computes Mapping the Commodore 64 - page 95
-// - https://www.lemon64.com/forum/viewtopic.php?t=64721&sid=bc400a5a6d404f8f092e4d32a92f5de7
-//
+;
+; Well-known BASIC routine, described in:
+;
+; - [CM64] Computes Mapping the Commodore 64 - page 95
+; - https://www.lemon64.com/forum/viewtopic.php?t=64721&sid=bc400a5a6d404f8f092e4d32a92f5de7
+;
 
 LINKPRG:
 
@@ -21,11 +21,11 @@ LINKPRG:
 
 #else
 
-	// Start by getting pointer to the first line
+	; Start by getting pointer to the first line
 	jsr init_oldtxt
 
 linkprg_loop:
-	// Is the pointer to the end of the program
+	; Is the pointer to the end of the program
 	ldy #1
 
 #if ROM_LAYOUT_M65
@@ -37,17 +37,17 @@ linkprg_loop:
 #elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	jsr peek_under_roms_via_OLDTXT
 	cmp #$00
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
 #endif
 
 	bne !+
 
-	// End of program
+	; End of program
 	rts
 !:
-	// Now search forward to find the end of the line
-	// Skip forward pointer and line number
+	; Now search forward to find the end of the line
+	; Skip forward pointer and line number
 	ldy #4
 
 linkprg_end_of_line_search:
@@ -59,28 +59,28 @@ linkprg_end_of_line_search:
 	jsr peek_under_roms
 #elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	jsr peek_under_roms_via_OLDTXT
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
 #endif
 
 	cmp #$00
 	beq !+
 
-	// Not yet end of line
+	; Not yet end of line
 	iny
 	bne linkprg_end_of_line_search
 
-	// line too long
+	; line too long
 	jmp do_STRING_TOO_LONG_error
 
 !:
-	// Found end of line, so update pointer
+	; Found end of line, so update pointer
 
-	// First, skip over the $00 char
+	; First, skip over the $00 char
 	iny
 
-	// Now overwrite the pointer (carefully)
-	//
+	; Now overwrite the pointer (carefully)
+	;
 	tya
 	clc
 	adc OLDTXT+0
@@ -117,4 +117,4 @@ linkprg_end_of_line_search:
 	jmp linkprg_loop
 
 
-#endif // ROM layout
+#endif ; ROM layout

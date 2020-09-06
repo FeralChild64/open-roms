@@ -1,16 +1,16 @@
-// #LAYOUT# M65 BASIC_0 #TAKE-FLOAT
-// #LAYOUT# M65 BASIC_1 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# M65 BASIC_0 #TAKE-FLOAT
+;; #LAYOUT# M65 BASIC_1 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Definitions for communication with MEGA65 segment BASIC_1 from BASIC_0
-//
+;
+; Definitions for communication with MEGA65 segment BASIC_1 from BASIC_0
+;
 
 
 #if SEGMENT_BASIC_0
 
 
-	// Label definitions
+	; Label definitions
 
 	.label VB1__INITMSG                  = $4000 + 2 * 0
 	.label VB1__INITMSG_autoswitch       = $4000 + 2 * 1
@@ -33,7 +33,7 @@
 
 #else
 
-	// Vector table (Open ROMs private!)
+	; Vector table (Open ROMs private!)
 
 	.word INITMSG
 	.word INITMSG_autoswitch

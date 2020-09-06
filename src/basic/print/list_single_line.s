@@ -1,7 +1,8 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# M65 *       #TAKE
-// #LAYOUT# X16 BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# M65 *       #TAKE
+;; #LAYOUT# X16 BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
+
 
 list_single_line:
 
@@ -13,7 +14,7 @@ list_single_line:
 
 #else
 
-	// Print line number - in a new line
+	; Print line number - in a new line
 	jsr print_return
 	ldy #3
 
@@ -23,7 +24,7 @@ list_single_line:
 	jsr peek_under_roms
 #elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	jsr peek_under_roms_via_OLDTXT
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
 #endif
 
@@ -36,7 +37,7 @@ list_single_line:
 	jsr peek_under_roms
 #elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	jsr peek_under_roms_via_OLDTXT
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
 #endif
 
@@ -45,8 +46,8 @@ list_single_line:
 	jsr print_integer
 	jsr print_space
 
-	// Iterate through printing out the line
-	// contents
+	; Iterate through printing out the line
+	; contents
 	lda #0
 	sta QTSW
 	
@@ -63,12 +64,12 @@ list_print_loop:
 #elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	jsr peek_under_roms_via_OLDTXT
 	cmp #$00
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
 #endif
 
 	bne !+
-	rts                                          // end of line
+	rts                                          ; end of line
 !:
 	cmp #$22
 	bne list_not_quote
@@ -80,14 +81,14 @@ list_print_loop:
 
 list_not_quote:	
 
-	// Check quote mode, and display as literal if required
+	; Check quote mode, and display as literal if required
 	ldx QTSW
 	bne list_is_literal
 	
 	cmp #$FF
 	beq list_is_pi
 
-	// Check for extended BASIC tokens
+	; Check for extended BASIC tokens
 	cmp #$01
 	beq list_display_token_01
 #if !HAS_SMALL_BASIC
@@ -99,71 +100,71 @@ list_not_quote:
 	beq list_display_token_03
 #endif
 
-	// Check for literals
+	; Check for literals
 	cmp #$7F
 	bcc list_is_literal
 
-	// Display a token - V2 dialect
+	; Display a token - V2 dialect
 
 list_display_token_V2:
 
-	// Save registers
+	; Save registers
 	tax
 	pha
 	phy_trash_a
 
-	// Subtract $80 from token to get offset in token list
+	; Subtract $80 from token to get offset in token list
 	txa
 	and #$7F
 	tax
 
-	// Check if token is known
+	; Check if token is known
 	cpx #TK__MAXTOKEN_keywords_V2
 	bcs list_display_unknown_token
 
-	// Now ask for it to be printed
+	; Now ask for it to be printed
 	jsr print_packed_keyword_V2
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 list_token_displayed:
 
-	// Restore registers
+	; Restore registers
 	ply_trash_a
 	pla
 
 	cmp #$8F
 	bne list_not_rem
-	// REM command locks quote flag on until the end of the line, allowing
-	// funny characters in REM statements without problem.
-	sta QTSW    // Any value other than $00 or $FF will lock quote mode on, so the token value of REM is fine here
+	; REM command locks quote flag on until the end of the line, allowing
+	; funny characters in REM statements without problem.
+	sta QTSW    ; Any value other than $00 or $FF will lock quote mode on, so the token value of REM is fine here
 	
-	// FALLTHROUGH
+	; FALLTHROUGH
 
 list_not_rem:		
 	
 	iny
-	bne list_print_loop // branch always
+	bne list_print_loop ; branch always
 
 list_is_pi:
 
 	lda #$7E
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 list_is_literal:
 
 	pha
 	bit QTSW
-	bpl list_is_literal_known                    // in quote mode every character is allowed
+	bpl list_is_literal_known                    ; in quote mode every character is allowed
 	and #$7F
 	cmp #$12
-	beq list_is_literal_known                    // enabling/disabling reverse mode is allowed
+	beq list_is_literal_known                    ; enabling/disabling reverse mode is allowed
 	and #%01100000
 	bne list_is_literal_known
 	pla
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 list_is_unknown:
 
@@ -183,7 +184,7 @@ list_is_literal_known:
 	iny
 	bne_16 list_print_loop
 	
-	rts                                          // end of line
+	rts                                          ; end of line
 
 list_display_unknown_token:
 
@@ -194,38 +195,38 @@ list_display_unknown_token:
 
 list_display_token_01:
 
-	// Display a 2-byte token - for extended BASIC
+	; Display a 2-byte token - for extended BASIC
 	jsr list_fetch_subtoken
 
-	// Check if token is known
+	; Check if token is known
 	cpx #TK__MAXTOKEN_keywords_01
 	bcs list_is_unknown
 
-	// Now ask for it to be printed
+	; Now ask for it to be printed
 	phy_trash_a
 	jsr print_packed_keyword_01
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 list_display_token_ext_done:
 
 	ply_trash_a
 
-	// Next iteration
+	; Next iteration
 	jmp_8 list_not_rem
 
 #if !HAS_SMALL_BASIC
 
 list_display_token_02:
 
-	// Display a 2-byte token - for extended BASIC
+	; Display a 2-byte token - for extended BASIC
 	jsr list_fetch_subtoken
 
-	// Check if token is known
+	; Check if token is known
 	cpx #TK__MAXTOKEN_keywords_02
 	bcs list_is_unknown
 
-	// Now ask for it to be printed
+	; Now ask for it to be printed
 	phy_trash_a
 	jsr print_packed_keyword_02
 	jmp_8 list_display_token_ext_done
@@ -236,14 +237,14 @@ list_display_token_02:
 
 list_display_token_03:
 
-	// Display a 2-byte token - for extended BASIC
+	; Display a 2-byte token - for extended BASIC
 	jsr list_fetch_subtoken
 
-	// Check if token is known
+	; Check if token is known
 	cpx #TK__MAXTOKEN_keywords_03
 	bcs list_is_unknown
 
-	// Now ask for it to be printed
+	; Now ask for it to be printed
 	phy_trash_a
 	jsr print_packed_keyword_03
 	jmp_8 list_display_token_ext_done
@@ -252,7 +253,7 @@ list_display_token_03:
 
 list_fetch_subtoken:
 
-	// Fetch the sub-token
+	; Fetch the sub-token
 
 	iny
 #if ROM_LAYOUT_M65
@@ -264,11 +265,11 @@ list_fetch_subtoken:
 #elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	jsr peek_under_roms_via_OLDTXT
 	cmp #$00
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
 #endif
 	
-	// Subtract $1 from token to get offset in token list
+	; Subtract $1 from token to get offset in token list
 	tax
 	beq list_fetch_subtoken_fail
 	dex
@@ -281,4 +282,4 @@ list_fetch_subtoken_fail:
 	jmp list_display_unknown_token
 
 
-#endif // ROM layout
+#endif ; ROM layout

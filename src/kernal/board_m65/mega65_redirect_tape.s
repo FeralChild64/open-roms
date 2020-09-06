@@ -1,9 +1,9 @@
-// #LAYOUT# M65 KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// ROM routine call redirect for tape routines
-//
+;
+; ROM routine call redirect for tape routines
+;
 
 
 #if CONFIG_TAPE_NORMAL && !CONFIG_TAPE_AUTODETECT

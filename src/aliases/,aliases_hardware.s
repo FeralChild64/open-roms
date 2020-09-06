@@ -1,19 +1,19 @@
 
-//
-// Names of hardware registers - names from C64 Programmer's Reference Guide, sometimes slightly modified
-//
+;
+; Names of hardware registers - names from C64 Programmer's Reference Guide, sometimes slightly modified
+;
 
 
 #if CONFIG_PLATFORM_COMMODORE_64
 
-	// CPU memory registers
+	; CPU memory registers
 
 	.label CPU_D6510    = $00
 	.label CPU_R6510    = $01
 
-	// VIC-II registers
+	; VIC-II registers
 
-	.label __VIC_BASE   = $D000  // base address of the chip
+	.label __VIC_BASE   = $D000  ; base address of the chip
 
 	.label VIC_SP0X     = $D000
 	.label VIC_SP0Y     = $D001
@@ -67,21 +67,21 @@
 
 #if !CONFIG_MB_MEGA_65 && !CONFIG_MB_ULTIMATE_64
 
-	.label VIC_XSCAN    = $D02F // C128 only
-	.label VIC_CLKRATE  = $D030 // C128 only
+	.label VIC_XSCAN    = $D02F ; C128 only
+	.label VIC_CLKRATE  = $D030 ; C128 only
 
 #endif
 
-	// SID registers
+	; SID registers
 
-	.label __SID_BASE   = $D400  // base address of the chip
+	.label __SID_BASE   = $D400  ; base address of the chip
 
 #if CONFIG_MB_MEGA_65
 
-	.label __SID_R1_OFFSET = $00 // right SID 1, $D400
-	.label __SID_R2_OFFSET = $20 // right SID 2, $D420
-	.label __SID_L1_OFFSET = $40 // left  SID 1, $D440
-	.label __SID_L2_OFFSET = $60 // left  SID 2, $D460
+	.label __SID_R1_OFFSET = $00 ; right SID 1, $D400
+	.label __SID_R2_OFFSET = $20 ; right SID 2, $D420
+	.label __SID_L1_OFFSET = $40 ; left  SID 1, $D440
+	.label __SID_L2_OFFSET = $60 ; left  SID 2, $D460
 
 #endif
 
@@ -118,13 +118,13 @@
 	.label SID_RANDOM   = $D41B
 	.label SID_ENV3     = $D41C
 
-	// Color COLOR_RAM
+	; Color COLOR_RAM
 
 	.label COLOR_RAM    = $D800
 
-	// CIA #1 registers
+	; CIA #1 registers
 
-	.label __CIA1_BASE  = $DC00  // base address of the chip
+	.label __CIA1_BASE  = $DC00  ; base address of the chip
 
 	.label CIA1_PRA     = $DC00
 	.label CIA1_PRB     = $DC01
@@ -146,11 +146,11 @@
 	.label CIA1_CRA     = $DC0E
 	.label CIA1_CRB     = $DC0F
 
-	// CIA #2 registers
+	; CIA #2 registers
 
-	.label __CIA2_BASE  = $DD00  // base address of the chip
+	.label __CIA2_BASE  = $DD00  ; base address of the chip
 
-	.label CIA2_PRA     = $DD00  // VIC bank switching and IEC port
+	.label CIA2_PRA     = $DD00  ; VIC bank switching and IEC port
 	.label CIA2_PRB     = $DD01
 	.label CIA2_DDRA    = $DD02
 	.label CIA2_DDRB    = $DD03
@@ -170,13 +170,13 @@
 	.label CIA2_CRA     = $DD0E
 	.label CIA2_CRB     = $DD0F
 
-	// CIA #2 helper bits - IEC bus
+	; CIA #2 helper bits - IEC bus
 	
-	.const BIT_CIA2_PRA_ATN_OUT  = $08  // 1 - low (pulled), 0 - high (released)
-	.const BIT_CIA2_PRA_CLK_OUT  = $10  // 1 - low (pulled), 0 - high (released)
-	.const BIT_CIA2_PRA_DAT_OUT  = $20  // 1 - low (pulled), 0 - high (released)
-	.const BIT_CIA2_PRA_CLK_IN   = $40  // 0 - low (pulled), 1 - high (released)
-	.const BIT_CIA2_PRA_DAT_IN   = $80  // 0 - low (pulled), 1 - high (released)
+	.const BIT_CIA2_PRA_ATN_OUT  = $08  ; 1 - low (pulled), 0 - high (released)
+	.const BIT_CIA2_PRA_CLK_OUT  = $10  ; 1 - low (pulled), 0 - high (released)
+	.const BIT_CIA2_PRA_DAT_OUT  = $20  ; 1 - low (pulled), 0 - high (released)
+	.const BIT_CIA2_PRA_CLK_IN   = $40  ; 0 - low (pulled), 1 - high (released)
+	.const BIT_CIA2_PRA_DAT_IN   = $80  ; 0 - low (pulled), 1 - high (released)
 
 #if CONFIG_MB_MEGA_65
 
@@ -187,7 +187,7 @@
 
 #if !CONFIG_MB_MEGA_65
 
-	// SuperCPU registers
+	; SuperCPU registers
 
 	.label SCPU_SPEED_NORMAL = $D07A
 	.label SCPU_SPEED_TURBO  = $D07B

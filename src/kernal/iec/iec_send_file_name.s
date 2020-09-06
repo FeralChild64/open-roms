@@ -1,10 +1,10 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Sends file (stream) name to IEC device
-//
+;
+; Sends file (stream) name to IEC device
+;
 
 
 #if CONFIG_IEC
@@ -22,18 +22,18 @@ iec_send_file_name_loop:
 	jsr peek_under_roms
 #elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	jsr peek_under_roms_via_FNADDR
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 	lda (FNADDR),y
 #endif
 
 	iny
-	// Set Carry flag on the last file name character, to mark EOI
+	; Set Carry flag on the last file name character, to mark EOI
 	cpy FNLEN
 	clc
 	bne !+
 	sec
 !:
-	// Transmit one character
+	; Transmit one character
 	sta TBTCNT
 #if CONFIG_IEC_JIFFYDOS
 	jsr iec_tx_dispatch
@@ -46,4 +46,4 @@ iec_send_file_name_done:
 	jmp UNLSN
 
 
-#endif // CONFIG_IEC
+#endif ; CONFIG_IEC

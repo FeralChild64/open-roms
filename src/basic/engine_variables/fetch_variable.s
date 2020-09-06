@@ -1,26 +1,26 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-//
-// Carry set = failure, not recognized variable name
-//
+;
+; Carry set = failure, not recognized variable name
+;
 
 
 fetch_variable:
 
-	// Start by fetching variable name
+	; Start by fetching variable name
 
 	jsr fetch_variable_name
 	bcc !+
 	rts
 !:
-	// If this is array, redirect to appropriate routine
+	; If this is array, redirect to appropriate routine
 
 	bit DIMFLG
 	bmi_16 fetch_variable_arr
 
-	// Handle special variables - TI$, TI, ST
+	; Handle special variables - TI$, TI, ST
 
 	jsr is_var_TI_string
 	beq_16 fetch_variable_TI_string
@@ -31,23 +31,23 @@ fetch_variable:
 	jsr is_var_ST
 	beq_16 fetch_variable_ST
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 fetch_variable_find_addr:
 
-	// Now try to find variable address between VARTAB and ARYTAB, see
-	// - https://www.c64-wiki.com/wiki/Memory_(BASIC)
+	; Now try to find variable address between VARTAB and ARYTAB, see
+	; - https://www.c64-wiki.com/wiki/Memory_(BASIC)
 
 	lda VARTAB+0
 	sta VARPNT+0
 	lda VARTAB+1
 	sta VARPNT+1
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 fetch_variable_find_addr_loop:
 
-	// Check if end of search loop
+	; Check if end of search loop
 
 	lda VARPNT+1
 	cmp ARYTAB+1
@@ -56,23 +56,23 @@ fetch_variable_find_addr_loop:
 	cmp ARYTAB+0
 	beq fetch_variable_alocate
 !:
-	// Compare current variable name with searched one
+	; Compare current variable name with searched one
 
 	jsr helper_cmp_varnam
 	bne fetch_variable_find_addr_next
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 fetch_variable_adjust_VARPNT:
 
-	// Adjust VARPNT to point just after variable name and quit
+	; Adjust VARPNT to point just after variable name and quit
 
 #if !HAS_OPCODES_65CE02
 
 	lda #$02
 	jsr helper_VARPNT_up_A
 
-#else // HAS_OPCODES_65CE02
+#else ; HAS_OPCODES_65CE02
 
 	inw VARPNT
 	inw VARPNT
@@ -84,8 +84,8 @@ fetch_variable_adjust_VARPNT:
 
 fetch_variable_find_addr_next:
 
-	// Increase VARPNT by 7 - constant value, each variable uses 7 bytes, see:
-	// - https://sites.google.com/site/h2obsession/CBM/basic/variable-format
+	; Increase VARPNT by 7 - constant value, each variable uses 7 bytes, see:
+	; - https://sites.google.com/site/h2obsession/CBM/basic/variable-format
 
 	lda #$07
 	jsr helper_VARPNT_up_A
@@ -94,7 +94,7 @@ fetch_variable_find_addr_next:
 
 fetch_variable_alocate:
 	
-	// First check if we have enough space for a new descriptor (if FRETOP - STREND >= 7)
+	; First check if we have enough space for a new descriptor (if FRETOP - STREND >= 7)
 
 	sec
 	lda FRETOP+0
@@ -102,7 +102,7 @@ fetch_variable_alocate:
 	pha
 	lda FRETOP+1
 	sbc STREND+1
-	bne !+                             // branch if high byte of result > 0
+	bne !+                             ; branch if high byte of result > 0
 
 	pla
 	cmp #$07
@@ -112,11 +112,11 @@ fetch_variable_alocate:
 !:
 	pla
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 fetch_variable_alocate_space_OK:
 
-	// If arrays exist, we need to move them upwards
+	; If arrays exist, we need to move them upwards
 
 	sec
 	lda STREND+0
@@ -131,7 +131,7 @@ fetch_variable_alocate_space_OK:
 	ora memmove__size+0
 	beq fetch_variable_alocate_adjust_vars
 
-	// Indeed, there are arrays - adjust size, calculate the destination and perform copying
+	; Indeed, there are arrays - adjust size, calculate the destination and perform copying
 
 	inc memmove__size+0
 	bne !+
@@ -148,11 +148,11 @@ fetch_variable_alocate_space_OK:
 
 	jsr shift_mem_up
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 fetch_variable_alocate_adjust_vars:
 
-	// Adjust ARYTAB and STREND
+	; Adjust ARYTAB and STREND
 
 	clc
 	lda STREND+0
@@ -169,13 +169,13 @@ fetch_variable_alocate_adjust_vars:
 	bcc !+
 	inc ARYTAB+1
 !:
-	// VARPNT already points to the start of the variable descriptor
+	; VARPNT already points to the start of the variable descriptor
 
-	// We need to recreate the back-pointers to string arrays
+	; We need to recreate the back-pointers to string arrays
 
 	jsr helper_array_refresh_bptrs
 
-	// Fill-in the new variable name and descriptor (it is enough to zero first 2 bytes of content)
+	; Fill-in the new variable name and descriptor (it is enough to zero first 2 bytes of content)
 
 	ldy #$00
 
@@ -193,7 +193,7 @@ fetch_variable_alocate_adjust_vars:
 	iny
 	jsr poke_under_roms
 
-#else // CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	
 	lda VARNAM+0
 	sta (VARPNT),y
@@ -208,6 +208,6 @@ fetch_variable_alocate_adjust_vars:
 
 #endif
 
-	// Adjust variable pointer and quit
+	; Adjust variable pointer and quit
 
 	jmp fetch_variable_adjust_VARPNT

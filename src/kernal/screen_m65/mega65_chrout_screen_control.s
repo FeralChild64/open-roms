@@ -1,5 +1,5 @@
-// #LAYOUT# M65 KERNAL_1 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_1 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
 
 m65_chrout_screen_control:
@@ -15,7 +15,7 @@ m65_chrout_try_jumptable_loop:
 	cpx #(__m65_chrout_screen_jumptable_quote_guard - m65_chrout_screen_jumptable_codes - 1)
 	bne m65_chrout_try_jumptable_loop_noquote
 
-	// Is this insert/quote mode?
+	; Is this insert/quote mode?
 
 	tay
 	lda QTSW
@@ -26,14 +26,14 @@ m65_chrout_try_jumptable_loop:
 !:
 	tya
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 m65_chrout_try_jumptable_loop_noquote:
 
 	cmp m65_chrout_screen_jumptable_codes, x
 	bne !+
 
-	// Found, perform a jump to subroutine
+	; Found, perform a jump to subroutine
 
 	txa
 	asl
@@ -66,14 +66,14 @@ m65_chrout_try_color_loop:
 	dex
 	bpl m65_chrout_try_color_loop
 
-	// Unknown code, or key not requiring any handling
+	; Unknown code, or key not requiring any handling
 
 	jmp m65_chrout_screen_done
 
 
 
 
-// XXX: implement screen routines below:
+; XXX: implement screen routines below:
 
 m65_chrout_screen_TAB:
 	nop

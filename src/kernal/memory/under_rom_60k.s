@@ -1,18 +1,18 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
 
 #if CONFIG_MEMORY_MODEL_60K
 
 
-// IMPORTANT:
-// These routines lengths cannot be changed without changing
-// the aliases for peek_under_roms, poke_under_roms, etc.
-// Thus those addresses are expressed using formulae.
+; IMPORTANT:
+; These routines lengths cannot be changed without changing
+; the aliases for peek_under_roms, poke_under_roms, etc.
+; Thus those addresses are expressed using formulae.
 
 install_ram_routines:
-	// Copy routines into place
+	; Copy routines into place
 	ldx #__ram_routines_end-__ram_routines_start-1
 !:
 	lda __ram_routines_start,x
@@ -20,7 +20,7 @@ install_ram_routines:
 	dex
 	bpl !-
 
-	// Point NMI handler to tiny_nmi_handler
+	; Point NMI handler to tiny_nmi_handler
 	lda #<tiny_nmi_handler
 	sta $FFFE
 	lda #>tiny_nmi_handler
@@ -35,7 +35,7 @@ tiny_nmi_handler_routine:
 	rti
 peek_under_roms_routine:
 	php
-	// Offset of arg of lda ($00),y	
+	; Offset of arg of lda ($00),y	
 	stx peek_under_roms+pa-peek_under_roms_routine+1
 	jsr memmap_allram
 pa:	lda ($00),y
@@ -45,7 +45,7 @@ pa:	lda ($00),y
 
 poke_under_roms_routine:
 	php
-	// Offset of arg of lda ($00),y	
+	; Offset of arg of lda ($00),y	
 	stx poke_under_roms+pb-poke_under_roms_routine+1
 	jsr memmap_allram
 pb:	sta ($00),y

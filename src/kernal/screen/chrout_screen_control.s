@@ -1,11 +1,11 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# X16 *        #IGNORE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# X16 *        #IGNORE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// CHROUT routine - screen support, control codes
-//
+;
+; CHROUT routine - screen support, control codes
+;
 
 chrout_screen_control:
 
@@ -20,7 +20,7 @@ chrout_try_jumptable_loop:
 	cpx #(__chrout_screen_jumptable_quote_guard - chrout_screen_jumptable_codes - 1)
 	bne chrout_try_jumptable_loop_noquote
 
-	// Is this insert/quote mode?
+	; Is this insert/quote mode?
 	tay
 	lda QTSW
 	ora INSRT
@@ -30,14 +30,14 @@ chrout_try_jumptable_loop:
 !:
 	tya
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 chrout_try_jumptable_loop_noquote:
 
 	cmp chrout_screen_jumptable_codes, x
 	bne !+
 
-	// Found, perform a jump to subroutine
+	; Found, perform a jump to subroutine
 #if !HAS_OPCODES_65C02
 	lda chrout_screen_jumptable_hi, x
 	pha
@@ -68,5 +68,5 @@ chrout_try_color_loop:
 	dex
 	bpl chrout_try_color_loop
 
-	// Unknown code, or key not requiring any handling
+	; Unknown code, or key not requiring any handling
 	jmp chrout_screen_done

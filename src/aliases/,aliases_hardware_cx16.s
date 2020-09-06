@@ -1,14 +1,14 @@
 
-//
-// Names of hardware registers
-//
+;
+; Names of hardware registers
+;
 
 
 #if CONFIG_PLATFORM_COMMANDER_X16
 
-	// VERA registers
+	; VERA registers
 
-	.label __VERA_BASE   = $9F20  // base address of the chip
+	.label __VERA_BASE   = $9F20  ; base address of the chip
 
 	.label VERA_ADDR_LO  = $9F20
 	.label VERA_ADDR_MID = $9F21
@@ -22,9 +22,9 @@
 	.label VERA_IEN      = $9F26
 	.label VERA_ISR      = $9F27
 
-	// VIA #1 registers
+	; VIA #1 registers
 
-	.label __VIA1_BASE  = $9F60  // base address of the chip
+	.label __VIA1_BASE  = $9F60  ; base address of the chip
 
 	.label VIA1_PRB     = $9F60
 	.label VIA1_PRA     = $9F61
@@ -46,9 +46,9 @@
 
 	.label VIA1_PRA_NH  = $9F6F
 
-	// VIA #2 registers
+	; VIA #2 registers
 
-	.label __VIA2_BASE  = $9F70  // base address of the chip
+	.label __VIA2_BASE  = $9F70  ; base address of the chip
 
 	.label VIA2_PRB     = $9F70
 	.label VIA2_PRA     = $9F71

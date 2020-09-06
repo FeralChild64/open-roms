@@ -1,24 +1,24 @@
-// #LAYOUT# STD *       #TAKE
-// #LAYOUT# *   BASIC_0 #TAKE
-// #LAYOUT# *   *       #IGNORE
+;; #LAYOUT# STD *       #TAKE
+;; #LAYOUT# *   BASIC_0 #TAKE
+;; #LAYOUT# *   *       #IGNORE
 
-// Carry set = unable to find array
+; Carry set = unable to find array
 
 
 find_array:
 
-	 // Initialize VARPNT with the start of array area
+	 ; Initialize VARPNT with the start of array area
 
 	 lda ARYTAB+0
 	 sta VARPNT+0
 	 lda ARYTAB+1
 	 sta VARPNT+1
 
-	 // FALLTROUGH
+	 ; FALLTROUGH
 
 find_array_loop:
 
-	// Check if end of arrays
+	; Check if end of arrays
 
 	lda VARPNT+1
 	cmp STREND+1
@@ -27,7 +27,7 @@ find_array_loop:
 	cmp STREND+0
 	bne !+
 
-	// End of arrays
+	; End of arrays
 
 	sec
 	rts
@@ -36,11 +36,11 @@ find_array_loop:
 
 #if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	bne_16 find_array_next
-#else // CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_60K
+#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_60K
 	bne find_array_next
 #endif
 
-	// Array found
+	; Array found
 
 	clc
 	rts
@@ -50,7 +50,7 @@ find_array_loop:
 
 find_array_next:
 
-	// Fetch offset to the next array
+	; Fetch offset to the next array
 
 	ldy #$03
 
@@ -63,7 +63,7 @@ find_array_next:
 	dey
 	jsr peek_under_roms
 
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 
 	lda (VARPNT),y
 	pha
@@ -72,7 +72,7 @@ find_array_next:
 
 #endif
 
-	// Adjust VARPNT to point to the next array
+	; Adjust VARPNT to point to the next array
 
 	clc
 	adc VARPNT+0
@@ -82,8 +82,8 @@ find_array_next:
 	adc VARPNT+1
 	sta VARPNT+1	
 
-	// Next iteration
+	; Next iteration
 
-	bcc find_array_loop                // branch always
+	bcc find_array_loop                ; branch always
 
 #endif

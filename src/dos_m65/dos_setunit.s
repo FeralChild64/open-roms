@@ -1,12 +1,12 @@
 
-//
-// Unit number handling. For detailed description see 'm65dos_bridge.s' file
-//
+;
+; Unit number handling. For detailed description see 'm65dos_bridge.s' file
+;
 
 
 dos_SETUNIT:
 
-	// XXX check if .X is valid
+	; XXX check if .X is valid
 
 	cmp #$00
 	beq dos_SETUNIT_sdcard
@@ -23,20 +23,20 @@ dos_SETUNIT_sdcard:
 	stx UNIT_SDCARD
 	skip_2_bytes_trash_nvz
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 dos_SETUNIT_floppy:
 
 	stx UNIT_FLOPPY
 	skip_2_bytes_trash_nvz
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 dos_SETUNIT_ramdisk:
 
 	stx UNIT_RAMDISK
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 	clc
 	rts

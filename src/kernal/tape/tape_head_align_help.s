@@ -1,34 +1,34 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# M65 KERNAL_1 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# M65 KERNAL_1 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Tape head alignemnt tool - prints out a help message on screen
-//
+;
+; Tape head alignemnt tool - prints out a help message on screen
+;
 
 
 #if CONFIG_TAPE_HEAD_ALIGN
 
 
-// Helper variable - reuse BASIC numeric work area on zero page
+; Helper variable - reuse BASIC numeric work area on zero page
 
-.label __ha_storage = TEMPF1;          // 1 byte
+.label __ha_storage = TEMPF1;          ; 1 byte
 
 
 tape_head_align_print_help:
 
-	// Make screen font visible
+	; Make screen font visible
 
 	lda CPU_R6510
 	pha
 	and #%11111011
 	sta CPU_R6510
 
-	// Print help message
+	; Print help message
 
 	ldy #$00
 
-	// Retrieve address
+	; Retrieve address
 !:
 	lda tape_head_align_help_text, y
 	iny
@@ -40,7 +40,7 @@ tape_head_align_print_help:
 	iny
 	sta EAL+1
 !:
-	// Retrieve and print character
+	; Retrieve and print character
 
 	lda tape_head_align_help_text, y
 	iny
@@ -51,12 +51,12 @@ tape_head_align_print_help:
 	jsr tape_head_align_print_char
 	ldy __ha_storage
 
-	bne !-                             // branch alwats
+	bne !-                             ; branch alwats
 
 
 tape_head_align_print_end:
 
-	// Restore normal memory configuration and quit
+	; Restore normal memory configuration and quit
 
 	pla
 	sta CPU_R6510
@@ -68,7 +68,7 @@ tape_head_align_print_string:
 
 tape_head_align_print_char:
 
-	// Calculate start address of character in .A
+	; Calculate start address of character in .A
 
 	sta SAL+0
 	lda #$00
@@ -86,7 +86,7 @@ tape_head_align_print_char:
 	adc #$D0
 	sta SAL+1
 
-	// Print out the character
+	; Print out the character
 
 	ldy #$07
 !:
@@ -95,7 +95,7 @@ tape_head_align_print_char:
 	dey
 	bpl !-
 
-	// Prepare EAL for the next character
+	; Prepare EAL for the next character
 
 	lda EAL+0
 	clc
@@ -107,19 +107,19 @@ tape_head_align_print_char:
 	rts
 
 
-//
-// Strings to print
-//
+;
+; Strings to print
+;
 
 .encoding "screencode_upper"
 
 
 tape_head_align_help_text:
 
-	// Each string consists of:
-	// - destination (start byte) address
-	// - text in screencodes
-	// - $FF to mark end
+	; Each string consists of:
+	; - destination (start byte) address
+	; - text in screencodes
+	; - $FF to mark end
 
 	.word $2000 + (40 * 8) * 0 + 8 * 1
 	.text "COMPUTER HAS TO TELL THE SIGNALS APART"
@@ -141,7 +141,7 @@ tape_head_align_help_text:
 	.text "ARE HALF A WAY BETWEEN SIGNALS"
 	.byte $FF
 
-	.byte $FF                          // end of strings
+	.byte $FF                          ; end of strings
 
 
 #endif

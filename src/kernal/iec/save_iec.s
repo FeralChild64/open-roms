@@ -1,10 +1,10 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// IEC part of the SAVE routine
-//
+;
+; IEC part of the SAVE routine
+;
 
 
 #if CONFIG_IEC
@@ -16,28 +16,28 @@ save_iec_dev_not_found:
 
 save_iec:
 
-	// Check file name
+	; Check file name
 	lda FNLEN
 	beq_16 kernalerror_FILE_NAME_MISSING
 
-	// Display SAVING
+	; Display SAVING
 	jsr lvs_display_saving
 
-	// Call device to LISTEN
+	; Call device to LISTEN
 	lda FA
 	jsr LISTEN
 	bcs save_iec_dev_not_found
 
-	// Open channel 1 (reserved for file writing)
+	; Open channel 1 (reserved for file writing)
 	lda #$01
 	jsr iec_cmd_open
 	bcs save_iec_dev_not_found
 
-	// Send file name
+	; Send file name
 	jsr iec_send_file_name
 	bcs save_iec_dev_not_found
 
-	// Call device to LISTEN once again
+	; Call device to LISTEN once again
 	lda FA
 	jsr LISTEN
 	bcs save_iec_dev_not_found
@@ -46,7 +46,7 @@ save_iec:
 	jsr burst_advertise
 #endif
 
-	lda #$61 // open channel / data (p3) , required according to p13
+	lda #$61 ; open channel / data (p3) , required according to p13
 	sta TBTCNT
 	jsr iec_tx_command
 	bcs save_iec_dev_not_found
@@ -55,7 +55,7 @@ save_iec:
 	jsr dolphindos_detect
 #endif
 
-	// Save start address
+	; Save start address
 	lda STAL+0
 	sta TBTCNT
 	clc
@@ -78,17 +78,17 @@ save_iec:
 	ldy #$00
 iec_save_loop:
 
-	// Retrieve byte to send
+	; Retrieve byte to send
 #if CONFIG_MEMORY_MODEL_60K
 	ldx #<MEMUSS+0
 	jsr peek_under_roms
 #elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	jsr peek_under_roms_via_MEMUSS
-#else // CONFIG_MEMORY_MODEL_38K
+#else ; CONFIG_MEMORY_MODEL_38K
 	lda (MEMUSS),y
 #endif
 
-	// Send the byte
+	; Send the byte
 	sta TBTCNT
 	clc
 #if CONFIG_IEC_JIFFYDOS
@@ -97,7 +97,7 @@ iec_save_loop:
 	jsr iec_tx_byte
 #endif
 
-	// Next iteration
+	; Next iteration
 #if !HAS_OPCODES_65CE02
 	jsr lvs_advance_MEMUSS
 #else
@@ -108,25 +108,25 @@ iec_save_loop:
 
 iec_save_loop_end:
 
-	// Close file on drive
+	; Close file on drive
 	lda FA
 	jsr UNLSN
 
 	lda FA
 	jsr LISTEN
 
-	lda #$E1 // CLOSE command
+	lda #$E1 ; CLOSE command
 	sta TBTCNT
 	jsr iec_tx_command
 	jsr iec_tx_command_finalize
 
-	// Tell drive to unlisten
+	; Tell drive to unlisten
 	lda FA
 	jsr UNLSN
 
-	// Return success
+	; Return success
 	clc
 	rts
 
 
-#endif // CONFIG_IEC
+#endif ; CONFIG_IEC

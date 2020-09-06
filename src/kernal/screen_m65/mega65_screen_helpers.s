@@ -1,5 +1,5 @@
-// #LAYOUT# M65 KERNAL_1 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# M65 KERNAL_1 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
 
 m65_screen_clear_colorattr:
@@ -24,7 +24,7 @@ m65_screen_upd_txtrow_off:
 
 m65_screen_dmasrcdst_screen:
 
-	// Set screen memory as start/end addresses
+	; Set screen memory as start/end addresses
 
 	lda M65_SCRBASE+0
 	sta M65_DMAJOB_SRC_0
@@ -45,7 +45,7 @@ m65_screen_dmasrcdst_screen:
 
 m65_screen_dmasrcdst_color:
 
-	// Set color memory as start/end addresses
+	; Set color memory as start/end addresses
 
 	lda #$00
 	sta M65_DMAJOB_SRC_0

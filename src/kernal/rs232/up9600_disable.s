@@ -1,32 +1,32 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
-//
-// Disable UP9600 interface
-//
+;
+; Disable UP9600 interface
+;
 
-// Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
+; Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
 
 
 #if CONFIG_RS232_UP9600
 
 
-up9600_disable: // XXX adapt
+up9600_disable: ; XXX adapt
 
-	// XXX restore interrupt vectors and IRQ timer 
+	; XXX restore interrupt vectors and IRQ timer 
 
 	sei
-	lda CIA2_PRB // $DD01; DISABLE RTS
+	lda CIA2_PRB ; $DD01; DISABLE RTS
 	and #$FD
-	sta CIA2_PRB // $DD01
+	sta CIA2_PRB ; $DD01
 	lda #$7F
-	sta CIA2_ICR // $DD0D ; DISABLE ALL CIA INTERRUPTS
-	sta CIA1_ICR // $DC0D 
+	sta CIA2_ICR ; $DD0D ; DISABLE ALL CIA INTERRUPTS
+	sta CIA1_ICR ; $DC0D 
 	lda #$41; QUICK (AND DIRTY) HACK TO SWITCH BACK
-	sta CIA1_TIMAHI // $DC05 ; TO THE DEFAULT CIA1 CONFIGURATION
+	sta CIA1_TIMAHI ; $DC05 ; TO THE DEFAULT CIA1 CONFIGURATION
 	lda #$81
-	sta CIA1_ICR // $DC0D ; ENABLE TIMER1 (THIS IS DEFAULT)
+	sta CIA1_ICR ; $DC0D ; ENABLE TIMER1 (THIS IS DEFAULT)
 	lda #<ORIGIRQ; RESTORE OLD IRQ-HANDLER
 	sta IRQVECT
 	lda #>ORIGIRQ
@@ -43,4 +43,4 @@ up9600_disable: // XXX adapt
 	pla
 
 
-#endif // CONFIG_RS232_UP9600
+#endif ; CONFIG_RS232_UP9600

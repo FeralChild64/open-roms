@@ -1,10 +1,10 @@
-// #LAYOUT# STD *        #TAKE
-// #LAYOUT# X16 *        #IGNORE
-// #LAYOUT# *   KERNAL_0 #TAKE
-// #LAYOUT# *   *        #IGNORE
+;; #LAYOUT# STD *        #TAKE
+;; #LAYOUT# X16 *        #IGNORE
+;; #LAYOUT# *   KERNAL_0 #TAKE
+;; #LAYOUT# *   *        #IGNORE
 
 
-// c64 prg p263
+; c64 prg p263
 
 cartridge_check:
 
@@ -16,7 +16,7 @@ cartridge_check:
 	dex
 	bne !-
 
-	// FALLTROUGH
+	; FALLTROUGH
 
 cartridge_check_end:
 

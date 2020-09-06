@@ -1,5 +1,5 @@
 
-	// BASIC startup vectors
+	; BASIC startup vectors
 
 
 #if ROM_LAYOUT_X16
