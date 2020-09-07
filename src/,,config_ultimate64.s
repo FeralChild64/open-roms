@@ -80,25 +80,25 @@
 
 !set CONFIG_PROGRAMMABLE_KEYS = 1
 
-.const !set CONFIG_KEYCMD_RUN  = @"\$5FL"
+!macro CONFIG_KEYCMD_RUN  { !pet "\$5FL" }
 
-.const !set CONFIG_KEYCMD_F1   = @"@"
-.const !set CONFIG_KEYCMD_F2   = @""
-.const !set CONFIG_KEYCMD_F3   = @"RUN:"
-.const !set CONFIG_KEYCMD_F4   = @""
-.const !set CONFIG_KEYCMD_F5   = @"LOAD"
-.const !set CONFIG_KEYCMD_F6   = @""
-.const !set CONFIG_KEYCMD_F7   = @"@$"
-.const !set CONFIG_KEYCMD_F8   = @""
+!macro CONFIG_KEYCMD_F1   { !pet "@" }
+!macro CONFIG_KEYCMD_F2   { !pet "" }
+!macro CONFIG_KEYCMD_F3   { !pet "RUN:" }
+!macro CONFIG_KEYCMD_F4   { !pet "" }
+!macro CONFIG_KEYCMD_F5   { !pet "LOAD" }
+!macro CONFIG_KEYCMD_F6   { !pet "" }
+!macro CONFIG_KEYCMD_F7   { !pet "@$" }
+!macro CONFIG_KEYCMD_F8   { !pet "" }
 
-.const !set CONFIG_KEYCMD_HELP = @"LIST"
+!macro CONFIG_KEYCMD_HELP { !pet "LIST" }
 
-.const !set CONFIG_KEYCMD_F9   = @""
-.const !set CONFIG_KEYCMD_F10  = @""
-.const !set CONFIG_KEYCMD_F11  = @""
-.const !set CONFIG_KEYCMD_F12  = @""
-.const !set CONFIG_KEYCMD_F13  = @""
-.const !set CONFIG_KEYCMD_F14  = @""
+!macro CONFIG_KEYCMD_F9   { !pet "" }
+!macro CONFIG_KEYCMD_F10  { !pet "" }
+!macro CONFIG_KEYCMD_F11  { !pet "" }
+!macro CONFIG_KEYCMD_F12  { !pet "" }
+!macro CONFIG_KEYCMD_F13  { !pet "" }
+!macro CONFIG_KEYCMD_F14  { !pet "" }
 
 
 ; Screen editor

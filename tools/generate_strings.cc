@@ -1757,7 +1757,7 @@ void parseConfigFile()
        
         if (!std::regex_match(workStr, std::regex("^\\!set[ \t].*")))
         {
-            ERROR(std::string("only '!set' preprocessor directives allowed in config files - line ") + std::to_string(lineNum));
+            continue;
         }
 
         // Get rid of the directive and trailing spaces/values/comments
