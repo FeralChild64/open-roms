@@ -13,7 +13,7 @@ Just edit them and recompile the project. To enable particular option - uncommen
 
 Note however, that features do not came for free - enabling them needs some additional ROM space (in BASIC segment, in KERNAL segment, or in both), which is VERY limited on the target machines. Some options might be unavailable for speecific targets - read the comments in the configuration files. Some options might also carry compatibility and/or performance hit - so choose wisely.
 
-## Hardware platform and brand
+## Hardware platform
 
 ### `CONFIG_PLATFORM_COMMODORE_64`
 
@@ -25,13 +25,17 @@ Since Open ROMs is highly modular, it should be possible to add other platforms 
 * 8KB ROM area `$A000`-`$BFFF`
 * 8KB ROM area `$E000`-`$FFFF`
 
-### `CONFIG_MB_MEGA_65`, `CONFIG_MB_ULTIMATE_64`
+### `CONFIG_MB_M65`, `CONFIG_MB_U64`
 
-Select if the ROM is going to be used exclusively on the specific motherboard. It prevents from enabling options not having sense, skips initialization of C128-only registers, etc.
+Select if the ROM is going to be used exclusively on the specified motherboard. It prevents from enabling options not having sense, skips initialization of C128-only registers, and enables motherboard-specific features.
+
+## Brand
+
+Branding is only allowed for C64 platform if no motherboard is specified.
 
 ### `CONFIG_BRAND_CUSTOM`
 
-Intended for custom builds, which are not to be redistributed. Allows to configure branding with `CONFIG_CUSTOM_BRAND` varaible
+Intended for custom builds, for private purposes. Allows to configure branding with `CONFIG_CUSTOM_BRAND` macro.
 
 ### `CONFIG_BRAND_GENERIC`
 
@@ -40,10 +44,6 @@ If you don't know which variant to choose - select this one.
 ### `CONFIG_BRAND_TESTING`
 
 Use this one for any kind of testing/experimental build.
-
-### `CONFIG_BRAND_MEGA_65`, `CONFIG_BRAND_ULTIMATE_64`
-
-Select if you are using appropriate motherboard.
 
 ## Processor instruction set
 
@@ -181,9 +181,9 @@ The SID is a sound chip - the original Commodore 64 had one installed. However, 
 
 The SID support in the ROM is very limited - it only disables the sound during startup or warm restart (when STOP+RESTORE is pressed or BRK assembler instruction is executed).
 
-### `CONFIG_SID_2ND` and `CONFIG_SID_3RD` 
+### `CONFIG_SID_2ND_ADDRESS` and `CONFIG_SID_3RD_ADDRESS` 
 
-Each of them add support for one additional SID - addresses should be given in `CONFIG_SID_2ND_ADDRESS` and `CONFIG_SID_3RD_ADDRESS`, respectively. Do not use when `CONFIG_MB_MEGA_65` is selected - the motherboard support code already knows the SID locations. 
+Each of them add support for one additional SID - addresses should be given as parameter, respectively. Do not use when `CONFIG_MB_M65` is selected - the motherboard support code already knows the SID locations. 
 
 Each of these options needs 3 bytes in KERNAL segment.
 
@@ -191,7 +191,7 @@ Each of these options needs 3 bytes in KERNAL segment.
 
 Cause the system to support SIDs in `$D4xx` and `$D5xx` ranges, respectively.
 
-Each of them needs a couple of bytes in KERNAL segment - but they can share some code, and `$D4xx` range support replaces the standard `$D400` address handling, so exact amount depends on the exact configuration. Do not use when `CONFIG_MB_MEGA_65` is selected - the motherboard support code already knows the SID locations.
+Each of them needs a couple of bytes in KERNAL segment - but they can share some code, and `$D4xx` range support replaces the standard `$D400` address handling, so exact amount depends on the exact configuration. Do not use when `CONFIG_MB_M65` is selected - the motherboard support code already knows the SID locations.
 
 ## Keyboard
 

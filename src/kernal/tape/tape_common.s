@@ -115,7 +115,7 @@ tape_prepare_reading:
 
 #endif ; CONFIG_TAPE_HEAD_ALIGN
 
-#if CONFIG_MB_MEGA_65
+#if CONFIG_MB_M65
 
 	; Display confirmation
 

@@ -3,86 +3,64 @@
 ; Various configuration dependent aliases/macros/checks
 ;
 
-.encoding "petscii_upper"
+
+
+; Check that platform is specified
+
+!set counter = 0
+!ifdef CONFIG_PLATFORM_COMMODORE_64  { !set counter = counter + 1 }
+!ifdef CONFIG_PLATFORM_COMMANDER_X16 { !set counter = counter + 1 }
+
+!if (counter != 1) { !error "Please select exactly one CONFIG_PLATFORM_* option" }
 
 
 
-; Check that platform configuration is correct
-{
-	.var selected = 0;
+; Check that motherboard configuration is correct
 
-#if CONFIG_PLATFORM_COMMODORE_64
-	.eval selected++
-#endif
-#if CONFIG_PLATFORM_COMMANDER_X16
-	.eval selected++
-#endif
+!set counter = 0
+!ifdef CONFIG_MB_M65 { !set counter = counter + 1 }
+!ifdef CONFIG_MB_U64 { !set counter = counter + 1 }
 
-	.if (selected != 1) .error "Please select exactly one CONFIG_PLATFORM_* option" 
-}
+!if (counter > 1) { !error "Please select at most one CONFIG_MB_* option" }
 
+!ifdef ROM_LAYOUT_M65 { !ifndef CONFIG_MB_M65 { !error "ROM layout requires CONFIG_MB_M65 option" } }
+!ifdef ROM_LAYOUT_U16 { !ifndef CONFIG_MB_U64 { !error "ROM layout requires CONFIG_MB_U64 option" } }
 
+!ifdef CONFIG_MB_M65 { !ifndef ROM_LAYOUT_M65 { !error "CONFIG_MB_M65 can only be used with appropriate ROM layout" } }
+; !ifdef CONFIG_MB_U64 { !ifndef ROM_LAYOUT_U64 { !error "CONFIG_MB_U64 can only be used with appropriate ROM layout" } }
 
-; Check that motherboard extras configuration is correct
-{
-	.var selected = 0;
-
-#if CONFIG_MB_MEGA_65
-	.eval selected++
-#endif
-#if CONFIG_MB_ULTIMATE_64
-	.eval selected++
-#endif
-
-	.if (selected > 1) .error "Please select at most one CONFIG_MB_* option"
-
-#if !CONFIG_PLATFORM_COMMODORE_64 && CONFIG_BRAND_MEGA_65 &&
-	.error "CONFIG_BRAND_MEGA_65 can only be used with CONFIG_PLATFORM_COMMODORE_64"
-#endif
-#if !CONFIG_PLATFORM_COMMODORE_64 && CONFIG_BRAND_ULTIMATE_64 &&
-	.error "CONFIG_BRAND_ULTIMATE_64 can only be used with CONFIG_PLATFORM_COMMODORE_64"
-#endif
-
-#if CONFIG_MB_MEGA_65 && (CONFIG_SID_2ND || CONFIG_SID_3RD || CONFIG_SID_D4XX || CONFIG_SID_D5XX)
-	.error "CONFIG_MB_MEGA_65 cannot be used with CONFIG_SID_*"
-#endif
-}
+!ifdef CONFIG_MB_M65 { !ifndef CONFIG_PLATFORM_COMMODORE_64 { !error "CONFIG_MB_M65 can only be used with CONFIG_PLATFORM_COMMODORE_64" } }
+!ifdef CONFIG_MB_U64 { !ifndef CONFIG_PLATFORM_COMMODORE_64 { !error "CONFIG_MB_U64 can only be used with CONFIG_PLATFORM_COMMODORE_64" } }
 
 
 
 ; Check that brand configuration is correct
-{
-	.var selected = 0;
 
-#if CONFIG_BRAND_CUSTOM_BUILD
-	.eval selected++
-#endif
-#if CONFIG_BRAND_GENERIC
-	.eval selected++
-#endif
-#if CONFIG_BRAND_TESTING
-	.eval selected++
-#endif
-#if CONFIG_BRAND_ULTIMATE_64
-	.eval selected++
-#endif
+!set counter = 0
+!ifdef CONFIG_BRAND_CUSTOM_BUILD { !set counter = counter + 1 }
+!ifdef CONFIG_BRAND_GENERIC      { !set counter = counter + 1 }
+!ifdef CONFIG_BRAND_TESTING      { !set counter = counter + 1 }
+!ifdef CONFIG_BRAND_ULTIMATE_64  { !set counter = counter + 1 }
 
-#if !CONFIG_MB_MEGA_65
-	.if (selected != 1) .error "Please select exactly one CONFIG_BRAND_* option"
-#endif
-#if CONFIG_MB_MEGA_65
-	.if (selected != 0) .error "Do not use CONFIG_BRAND_* options for MEGA65"
-#endif
-
-#if CONFIG_MB_MEGA_65 && CONFIG_SHOW_FEATURES
-	.if (selected != 0) .error "Do not use CONFIG_SHOW_FEATURES options for MEGA65"
-#endif
-
-#if CONFIG_MB_ULTIMATE_64 && !(CONFIG_BRAND_ULTIMATE_64 || CONFIG_BRAND_TESTING || CONFIG_BRAND_CUSTOM_BUILD)
-	.error "Please select brand either matching the CONFIG_MB_*, or a testing/custom one"
-#endif
+!ifndef CONFIG_PLATFORM_COMMODORE_64 {
+	!if (counter != 0) { !error "Do not use CONFIG_BRAND_* options for non-C64 platforms" }
+} else ifdef CONFIG_MB_M65 {
+	!if (counter != 0) { !error "Do not use CONFIG_BRAND_* options for MEGA65 motherboard" }
+} else ifdef CONFIG_MB_MU64 {
+	!if (counter != 0) { !error "Do not use CONFIG_BRAND_* options for Ultimate 64 motherboard" }
+} else if (counter != 1) {
+	!error "Please select exactly one CONFIG_BRAND_* option"	
 }
 
+
+
+
+
+
+
+
+
+// XXX check SID configuration, shouldn't be specified for MEGA65 or COMMANDER X16
 
 
 ; Check that processor configuration is correct
@@ -238,6 +216,11 @@
 
 
 
+#if CONFIG_MB_M65 && CONFIG_SHOW_FEATURES
+	.if (selected != 0) .error "Do not use CONFIG_SHOW_FEATURES options for MEGA65"
+#endif
+
+
 ; Check if keyboard options are correct
 .function CHECK_KEYCMD(keycmd)
 {
@@ -255,10 +238,10 @@
 	.error "CONFIG_LEGACY_SCNKEY and CONFIG_KEYBOARD_C128* / CONFIG_KEYBOARD_C65* are mutually exclusive"
 #endif
 
-#if (CONFIG_MB_MEGA_65 || CONFIG_MB_ULTIMATE_64) && (CONFIG_KEYBOARD_C128 || CONFIG_KEYBOARD_C128_CAPS_LOCK)
+#if (CONFIG_MB_M65 || CONFIG_MB_U64) && (CONFIG_KEYBOARD_C128 || CONFIG_KEYBOARD_C128_CAPS_LOCK)
 	.error "Selected CONFIG_MB_* is not compatible with CONFIG_KEYBOARD_C128*"
 #endif
-#if CONFIG_MB_ULTIMATE_64 && (CONFIG_KEYBOARD_C65 || CONFIG_KEYBOARD_C65_CAPS_LOCK)
+#if CONFIG_MB_U64 && (CONFIG_KEYBOARD_C65 || CONFIG_KEYBOARD_C65_CAPS_LOCK)
 	.error "Selected CONFIG_MB_* is not compatible with CONFIG_KEYBOARD_C65*"
 #endif
 

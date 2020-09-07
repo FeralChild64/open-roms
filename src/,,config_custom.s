@@ -14,13 +14,9 @@
 ; Hardware platform and brand
 
 !set CONFIG_PLATFORM_COMMODORE_64 = 1
-
-!set CONFIG_BRAND_CUSTOM_BUILD = 1
-; !set CONFIG_BRAND_GENERIC = 1
-; !set CONFIG_BRAND_TESTING = 1
-; !set CONFIG_BRAND_ULTIMATE_64 = 1
-
+!set CONFIG_BRAND_CUSTOM_BUILD    = 1
 !macro CONFIG_CUSTOM_BRAND { !pet "CUSTOM BUILD" }
+
 
 
 ; Processor instruction set

@@ -9,7 +9,7 @@
 
 .const command_01_list = List().add(
 
-#if CONFIG_MB_MEGA_65
+#if CONFIG_MB_M65
 	M65_SLOW,
 	M65_FAST,
 #else

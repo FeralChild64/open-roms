@@ -62,7 +62,7 @@ IOINIT:
 
 	lda #$00
 
-#if !CONFIG_MB_MEGA_65
+#if !CONFIG_MB_M65
 
 	; First the standard chip (skip if it is covered by whole $D4XX range)
 
@@ -72,11 +72,11 @@ IOINIT:
 
 	; Silence manually configured 2nd and 3rd SIDs
 
-#if CONFIG_SID_2ND
+#if CONFIG_SID_2ND // XXX only addr can be defined now
 	sta SID_SIGVOL - __SID_BASE + CONFIG_SID_2ND_ADDRESS
 #endif ; CONFIG_SID_2ND
 
-#if CONFIG_SID_3RD
+#if CONFIG_SID_3RD // XXX only addr can be defined now
 	sta SID_SIGVOL - __SID_BASE + CONFIG_SID_3RD_ADDRESS
 #endif ; CONFIG_SID_3RD
 
@@ -112,7 +112,7 @@ IOINIT:
 	sta SID_SIGVOL + __SID_L1_OFFSET
 	sta SID_SIGVOL + __SID_L2_OFFSET
 
-#endif ; CONFIG_MB_MEGA_65
+#endif ; CONFIG_MB_M65
 
 	;
 	; Now continue the CIAs initialization

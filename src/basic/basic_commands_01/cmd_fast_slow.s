@@ -3,11 +3,11 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 
-#if CONFIG_MB_MEGA_65
+#if CONFIG_MB_M65
 
 	; For MEGA65 Kernal routines are called directly
 
-#elif CONFIG_MB_ULTIMATE_64
+#elif CONFIG_MB_U64
 
 	; Command implementation for Ultimate 64 - SuperCPU compatible way should be enough
 

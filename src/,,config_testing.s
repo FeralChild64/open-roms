@@ -14,10 +14,8 @@
 ; Hardware platform and brand
 
 !set CONFIG_PLATFORM_COMMODORE_64 = 1
+!set CONFIG_BRAND_TESTING         = 1
 
-; !set CONFIG_BRAND_GENERIC = 1
-!set CONFIG_BRAND_TESTING = 1
-; !set CONFIG_BRAND_ULTIMATE_64 = 1
 
 
 ; Processor instruction set
@@ -54,10 +52,7 @@
 
 ; Multiple SID support
 
-!set CONFIG_SID_2ND = 1
 !set CONFIG_SID_2ND_ADDRESS = $D420
-
-!set CONFIG_SID_3RD = 1
 !set CONFIG_SID_3RD_ADDRESS = $D440
 
 ; !set CONFIG_SID_D4XX = 1

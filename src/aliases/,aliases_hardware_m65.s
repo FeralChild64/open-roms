@@ -6,7 +6,7 @@
 ;
 
 
-#if CONFIG_MB_MEGA_65
+#if CONFIG_MB_M65
 
 	; VIC-IV registers
 

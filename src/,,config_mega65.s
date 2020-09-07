@@ -14,7 +14,9 @@
 ; Hardware platform
 
 !set CONFIG_PLATFORM_COMMODORE_64 = 1
-!set CONFIG_MB_MEGA_65 = 1
+!set CONFIG_MB_M65                = 1
+
+
 
 ; Processor instruction set
 
@@ -50,10 +52,7 @@
 
 ; Multiple SID support
 
-; !set CONFIG_SID_2ND
 !set CONFIG_SID_2ND_ADDRESS = $D440
-
-; !set CONFIG_SID_3RD
 !set CONFIG_SID_3RD_ADDRESS = $D480
 
 ; !set CONFIG_SID_D4XX = 1

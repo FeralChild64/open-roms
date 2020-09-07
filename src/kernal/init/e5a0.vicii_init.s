@@ -31,7 +31,7 @@ vicii_init:
  	dex
  	bpl !-
 
-#if !CONFIG_MB_MEGA_65 && !CONFIG_MB_ULTIMATE_64
+#if !CONFIG_MB_M65 && !CONFIG_MB_U64
 
  	; Disable C128 extra keys - just to be sure they will not interfere with anything
 
