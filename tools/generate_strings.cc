@@ -1748,21 +1748,21 @@ void parseConfigFile()
         std::getline(cnfFile, workStr);
         if (cnfFile.bad()) ERROR("error reading configuration file");
         workStr = std::regex_replace(workStr, std::regex("^[ \t]+"), "");
-       
+
         // Skip lines which are not preprocessor definitions
        
-        if (workStr.empty() || workStr[0] != '#') continue;
+        if (workStr.empty() || workStr[0] != '!') continue;
        
-        // Make sure this is '#define '
+        // Make sure this is '!set '
        
-        if (!std::regex_match(workStr, std::regex("^#define[ \t].*")))
+        if (!std::regex_match(workStr, std::regex("^\\!set[ \t].*")))
         {
-            ERROR(std::string("only '#define' preprocessor directives allowed in config files - line ") + std::to_string(lineNum));
+            ERROR(std::string("only '!set' preprocessor directives allowed in config files - line ") + std::to_string(lineNum));
         }
 
-        // Get rid of the directive and trailing spaces/comments
+        // Get rid of the directive and trailing spaces/values/comments
    
-        workStr = std::regex_replace(workStr, std::regex("^#define[ \t]+"), "");
+        workStr = std::regex_replace(workStr, std::regex("^\\!set[ \t]+"), "");
         workStr = std::regex_replace(workStr, std::regex("[ \t]+.*"), "");
 
         // Add definitin to config option map
