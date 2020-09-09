@@ -7,12 +7,12 @@
 ;
 
 
-#if HAS_RS232
+!ifdef HAS_RS232 {
 
 
-#if CONFIG_MEMORY_MODEL_60K
-	.error "CONFIG_MEMORY_MODEL_60K is not compatible with RS-232 memory allocation code"
-#endif
+!ifdef CONFIG_MEMORY_MODEL_60K {
+	!error "CONFIG_MEMORY_MODEL_60K is not compatible with RS-232 memory allocation code"
+}
 
 
 open_rs232:
@@ -48,16 +48,13 @@ open_rs232:
 	sta RODBE
 
 
-#if CONFIG_RS232_UP9600
+!ifdef CONFIG_RS232_UP9600 {
 
 	jmp up9600_enable
-
-#endif ; CONFIG_RS232_UP9600
-
+}
 
 open_rs232_end:
 
 	jmp open_done_success
+}
 
-
-#endif ; HAS_RS232

@@ -7,17 +7,18 @@ hw_entry_nmi:
 
 	sei                      ; do not allow IRQ to interfere, see https://www.c64-wiki.com/wiki/Interrupt
 
-#if CONFIG_CPU_MOS_6502 && CONFIG_BCD_SAFE_INTERRUPTS
+!ifndef HAS_OPCODES_65CE02 { !ifdef CONFIG_BCD_SAFE_INTERRUPTS {
+
 	cld                      ; clear decimal flag to allow using it without disabling interrupts
-#endif
+} }
 
 	; Call interrupt routine (only if initialised)
 	pha
 	lda NMINV+1              ; consider zeropage NMI address as uninitialized vector
-	beq !+                   ; this allows safer interrupt vector modifications 
+	beq @1                   ; this allows safer interrupt vector modifications 
 	pla
 	jmp (NMINV)
-!:
+@1:
 	; Vector not initialized - call default interrupt routine
 	pla
 	jmp default_nmi_handler

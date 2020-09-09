@@ -9,7 +9,7 @@
 ; Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
 
 
-#if CONFIG_RS232_UP9600
+!ifdef CONFIG_RS232_UP9600 {
 
 
 up9600_rsout:
@@ -29,7 +29,7 @@ up9600_rsout:
 	sei
 	sta CIA1_SDR ; $DC0C
 	lda #$02
-	STA XXX_OUTSTAT
+	sta XXX_OUTSTAT
 	ror
 	ora #$7F
 	sta CIA1_SDR ; $DC0C
@@ -48,12 +48,10 @@ up9600_rsout_time:
 rs232_rsout_wait:
 
 	lda XXX_OUTSTAT
-	beq !+
+	beq @1
 	bit TIME+2
 	bmi up9600_rsout_wait
-
-!:
+@1:
 	jmp $F490 ; XXX 
+}
 
-
-#endif ; CONFIG_RS232_UP9600

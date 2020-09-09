@@ -9,7 +9,7 @@
 ; Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
 
 
-#if CONFIG_RS232_UP9600
+!ifdef CONFIG_RS232_UP9600 {
 
 
 up9600_irq:
@@ -23,10 +23,10 @@ up9600_irq:
 	beq up9600_irq_continue
 
 	ldx RINONE
-	beq !+                             ; skip if not waiting for empty SDR
+	beq @1                             ; skip if not waiting for empty SDR
 	dex
 	stx RINONE
-!:
+@1:
 	bcc up9600_irq_end
 
 up9600_irq_continue:
@@ -38,6 +38,4 @@ up9600_irq_end:
 	pla
 	pla
 	jmp return_from_interrupt
-
-
-#endif ; CONFIG_RS232_UP9600
+}

@@ -7,23 +7,22 @@
 ;
 
 
-#if HAS_RS232
+!ifdef HAS_RS232 {
 
 
 rs232_count_channels:
 
 	ldx #$00
 	ldy LDTND
-!:
+@1:
 	dey
-	bmi !+
+	bmi @2
 	lda FAT, y
 	cmp #$02
-	bne !-
+	bne @1
 	inx
-	bpl !- ; branch always
-!:
+	bpl @1 ; branch always
+@2:
 	rts
+}
 
-
-#endif

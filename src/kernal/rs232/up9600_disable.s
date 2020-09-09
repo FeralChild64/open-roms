@@ -9,7 +9,7 @@
 ; Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
 
 
-#if CONFIG_RS232_UP9600
+!ifdef CONFIG_RS232_UP9600 {
 
 
 up9600_disable: ; XXX adapt
@@ -41,6 +41,4 @@ up9600_disable: ; XXX adapt
 	pla
 	tax
 	pla
-
-
-#endif ; CONFIG_RS232_UP9600
+}

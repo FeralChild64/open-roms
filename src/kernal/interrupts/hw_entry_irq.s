@@ -15,12 +15,13 @@ hw_entry_irq:
 
 	; Save registers, sequence according to Computes Mapping the Commodore 64, page 73
 	pha
-	phx_trash_a
-	phy_trash_a
+	+phx_trash_a
+	+phy_trash_a
 
-#if CONFIG_CPU_MOS_6502 && CONFIG_BCD_SAFE_INTERRUPTS
-	cld ; clear decimal flag to allow using it without disabling interrupts
-#endif
+!ifndef HAS_OPCODES_65CE02 { !ifdef CONFIG_BCD_SAFE_INTERRUPTS {
+
+	cld                      ; clear decimal flag to allow using it without disabling interrupts
+} }
 
 	; Check if caused by BRK
 	tsx
@@ -31,9 +32,9 @@ hw_entry_irq:
 	; Not caused by BRK - call interrupt routine (only if initialised)
 	; Routine on zeropage = assuming not initialized
 	lda CINV+1
-	beq !+
+	beq @1
 	jmp (CINV)
-!:
+@1:
 	; Vector not initialized - call default interrupt routine
 	jmp default_irq_handler
 

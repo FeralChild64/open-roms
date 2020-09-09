@@ -9,7 +9,7 @@
 ; Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
 
 
-#if CONFIG_RS232_UP9600
+!ifdef CONFIG_RS232_UP9600 {
 
 
 up9600_nmi:
@@ -25,11 +25,10 @@ up9600_nmi:
 	sta NMIVECT; (TRIGGERED BY SDR FULL)
 	lda #>NMIBYTRY
 	sta NMIVECT+1
-NMIDOBI2
+NMIDOBI2:
 	pla; IGNORE, IF NMI WAS TRIGGERED BY RESTORE-KEY
 	rti
-	; 
-NMIBYTRY
+NMIBYTRY:
 	pha
 	bit CIA2_ICR ; $DD0D; CHECK BIT 7 (SDR FULL PRINT)
 	bpl NMIDOBI2; SDR NOT FULL, THEN SKIP (EG. RESTORE-KEY)
@@ -40,8 +39,8 @@ NMIBYTRY
 	sta NMIVECT; (TRIGGERED BY A STARTBIT)
 	lda #>NMIDOBIT
 	sta NMIVECT+1
-	phx_trash_a
-	phy_trash_a
+	+phx_trash_a
+	+phy_trash_a
 	lda CIA2_SDR ; $DD0C; READ SDR (BIT0=DATABIT7,...,BIT7=DATABIT0)
 	cmp #128; MOVE BIT7 INTO CARRY-FLAG
 	and #127
@@ -60,10 +59,9 @@ NMIBYTRY
 	lda CIA2_PRB ; $DD01;; MORE THAN 200 BYTES IN THE RECEIVE BUFFER
 	and #$FD;; THEN DISABLE RTS
 	sta CIA2_PRB ; $DD01
-NMIBYTR2
-	ply_trash_a
-	plx_trash_a
+NMIBYTR2:
+	+ply_trash_a
+	+plx_trash_a
 	pla
 	rti
-
-#endif ; CONFIG_RS232_UP9600
+}
