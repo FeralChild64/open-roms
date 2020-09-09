@@ -24,4 +24,5 @@
 ; XXX provide implementation
 
 poly1_FAC1:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

@@ -14,4 +14,5 @@
 ; XXX provide implementation
 
 atn_FAC1:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

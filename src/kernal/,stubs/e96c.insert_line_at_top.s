@@ -5,4 +5,4 @@
 
 ; Insert line at top of screen
 
-	STUB_IMPLEMENTATION()
+	+STUB_IMPLEMENTATION

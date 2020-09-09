@@ -14,16 +14,15 @@
 
 cint_legacy: ; $E518
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	jsr M65_MODEGET
-	bcs !+
+	bcs @1
 
 	jsr M65_MODESET
 	bra cint_legacy_end
-!:
-#endif
-
+@1:
+}
 	; Setup video and I/O
 	; See here: https://csdb.dk/forums/index.php?roomid=11&topicid=17048&firstpost=22
 	

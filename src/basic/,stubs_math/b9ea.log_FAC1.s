@@ -16,4 +16,5 @@
 ; XXX provide implementation
 
 log_FAC1:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

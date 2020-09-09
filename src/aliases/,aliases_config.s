@@ -360,3 +360,12 @@
 !ifndef CONFIG_MB_M65 {
 	!set HAS_SMALL_BASIC = 1
 }
+
+
+
+; Defines for multi-segment ROMs
+
+!ifdef CONFIG_MB_M65 {
+	!ifdef SEGMENT_BASIC_0  { !set SEGMENT_M65_BASIC_0  }
+	!ifdef SEGMENT_KERNAL_0 { !set SEGMENT_M65_KERNAL_0 }
+}

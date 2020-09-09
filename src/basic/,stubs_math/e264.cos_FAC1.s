@@ -14,4 +14,5 @@
 ; XXX provide implementation
 
 COS:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

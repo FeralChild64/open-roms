@@ -17,4 +17,5 @@
 ; XXX provide implementation
 
 QINT:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

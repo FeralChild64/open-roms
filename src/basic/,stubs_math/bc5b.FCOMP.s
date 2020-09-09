@@ -26,4 +26,5 @@
 ; XXX provide implementation
 
 FCOMP:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

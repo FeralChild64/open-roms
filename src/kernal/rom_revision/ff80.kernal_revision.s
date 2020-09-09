@@ -64,4 +64,5 @@
 
 
 kernal_revision:
-    .byte $F0 ; chosen not to conflict with anything known so far
+
+    !byte $F0 ; chosen not to conflict with anything known so far

@@ -13,25 +13,25 @@
 
 vicii_init:
 
-#if (ROM_LAYOUT_M65 && SEGMENT_KERNAL_0)
+!ifdef SEGMENT_M65_KERNAL_0 {
 
 	jsr     map_KERNAL_1
 	jsr_ind VK1__vicii_init
 	jmp     map_NORMAL
 
-#else
+} else {
 
 	; Clear everything - turn off sprites (observed hanging around after
  	; running programs and resetting), etc.
 
 	lda #$00
  	ldx #$2E
- !:
+@1:
  	sta __VIC_BASE, x
  	dex
- 	bpl !-
+ 	bpl @1
 
-#if !CONFIG_MB_M65 && !CONFIG_MB_U64
+!ifndef CONFIG_MB_M65 { !ifndef CONFIG_MB_U64 {
 
  	; Disable C128 extra keys - just to be sure they will not interfere with anything
 
@@ -40,8 +40,7 @@ vicii_init:
  	; Disable the C128 2MHz mode, it prevents VIC-II display from working correctly
 
  	stx VIC_CLKRATE
-
-#endif
+} }
 
 	; Set up default IO values
 	; - [CM64] page 129       - VIC_SCROLY
@@ -68,4 +67,4 @@ vicii_init:
 
 	jmp clrchn_reset
 
-#endif ; ROM layout
+} ; ROM layout

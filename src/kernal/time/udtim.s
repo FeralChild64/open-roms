@@ -28,18 +28,18 @@ UDTIM:
 udtim_rollover_check:
 
 	lda TIME+0
-#if !CONFIG_RS232_UP9600
+!ifndef CONFIG_RS232_UP9600 {
 	cmp #$4F
-#else
+} else {
 	cmp #$54
-#endif
+}
 	bcc udtim_keyboard
 	lda TIME+1
-#if !CONFIG_RS232_UP9600
+!ifndef CONFIG_RS232_UP9600 {
 	cmp #$1A
-#else
+} else {
 	cmp #$60
-#endif	
+}
 	bcc udtim_keyboard
 	
 	; FALLTROUGH
@@ -59,11 +59,11 @@ udtim_clock_reset:
 
 udtim_keyboard:
 
-#if CONFIG_PLATFORM_COMMANDER_X16
+!ifdef CONFIG_PLATFORM_COMMANDER_X16 {
 
-	STUB_IMPLEMENTATION()
+	+STUB_IMPLEMENTATION
 
-#else
+} else {
 
 	; According to [CM64], page 27, the action we have to perform is to copy
 	; the last row of keyboard to RAM, so that various routines can detect the STOP
@@ -74,27 +74,27 @@ udtim_keyboard:
 
 	lda #$80
 	sta CIA1_PRA             ; select all the rows except the last one
-#if CONFIG_KEYBOARD_C128
+!ifdef CONFIG_KEYBOARD_C128 {
 	ldx #$00
 	stx VIC_XSCAN            ; connect all the extra C128 keys
-#endif
-#if CONFIG_KEYBOARD_C65
+}
+!ifdef CONFIG_KEYBOARD_C65 {
 	ldx #$00
 	stx C65_EXTKEYS_PR       ; connect all the extra C65 keys
-#endif
+}
 
 	lda CIA1_PRB             ; read the keys
 	eor #$FF
 	sta STKEY                ; store reversed state - to filter out anything vulnerable to ghosting
 
-#if CONFIG_KEYBOARD_C128
+!ifdef CONFIG_KEYBOARD_C128 {
 	dex                      ; puts $FF
 	stx VIC_XSCAN            ; disconnect the extra C128 keys
-#endif
-#if CONFIG_KEYBOARD_C65
+}
+!ifdef CONFIG_KEYBOARD_C65 {
 	dex                      ; puts $FF
 	stx C65_EXTKEYS_PR       ; disconnect the extra C65 keys
-#endif
+}
 	lda #$7F
 	sta CIA1_PRA             ; select the last row (bit to 0)
 
@@ -107,5 +107,4 @@ udtim_keyboard:
 	; unable to, for example, read the space bar status.
 
 	rts
-
-#endif
+}

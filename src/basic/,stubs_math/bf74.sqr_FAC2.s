@@ -18,4 +18,5 @@
 ; XXX provide implementation
 
 sqr_FAC2:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

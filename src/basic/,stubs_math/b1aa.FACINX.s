@@ -18,4 +18,5 @@
 ; XXX provide implementation
 
 FACINX:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

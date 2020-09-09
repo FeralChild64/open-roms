@@ -18,4 +18,5 @@
 ; XXX provide implementation
 
 GIVAYF:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

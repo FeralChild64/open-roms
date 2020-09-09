@@ -21,4 +21,5 @@
 ; XXX provide implementation
 
 FIN:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

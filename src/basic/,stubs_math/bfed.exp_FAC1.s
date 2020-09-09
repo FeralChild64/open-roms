@@ -16,4 +16,5 @@
 ; XXX provide implementation
 
 exp_FAC1:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

@@ -9,4 +9,5 @@
 ;      https://www.lemon64.com/forum/viewtopic.php?t=70680&sid=3ff66caf7f5fdf2a3c2ff2ee31fc3fd8
 
 setcharptr:
-    STUB_IMPLEMENTATION()
+
+    +STUB_IMPLEMENTATION

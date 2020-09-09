@@ -22,4 +22,5 @@
 ; XXX provide implementation
 
 pwr_FAC2_FAC1:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

@@ -6,4 +6,5 @@
 ; XXX provide documentation and implementation
 
 RVECT:
-    STUB_IMPLEMENTATION()
+
+    +STUB_IMPLEMENTATION

@@ -15,4 +15,5 @@
 ; XXX provide implementation
 
 int_FAC1:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

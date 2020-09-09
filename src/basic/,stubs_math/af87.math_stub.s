@@ -12,4 +12,4 @@
 
 ; XXX add name, label, implement, test
 
-	STUB_IMPLEMENTATION()
+	+STUB_IMPLEMENTATION

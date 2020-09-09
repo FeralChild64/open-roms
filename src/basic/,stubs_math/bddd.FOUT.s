@@ -19,4 +19,5 @@
 ; XXX provide implementation
 
 FOUT:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION

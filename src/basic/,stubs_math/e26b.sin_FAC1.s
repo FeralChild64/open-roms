@@ -14,15 +14,16 @@
 ; XXX provide implementation
 
 sin_FAC1:
-	STUB_IMPLEMENTATION()
+
+	+STUB_IMPLEMENTATION
 
 poly_sin:
 
-	.byte $05                          ; series length - 1
+	!byte $05                          ; series length - 1
 
-	put_const_POLY_SIN_1()
-	put_const_POLY_SIN_2()
-	put_const_POLY_SIN_3()
-	put_const_POLY_SIN_4()
-	put_const_POLY_SIN_5()
-	put_const_POLY_SIN_6()
+	+put_const_POLY_SIN_1
+	+put_const_POLY_SIN_2
+	+put_const_POLY_SIN_3
+	+put_const_POLY_SIN_4
+	+put_const_POLY_SIN_5
+	+put_const_POLY_SIN_6
