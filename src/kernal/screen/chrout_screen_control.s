@@ -24,10 +24,10 @@ chrout_try_jumptable_loop:
 	tay
 	lda QTSW
 	ora INSRT
-	beq !+
+	beq @1
 	tya
 	jmp chrout_screen_quote
-!:
+@1:
 	tya
 
 	; FALLTROUGH
@@ -35,22 +35,22 @@ chrout_try_jumptable_loop:
 chrout_try_jumptable_loop_noquote:
 
 	cmp chrout_screen_jumptable_codes, x
-	bne !+
+	bne @2
 
 	; Found, perform a jump to subroutine
-#if !HAS_OPCODES_65C02
+!ifndef HAS_OPCODES_65C02 {
 	lda chrout_screen_jumptable_hi, x
 	pha
 	lda chrout_screen_jumptable_lo, x
 	pha
 	rts
-#else
+} else {
 	txa
 	asl
 	tax
 	jmp (chrout_screen_jumptable, x)
-#endif
-!:
+}
+@2:
 	dex
 	bpl chrout_try_jumptable_loop
 
@@ -61,10 +61,10 @@ chrout_try_COLOR:
 chrout_try_color_loop:
 
 	cmp colour_codes,x
-	bne !+
+	bne @3
 	stx COLOR
 	jmp chrout_screen_done
-!:	
+@3:
 	dex
 	bpl chrout_try_color_loop
 

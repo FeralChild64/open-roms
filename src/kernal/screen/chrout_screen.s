@@ -10,12 +10,11 @@
 
 chrout_screen:
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	jsr M65_MODEGET
-	bcc_16 m65_chrout_screen
-
-#endif
+	+bcc m65_chrout_screen
+}
 
 	jsr cursor_hide_if_visible
 
@@ -26,7 +25,7 @@ chrout_screen:
 	; ones are always printable characters; separate away control codes
 
 	and #$60
-	beq_16 chrout_screen_control
+	+beq chrout_screen_control
 	txa
 
 	; Literals - first convert PETSCII to screen code
@@ -54,9 +53,9 @@ chrout_screen_literal: ; entry point for chrout_screen_quote
 	; Decrement number of chars waiting to be inserted
 
 	lda INSRT
-	beq !+
+	beq @1
 	dec INSRT
-!:	
+@1:
 	; Toggle quote flag if required
 
 	txa
@@ -76,11 +75,11 @@ chrout_screen_literal: ; entry point for chrout_screen_quote
 	; Scroll down (extend logical line) if needed
 
 	cpy #40
-	bne !+
+	bne @2
 	jsr screen_grow_logical_line
 	inc TBLX
 	ldy PNTR
-!:
+@2:
 	; If not the 80th character of the logical row, we are done
 
 	cpy #80

@@ -7,12 +7,12 @@
 ;
 
 
-#if HAS_RS232
+!ifdef HAS_RS232 {
 
 
-#if CONFIG_MEMORY_MODEL_60K
-	.error "CONFIG_MEMORY_MODEL_60K is not compatible with RS-232 memory allocation code"
-#endif
+!ifdef CONFIG_MEMORY_MODEL_60K {
+	!error "CONFIG_MEMORY_MODEL_60K is not compatible with RS-232 memory allocation code"
+}
 
 
 close_rs232:
@@ -37,9 +37,11 @@ close_rs232:
 	sta RIBUF+0
 	sta RIBUF+1
 
+	; FALLTROUGH
+
 close_rs232_end:
 
 	jmp close_remove_from_table
 
 
-#endif ; HAS_RS232
+} ; HAS_RS232

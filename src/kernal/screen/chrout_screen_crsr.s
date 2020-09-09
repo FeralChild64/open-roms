@@ -25,9 +25,9 @@ chrout_screen_CRSR_DOWN:
 
 	lda TBLX
 	cmp #24
-	bne !+
+	bne @1
 	jsr screen_scroll_up
-!:
+@1:
 	inc TBLX
 	jmp chrout_screen_calc_lptr_done
 
@@ -36,10 +36,14 @@ chrout_screen_CRSR_RIGHT:
 
 	jsr screen_get_clipped_PNTR
 	cpy #39
-	beq_16 screen_advance_to_next_line
+	+beq screen_advance_to_next_line
 	
 	iny
-!:
+
+	; FALLTROUGH
+
+chrout_screen_CRSR_LR_end:
+
 	sty PNTR
 	bpl chrout_screen_CRSR_done        ; branch always
 
@@ -48,7 +52,7 @@ chrout_screen_CRSR_LEFT:
 
 	jsr screen_get_clipped_PNTR
 	dey
-	bpl !-
+	bpl chrout_screen_CRSR_LR_end
 
 	lda TBLX
 	beq chrout_screen_CRSR_done

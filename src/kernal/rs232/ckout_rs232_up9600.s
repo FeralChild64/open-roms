@@ -9,7 +9,7 @@
 ; Based on UP9600 code by Daniel Dallman with Bo Zimmerman adaptations
 
 
-#if CONFIG_RS232_UP9600
+!ifdef CONFIG_RS232_UP9600 {
 
 
 ckout_rs232:
@@ -23,4 +23,4 @@ ckout_rs232:
 	rts
 
 
-#endif ; CONFIG_RS232_UP9600
+} ; CONFIG_RS232_UP9600

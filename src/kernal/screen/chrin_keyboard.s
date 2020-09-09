@@ -10,17 +10,16 @@
 
 chrin_keyboard:
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	jsr M65_MODEGET
-	bcc_16 m65_chrin_keyboard
-
-#endif
+	+bcc m65_chrin_keyboard
+}
 
 	; Preserve .X and .Y registers
 
 	stx XSAV
-	phy_trash_a
+	+phy_trash_a
 
 	; FALLTROUGH
 
@@ -48,7 +47,7 @@ chrin_keyboard_empty_line:
 
 	; For an empty line, just return the carriage return
 
-	ply_trash_a
+	+ply_trash_a
 	ldx XSAV
 	clc
 	lda #$0D
@@ -68,7 +67,7 @@ chrin_keyboard_return_byte:
 	lda (LSXP),y
 	jsr screen_check_toggle_quote
 	tax
-	ply_trash_a
+	+ply_trash_a
 	txa
 	ldx XSAV
 	jsr screen_code_to_petscii
@@ -112,9 +111,9 @@ chrin_keyboard_enter:
 	sec
 	sbc #40
 	sta LSXP+0
-	bcs !+
+	bcs @1
 	dec LSXP+1
-!:
+@1:
 	ldy #80
 	bne chrin_enter_loop               ; branch always
 
@@ -150,12 +149,11 @@ chrkn_keyboard_not_enter:
 
 	lda KEYD
 
-#if CONFIG_PROGRAMMABLE_KEYS
+!ifdef CONFIG_PROGRAMMABLE_KEYS {
 
 	jsr chrin_programmable_keys
 	bcc chrin_keyboard_enter
-
-#endif ; CONFIG_PROGRAMMABLE_KEYS
+}
 
 	; Print character, keep looking for input from keyboard until carriage return
 	jsr CHROUT
