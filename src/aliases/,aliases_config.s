@@ -136,7 +136,12 @@
 }
 
 
+
 ; Check that tape deck configuration is correct
+
+!set counter = 0
+!ifdef CONFIG_TAPE_NORMAL { !set counter = counter + 1 }
+!ifdef CONFIG_TAPE_TURBO  { !set counter = counter + 1 }
 
 !ifdef CONFIG_PLATFORM_COMMANDER_X16 {
 	!ifdef CONFIG_TAPE_NORMAL { !error "Do not use CONFIG_TAPE_NORMAL options for Commander X16 platform, it is not implemented" }
@@ -145,6 +150,13 @@
 !ifdef CONFIG_TAPE_AUTODETECT { !ifndef CONFIG_TAPE_NORMAL { !ifndef CONFIG_TAPE_TURBO {
 	!error "CONFIG_TAPE_AUTODETECT requires both CONFIG_TAPE_NORMAL and CONFIG_TAPE_TURBO"
 } } }
+!ifdef CONFIG_TAPE_HEAD_ALIGN {
+	!ifndef CONFIG_TAPE_WEDGE { !error "CONFIG_TAPE_HEAD_ALIGN requires CONFIG_TAPE_WEDGE" }
+}
+!ifdef CONFIG_TAPE_WEDGE {
+	!if (counter = 0) { !error "CONFIG_TAPE_WEDGE requires CONFIG_TAPE_TURBO or CONFIG_TAPE_NORMAL"}
+}
+
 
 
 ; Check that RS-232 configuration is correct
@@ -165,175 +177,130 @@
 
 
 
+; Check that sound support configuration is correct
+
+!set counter = 0
+!ifdef CONFIG_SID_2ND_ADDRESS { !set counter = counter + 1 }
+!ifdef CONFIG_SID_3RD_ADDRESS { !set counter = counter + 1 }
+!ifdef CONFIG_SID_D4XX        { !set counter = counter + 1 }
+!ifdef CONFIG_SID_D5XX        { !set counter = counter + 1 }
+
+!ifdef CONFIG_PLATFORM_COMMANDER_X16 {
+	!if (counter != 0) { !error "Do not use CONFIG_SID_* options for Commander X16 platform" }
+}
+!ifdef CONFIG_MB_M65 {
+	!if (counter != 0) { !error "Do not use CONFIG_SID_* options for MEGA65 motherboard" }
+}
+!ifdef CONFIG_SID_2ND_ADDRESS {
+	!if (CONFIG_SID_2ND_ADDRESS = $D400) { !error "CONFIG_SID_2ND_ADDRESS points to the 1st SID" }
+}
+!ifdef CONFIG_SID_3RD_ADDRESS {
+	!if (CONFIG_SID_3RD_ADDRESS = $D400) { !error "CONFIG_SID_3RD_ADDRESS points to the 1st SID" }
+}
+!ifdef CONFIG_SID_2ND_ADDRESS { !ifdef CONFIG_SID_3RD_ADDRESS {
+	!if (CONFIG_SID_2ND_ADDRESS = CONFIG_SID_RD_ADDRESS) { !error "Configured SIDs have the same addresses" }
+} }
 
 
-// XXX check SID configuration, shouldn't be specified for MEGA65 or COMMANDER X16
+
+; Check that keyboard settings are correct
+
+!ifdef CONFIG_LEGACY_SCNKEY {
+	!ifdef CONFIG_RS232_UP2400            { !error "CONFIG_LEGACY_SCNKEY is not compatible with CONFIG_RS232_UP2400"               }
+	!ifdef CONFIG_RS232_UP9600            { !error "CONFIG_LEGACY_SCNKEY is not compatible with CONFIG_RS232_UP9600"               }
+	!ifdef CONFIG_TAPE_NORMAL             { !error "CONFIG_LEGACY_SCNKEY is not compatible with CONFIG_TAPE_NORMAL"                }
+	!ifdef CONFIG_KEYBOARD_C128           { !error "CONFIG_LEGACY_SCNKEY is not compatible with CONFIG_KEYBOARD_C128"              }
+	!ifdef CONFIG_KEYBOARD_C128_CAPS_LOCK { !error "CONFIG_LEGACY_SCNKEY is not compatible with CONFIG_KEYBOARD_C128_CAPS_LOCK"    }
+	!ifdef CONFIG_KEYBOARD_C65            { !error "CONFIG_LEGACY_SCNKEY is not compatible with CONFIG_KEYBOARD_C65"               }
+	!ifdef CONFIG_KEYBOARD_C65_CAPS_LOCK  { !error "CONFIG_LEGACY_SCNKEY is not compatible with CONFIG_KEYBOARD_C65_CAPS_LOCK"     }
+}
+!ifdef CONFIG_MB_M65 {
+	!ifdef CONFIG_KEYBOARD_C128           { !error "MEGA65 motherboard is not compatible with CONFIG_KEYBOARD_C128"                }
+	!ifdef CONFIG_KEYBOARD_C128_CAPS_LOCK { !error "MEGA65 motherboard is not compatible with CONFIG_KEYBOARD_C128_CAPS_LOCK"      }
+	!ifdef CONFIG_LEGACY_SCNKEY           { !error "MEGA65 motherboard is not compatible with CONFIG_LEGACY_SCNKEY"                }
+}
+!ifdef CONFIG_MB_U64 {
+	!ifdef CONFIG_KEYBOARD_C128           { !error "Ultimate 64 motherboard is not compatible with CONFIG_KEYBOARD_C128"           }
+	!ifdef CONFIG_KEYBOARD_C128_CAPS_LOCK { !error "Ultimate 64 motherboard is not compatible with CONFIG_KEYBOARD_C128_CAPS_LOCK" }
+	!ifdef CONFIG_KEYBOARD_C65            { !error "Ultimate 64 motherboard is not compatible with CONFIG_KEYBOARD_C65"            }
+	!ifdef CONFIG_KEYBOARD_C65_CAPS_LOCK  { !error "Ultimate 64 motherboard is not compatible with CONFIG_KEYBOARD_C65_CAPS_LOCK"  }
+}
+
 
 
 ; Check that startup banner configuration is correct
-{
-	.var selected = 0;
 
-#if CONFIG_BANNER_SIMPLE
-	.eval selected++
-#endif
-#if CONFIG_BANNER_FANCY
-	.eval selected++
-#endif
+!set counter = 0
+!ifdef CONFIG_BANNER_SIMPLE { !set counter = counter + 1 }
+!ifdef CONFIG_BANNER_FANCY  { !set counter = counter + 1 }
 
-#if !CONFIG_MB_MEGA_65
-	.if (selected != 1) .error "Please select exactly one CONFIG_BANNER_* option" 
-#endif
-
-#if CONFIG_MB_MEGA_65
-	.if (selected != 0) .error "Do not use CONFIG_BANNER_* options for MEGA65"
-#endif
-
-#if CONFIG_MB_MEGA_65 && CONFIG_COLORS_BRAND
-	.error "Do not use CONFIG_COLORS_BRAND options for MEGA65"
-#endif
-
+!ifdef CONFIG_MB_M65 {
+	!if (counter > 0) { !error "Do not use CONFIG_BANNER_* options for MEGA65"    }
+	!ifdef CONFIG_COLORS_BRAND  { !errror "Do not use CONFIG_COLORS_BRAND options for MEGA65" }
+	!ifdef CONFIG_SHOW_FEATURES { !errror "Do not use CONFIG_SHOW_FEATURES options for MEGA65" }
+} else {
+	!if (counter != 1) { !error "Please select exactly one CONFIG_BANNER_* option" }
 }
 
 
 
-#if CONFIG_MB_M65 && CONFIG_SHOW_FEATURES
-	.if (selected != 0) .error "Do not use CONFIG_SHOW_FEATURES options for MEGA65"
-#endif
-
-
-; Check if keyboard options are correct
-.function CHECK_KEYCMD(keycmd)
-{
-	.if (keycmd.size() > 0) .return 1
-	.return 0
-}
-{
-#if CONFIG_LEGACY_SCNKEY && CONFIG_RS232_UP9600
-	.error "CONFIG_LEGACY_SCNKEY is not compatible with CONFIG_RS232_UP9600"
-#endif
-#if CONFIG_LEGACY_SCNKEY && CONFIG_TAPE_NORMAL
-	.error "CONFIG_LEGACY_SCNKEY is not compatible with CONFIG_TAPE_NORMAL"
-#endif
-#if CONFIG_LEGACY_SCNKEY && (CONFIG_KEYBOARD_C128 || CONFIG_KEYBOARD_C128_CAPS_LOCK || CONFIG_KEYBOARD_C65 || CONFIG_KEYBOARD_C65_CAPS_LOCK)
-	.error "CONFIG_LEGACY_SCNKEY and CONFIG_KEYBOARD_C128* / CONFIG_KEYBOARD_C65* are mutually exclusive"
-#endif
-
-#if (CONFIG_MB_M65 || CONFIG_MB_U64) && (CONFIG_KEYBOARD_C128 || CONFIG_KEYBOARD_C128_CAPS_LOCK)
-	.error "Selected CONFIG_MB_* is not compatible with CONFIG_KEYBOARD_C128*"
-#endif
-#if CONFIG_MB_U64 && (CONFIG_KEYBOARD_C65 || CONFIG_KEYBOARD_C65_CAPS_LOCK)
-	.error "Selected CONFIG_MB_* is not compatible with CONFIG_KEYBOARD_C65*"
-#endif
-
-	.var num_pkeys_base = 0
-	.var num_pkeys_ext1 = 0
-	.var num_pkeys_ext2 = 0
-
-	.eval num_pkeys_base += CHECK_KEYCMD(CONFIG_KEYCMD_RUN)
-
-	.eval num_pkeys_base += CHECK_KEYCMD(CONFIG_KEYCMD_F1)
-	.eval num_pkeys_base += CHECK_KEYCMD(CONFIG_KEYCMD_F2)
-	.eval num_pkeys_base += CHECK_KEYCMD(CONFIG_KEYCMD_F3)
-	.eval num_pkeys_base += CHECK_KEYCMD(CONFIG_KEYCMD_F4)
-	.eval num_pkeys_base += CHECK_KEYCMD(CONFIG_KEYCMD_F5)
-	.eval num_pkeys_base += CHECK_KEYCMD(CONFIG_KEYCMD_F6)
-	.eval num_pkeys_base += CHECK_KEYCMD(CONFIG_KEYCMD_F7)
-	.eval num_pkeys_base += CHECK_KEYCMD(CONFIG_KEYCMD_F8)
-
-	.eval num_pkeys_ext1 += CHECK_KEYCMD(CONFIG_KEYCMD_HELP)
-
-	.eval num_pkeys_ext2 += CHECK_KEYCMD(CONFIG_KEYCMD_F9)
-	.eval num_pkeys_ext2 += CHECK_KEYCMD(CONFIG_KEYCMD_F10)
-	.eval num_pkeys_ext2 += CHECK_KEYCMD(CONFIG_KEYCMD_F11)
-	.eval num_pkeys_ext2 += CHECK_KEYCMD(CONFIG_KEYCMD_F12)
-	.eval num_pkeys_ext2 += CHECK_KEYCMD(CONFIG_KEYCMD_F13)
-	.eval num_pkeys_ext2 += CHECK_KEYCMD(CONFIG_KEYCMD_F14)
-
-	.var num_pkeys = num_pkeys_base
-#if !CONFIG_LEGACY_SCNKEY && (CONFIG_KEYBOARD_C128 || CONFIG_KEYBOARD_C65)
-	.eval num_pkeys += num_pkeys_ext1
-#endif
-#if !CONFIG_LEGACY_SCNKEY && CONFIG_KEYBOARD_C65
-	.eval num_pkeys += num_pkeys_ext2
-#endif
-
-#if CONFIG_PROGRAMMABLE_KEYS
-	.if (num_pkeys == 0) .error "CONFIG_PROGRAMMABLE_KEYS requires at least one defined key"
-#endif
-}
+;
+; Define some macros depending on the configuration
+;
 
 
 
-; Check that features are configured correctly
-{
-#if CONFIG_TAPE_WEDGE && !CONFIG_TAPE_TURBO && !CONFIG_TAPE_NORMAL
-	.error "CONFIG_TAPE_WEDGE requires CONFIG_TAPE_TURBO or CONFIG_TAPE_NORMAL"
-#endif
-#if !CONFIG_TAPE_WEDGE && CONFIG_TAPE_HEAD_ALIGN
-	.error "CONFIG_TAPE_HEAD_ALIGN requires CONFIG_TAPE_WEDGE"
-#endif
-}
+; Handle CPU configuration
+
+!ifdef CONFIG_BCD_SAFE_INTERRUPTS { !set HAS_BCD_SAFE_INTERRUPTS = 1 }
 
 
 
-; Handle I/O configuration
+; Handle RS-232 configuration
 
-#if CONFIG_RS232_UP2400 || CONFIG_RS232_UP9600
-#define HAS_RS232
-#endif
-
-
-
-; Handle configuration of various features
-
-#if CONFIG_BCD_SAFE_INTERRUPTS
-#define HAS_BCD_SAFE_INTERRUPTS
-#endif
+!ifdef CONFIG_RS232_ACIA   { !set HAS_RS232 = 1 }
+!ifdef CONFIG_RS232_UP2400 { !set HAS_RS232 = 1 }
+!ifdef CONFIG_RS232_UP9600 { !set HAS_RS232 = 1 }
 
 
 
-; Handle configuration of debug infrastructure
+; Handle debug configuration
 
-.macro STUB_IMPLEMENTATION_RTS() {
+!macro STUB_IMPLEMENTATION_RTS { 
 	rts
 }
 
-.macro STUB_IMPLEMENTATION_BRK() {
-	.break
+!macro STUB_IMPLEMENTATION_BRK { 
+	; XXX set VICE breakpoint
 	brk
 	brk
 	jmp *-2
 }
 
-.macro STUB_IMPLEMENTATION()
-{
-#if CONFIG_DBG_STUBS_BRK
-	STUB_IMPLEMENTATION_BRK()
-#else
-	STUB_IMPLEMENTATION_RTS()
-#endif
+!ifdef CONFIG_DBG_STUBS_BRK {
+	!macro STUB_IMPLEMENTATION { +STUB_IMPLEMENTATION_BRK }
+} else {
+	!macro STUB_IMPLEMENTATION { +STUB_IMPLEMENTATION_RTS }
 }
 
 
 
-; Setup colors
+; Handle colors
 
-#if CONFIG_COLORS_BRAND && CONFIG_BRAND_ULTIMATE_64
+!set CONFIG_COLOR_BG  = $06
+!set CONFIG_COLOR_TXT = $01
 
-	.const CONFIG_COLOR_BG  = $00
-	.const CONFIG_COLOR_TXT = $01
+!ifdef CONFIG_COLORS_BRAND {
+	!ifdef CONFIG_MB_U64 {
+		!set CONFIG_COLOR_BG  = $00
+		!set CONFIG_COLOR_TXT = $01
+	}
+}
 
-#else
-
-	.const CONFIG_COLOR_BG  = $06
-	.const CONFIG_COLOR_TXT = $01
-
-#endif
 
 
 ; Determine if we need space-savings in BASIC code
 
-#if !ROM_LAYOUT_M65
-#define HAS_SMALL_BASIC
-#endif
+!ifndef CONFIG_MB_M65 {
+	!set HAS_SMALL_BASIC = 1
+}

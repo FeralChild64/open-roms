@@ -43,6 +43,9 @@
 !set CONFIG_IEC_JIFFYDOS = 1
 ; !set CONFIG_IEC_JIFFYDOS_BLANK = 1
 
+
+; Tape deck configuration
+
 ; !set CONFIG_TAPE_NORMAL = 1
 !set CONFIG_TAPE_TURBO = 1
 ; !set CONFIG_TAPE_AUTODETECT = 1
@@ -50,11 +53,10 @@
 ; !set CONFIG_TAPE_NO_MOTOR_CONTROL = 1
 
 
-; Multiple SID support
+; Sound support
 
 !set CONFIG_SID_2ND_ADDRESS = $D420
 !set CONFIG_SID_3RD_ADDRESS = $D440
-
 ; !set CONFIG_SID_D4XX = 1
 ; !set CONFIG_SID_D5XX = 1
 

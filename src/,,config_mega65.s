@@ -43,15 +43,6 @@
 !set CONFIG_TAPE_NO_MOTOR_CONTROL = 1
 
 
-; Multiple SID support
-
-!set CONFIG_SID_2ND_ADDRESS = $D440
-!set CONFIG_SID_3RD_ADDRESS = $D480
-
-; !set CONFIG_SID_D4XX = 1
-; !set CONFIG_SID_D5XX = 1
-
-
 ; Keyboard settings
 
 ; !set CONFIG_LEGACY_SCNKEY = 1
