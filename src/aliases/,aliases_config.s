@@ -297,6 +297,21 @@
 
 
 
+; Handle IEC configuration
+
+!ifdef CONFIG_IEC_BURST_CIA1 { !set HAS_IEC_BURST = 1 }
+!ifdef CONFIG_IEC_BURST_CIA2 { !set HAS_IEC_BURST = 1 }
+!ifdef CONFIG_IEC_BURST_M65  { !set HAS_IEC_BURST = 1 }
+
+
+
+; Handle tape configuration
+
+!ifdef CONFIG_TAPE_NORMAL { !set HAS_TAPE = 1 }
+!ifdef CONFIG_TAPE_TURBO  { !set HAS_TAPE = 1 }
+
+
+
 ; Handle RS-232 configuration
 
 !ifdef CONFIG_RS232_ACIA   { !set HAS_RS232 = 1 }
