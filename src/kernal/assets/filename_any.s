@@ -5,4 +5,4 @@
 
 filename_any:
 
-	.text "*"
+	!byte $2A                ; '*'

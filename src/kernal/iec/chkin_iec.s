@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 chkin_iec:
@@ -16,19 +16,19 @@ chkin_iec:
 	
 	lda LAT, Y
 	cmp #$01
-	beq_16 chkin_file_not_input
+	+beq chkin_file_not_input
 
 	; Send TALK + TKSA first
 	lda FAT,Y
 
 	jsr TALK
-	bcs_16 chkinout_device_not_present
+	+bcs chkinout_device_not_present
 
 	lda LAT, Y
 	ora #$60
 	jsr TKSA
-	bcs_16 chkinout_device_not_present
+	+bcs chkinout_device_not_present
 
 	jmp chkin_set_device
 
-#endif ; CONFIG_IEC
+} ; CONFIG_IEC

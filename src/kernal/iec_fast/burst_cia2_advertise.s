@@ -12,19 +12,19 @@
 ;
 
 
-#if CONFIG_IEC_BURST_CIA2
+!ifdef CONFIG_IEC_BURST_CIA2 {
 
 
 burst_advertise:
 
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 
 	; Skip if other protocol (only JiffyDOS is possible at this moment) already detected
 	lda IECPROTO
-	bmi !+
+	bmi @1
 	bne burst_advertise_done              
-!:
-#endif
+@1:
+}
 
 	; Make sure this is not done under ATN
 	jst iec_release_atn
@@ -46,15 +46,13 @@ burst_advertise:
 
 	; Wait until byte sent
 	lda #$08		                   ; interrupt mask
-!:
+@2:
 	bit CIA2_ICR                       
-	beq !-
+	beq @2
 
 	; FALLTROUGH
 
 burst_advertise_done:
 
 	rts
-
-
-#endif
+}

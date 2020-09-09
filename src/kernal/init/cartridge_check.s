@@ -9,12 +9,12 @@
 cartridge_check:
 
 	ldx #$05
-!:
+@1:
 	lda CART_SIG-1,x
 	cmp cartridge_signature-1,x
 	bne cartridge_check_end
 	dex
-	bne !-
+	bne @1
 
 	; FALLTROUGH
 

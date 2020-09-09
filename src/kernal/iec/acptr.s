@@ -15,24 +15,24 @@
 ACPTR:
 
 	lda IOSTATUS
-	beq !+
+	beq @1
 
 	clc
 	lda #$0D                           ; tested on real ROMs
 	rts
-!:
+@1:
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr m65dos_check
-	bcc_16 m65dos_acptr                ; branch if device is handeld by internal DOS
-#endif
+	+bcc m65dos_acptr                ; branch if device is handeld by internal DOS
+}
 
-#if CONFIG_IEC
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC {
+!ifdef CONFIG_IEC_JIFFYDOS {
 	jmp iec_rx_dispatch
-#else
+} else {
 	jmp iec_rx_byte
-#endif
-#else
+}
+} else { ; no CONFIG_IEC
 	jmp kernalerror_ILLEGAL_DEVICE_NUMBER
-#endif
+}
