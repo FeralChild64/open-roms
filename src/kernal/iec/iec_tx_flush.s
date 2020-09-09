@@ -7,19 +7,17 @@
 ; Preserves .X, .Y and .A registers
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_tx_flush:
 
 	pha
 	lda C3PO
-	beq !+
+	beq @1
 	sec ; send it with EOI
 	jsr iec_tx_byte ; send the command regardless of the status
-!:
+@1:
 	pla
 	rts
-
-
-#endif ; CONFIG_IEC
+}

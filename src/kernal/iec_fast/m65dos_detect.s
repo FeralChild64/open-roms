@@ -13,10 +13,10 @@ m65dos_detect:
 
 	pha
 	jsr m65dos_chkunit
-	bcs !+
+	bcs @1
 
 	lda #IEC_ROMDOS
 	sta IECPROTO
-!:
+@1:
 	pla
 	rts

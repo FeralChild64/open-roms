@@ -6,7 +6,7 @@
 ; Helper routine to check for EOI while receiving byte from IEC
 ;
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_rx_check_eoi:
@@ -16,12 +16,11 @@ iec_rx_check_eoi:
 	; Loop iteraction takes 11 cycles, 19 full iterations are enough
 
 	ldx #$13                           ; 2 cycles
-
-!:
+:
 	bit CIA2_PRA                       ; 4 cycles
 	bvc iec_rx_check_eoi_done          ; 2 cycles if not jumped
 	dex                                ; 2 cycles
-    bne !-                             ; 3 cycles if jumped
+    bne @1                             ; 3 cycles if jumped
 
     ; FALLTROUGH
 
@@ -39,6 +38,4 @@ iec_rx_check_eoi_confirm:
 iec_rx_check_eoi_done:
 
 	rts
-
-
-#endif ; CONFIG_IEC
+}

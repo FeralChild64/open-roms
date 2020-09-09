@@ -5,10 +5,9 @@
 
 ; Short helper jump-via-vector routine, to set the keyboard matrix
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 
 scnkey_via_keylog:
 
 	jmp (KEYLOG)
-
-#endif
+}

@@ -15,9 +15,9 @@ iec_update_EAL_by_Y: ; note: Carry has to be set by caller!
 	tya
 	adc EAL+0
 	sta EAL+0
-	bcc !+
+	bcc @1
 	inc EAL+1
-!:
+@1:
 	rts
 
 

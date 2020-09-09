@@ -3,7 +3,7 @@
 ;; #LAYOUT# *   *        #IGNORE
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_wait_for_data_pull:
@@ -13,6 +13,4 @@ iec_wait_for_data_pull:
 	; (highest bit set = negative value)
 	bmi iec_wait_for_data_pull
 	rts
-
-
-#endif ; CONFIG_IEC
+}

@@ -13,7 +13,7 @@
 ; .byte 2,$low,$hi = display word as hex
 ; .byte $f0+n,$low,$hi = display byte at $hi$lo+n as hex
 
-#if CONFIG_DBG_PRINTF
+!ifdef CONFIG_DBG_PRINTF {
 
 printf:
 	; Temporary storage is between end of screen at $0400
@@ -127,9 +127,9 @@ printf_nextchar:
 printf_advance:
 	; Advance pointer to next character
 	inc $7f5
-	bne !+
+	bne @1
 	inc $7f6
-!:
+@1:
 	rts
 
 printf_retreat:
@@ -142,5 +142,4 @@ printf_retreat:
 	sbc #0
 	sta $7f6
 	rts
-
-#endif ; CONFIG_DBG_PRINTF
+}

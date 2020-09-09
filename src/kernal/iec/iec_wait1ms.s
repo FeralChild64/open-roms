@@ -12,25 +12,29 @@
 ; 63 cycles, we need at least 17 full rasters to be 100% sure we wait enough
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_wait1ms:
 
 	ldx #18 ; we probably won't start with the beginning of raster
 
-#endif ; CONFIG_IEC
+} ; CONFIG_IEC
+
+	; FALLTROUGH
 
 wait_x_bars: ; additional entry point for delayy in screen and tape support
              ; has to preserve .Y and put .X to 0
 
 	lda VIC_RASTER
-!:
+@1:
 	cmp VIC_RASTER
-	beq !-
+	beq @1
 	lda VIC_RASTER
 	dex
-	bne !-
+	bne @1
+
+	; FALLTROUGH
 
 iec_wait_rts: ; dummy RTS, for very short waits
 

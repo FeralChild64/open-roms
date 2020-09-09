@@ -3,7 +3,7 @@
 ;; #LAYOUT# *   *        #IGNORE
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_wait_for_data_release:
@@ -13,5 +13,4 @@ iec_wait_for_data_release:
 	; (highest bit set = negative value)
 	bpl iec_wait_for_data_release
 	rts
-
-#endif ; CONFIG_IEC
+}

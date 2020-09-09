@@ -3,7 +3,7 @@
 ;; #LAYOUT# *   *        #IGNORE
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_wait20us:
@@ -27,5 +27,4 @@ iec_wait20us:
     ;   1 cycle to fetch next instruction
     ; ---
     ;  21 cycles
-
-#endif ; CONFIG_IEC
+}

@@ -3,7 +3,7 @@
 ;; #LAYOUT# *   *        #IGNORE
 
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 
 ; IMPORTANT:
@@ -14,11 +14,11 @@
 install_ram_routines:
 	; Copy routines into place
 	ldx #__ram_routines_end-__ram_routines_start-1
-!:
+@1:
 	lda __ram_routines_start,x
 	sta tiny_nmi_handler,x
 	dex
-	bpl !-
+	bpl @1
 
 	; Point NMI handler to tiny_nmi_handler
 	lda #<tiny_nmi_handler
@@ -70,5 +70,4 @@ memmap_allram_routine:
 
 __ram_routines_end:
 
-
-#endif
+}

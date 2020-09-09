@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_wait60us:
@@ -22,8 +22,9 @@ iec_wait60us:
 	; Waste cycles in a loop
 
 	ldx #$0A   ; 2 cycles
-!:	dex        ; 2 cycles * 10
-	bpl !-     ; 3 cycles * 9  + 2 cycles
+@1:
+	dex        ; 2 cycles * 10
+	bpl @1     ; 3 cycles * 9  + 2 cycles
 	rts        ; 6 cycles
 
 	;   6 cycles JSR to routine, 
@@ -31,6 +32,4 @@ iec_wait60us:
     ;   1 cycle to fetch next instruction
     ; ---
     ;  64 cycles
-
-
-#endif ; CONFIG_IEC
+}

@@ -9,70 +9,63 @@
 ;
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_cmd_open: ; similar to TKSA, but without turnaround
 
 	jsr iec_check_channel_openclose
-	bcc !+
-	jmp kernalerror_FILE_NOT_INPUT
-!:
+	+bcs kernalerror_FILE_NOT_INPUT
+
 	ora #$F0
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	jsr m65dos_check
-	bcc_16 m65dos_second                 ; branch if device is handeld by internal DOS
+	+bcc m65dos_second                 ; branch if device is handeld by internal DOS
+}
 
-#endif
-
-#if CONFIG_IEC_BURST_CIA1 || CONFIG_IEC_BURST_CIA2 || CONFIG_IEC_BURST_MEGA_65
+!ifdef HAS_IEC_BURST {
 	pha
 	jsr burst_advertise
 	pla
-#endif
+}
 
-#if CONFIG_IEC_DOLPHINDOS
+!ifdef CONFIG_IEC_DOLPHINDOS {
 
 	sta TBTCNT
 	jsr iec_tx_command
-	bcs !+ ; branch if error
-
+	bcc @1
+	rts
+@1:
 	jsr dolphindos_detect
 
 	jmp iec_tx_command_finalize
-
-#else
-
+}
 	; FALLTROUGH
-
-#endif
 
 common_open_close_unlsn_second: ; common part of several commands
 
 	sta TBTCNT
 	jsr iec_tx_command
-	bcs !+ ; branch if error
-	jmp iec_tx_command_finalize
-!:
+	+bcc iec_tx_command_finalize
+
 	rts
 
 iec_check_channel_openclose:
 	; Due to OPEN/CLOSE/TKSA/SECOND command encoding (see https://www.pagetable.com/?p=1031),
 	; allowed channels are 0-15; report error if out of range
 	cmp #$10
-	bcc !+ 
+	bcc @2
 	; Workaround to allow reading executable files and disk directory
 	; using OPEN routine - see https://www.pagetable.com/?p=273 for
 	; example usage
 	cmp #$60
-	beq !+
+	beq @2
 	sec ; mark unsuitable channel number
 	rts
-!:
+@2:
 	clc ; mark suitable channel number
 	rts
+}
 
-
-#endif ; CONFIG_IEC

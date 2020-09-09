@@ -10,14 +10,14 @@
 ; Preserves .X and .Y registers
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_tx_command:
 
 	; Store .X and .Y on the stack - preserve them
-	phx_trash_a
-	phy_trash_a
+	+phx_trash_a
+	+phy_trash_a
 
 	; Notify all devices that we are going to send a byte
 	; and it is going to be a command (pulled ATN)
@@ -26,9 +26,8 @@ iec_tx_command:
 	; Give devices time to respond (response is mandatory!) by pulling DATA
 	jsr iec_wait1ms
 	lda CIA2_PRA ; pulled DATA = highest bit 0 = 'plus'
-	bpl !+
-	jmp iec_return_DEVICE_NOT_FOUND
-!:
+	+bmi iec_return_DEVICE_NOT_FOUND
+
 	; At least one device responded, but they are still allowed to stall
 	; (can be busy processing something), we have to wait till they are all
 	; ready (or bored with DOS attack...)
@@ -41,6 +40,4 @@ iec_tx_command:
 
 	clc ; Carry flag set is used for EOI mark
 	jmp iec_tx_common
-
-
-#endif ; CONFIG_IEC
+}

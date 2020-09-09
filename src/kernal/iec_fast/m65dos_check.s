@@ -11,12 +11,12 @@ m65dos_check:
 	pha
 	lda IECPROTO
 	cmp #IEC_ROMDOS
-	beq !+
+	beq @1
 
 	pla
 	sec
 	rts
-!:
+@1:
 	pla
 	clc
 	rts

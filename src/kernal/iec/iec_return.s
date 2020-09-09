@@ -12,7 +12,7 @@
 ;
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_return_success:
@@ -21,8 +21,8 @@ iec_return_success:
 	lda #$00
 	sta C3PO
 	; Restore registers
-	ply_trash_a
-	plx_trash_a
+	+ply_trash_a
+	+plx_trash_a
 	; Report success
 	clc
 	rts
@@ -35,10 +35,8 @@ iec_return_DEVICE_NOT_FOUND:
 	lda #$00
 	sta C3PO
 	; Restore registers
-	ply_trash_a
-	plx_trash_a
+	+ply_trash_a
+	+plx_trash_a
 	; Report error
 	jmp kernalerror_DEVICE_NOT_FOUND
-
-
-#endif ; CONFIG_IEC
+}
