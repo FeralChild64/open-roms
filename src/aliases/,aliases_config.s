@@ -1,6 +1,6 @@
 
 ;
-; Various configuration dependent aliases/macros/checks
+; Configuration dependent aliases/macros/checks
 ;
 
 
@@ -68,7 +68,6 @@
 	!set CONFIG_CPU_WDC_65C02 = 1
 } else ifdef CONFIG_MB_M65 {
 	!if (counter != 0) { !error "Do not use CONFIG_CPU_* options for MEGA65 motherboard" }
-	!set CONFIG_CPU_CSG_65CE02 = 1
 } else ifdef CONFIG_MB_U64 {
 	!if (counter != 0) { !error "Do not use CONFIG_CPU_* options for Ultimate 64 motherboard" }
 	!set CONFIG_CPU_MOS_6502 = 1
@@ -253,6 +252,48 @@
 ; Handle CPU configuration
 
 !ifdef CONFIG_BCD_SAFE_INTERRUPTS { !set HAS_BCD_SAFE_INTERRUPTS = 1 }
+
+!ifdef CONFIG_CPU_MOS_6502 {
+	!cpu 6502
+}
+!ifdef CONFIG_CPU_DTV_6502 {
+	!cpu c64dtv2
+	!set HAS_OPCODE_BRA          = 1
+	; XXX
+}
+!ifdef CONFIG_CPU_RCW_65C02 {
+	!cpu r65c02
+	!set HAS_BCD_SAFE_INTERRUPTS = 1
+	!set HAS_OPCODE_BRA          = 1
+	!set HAS_OPCODES_65C02       = 1
+}
+!ifdef CONFIG_CPU_WDC_65C02 {
+	!cpu w65c02
+	!set HAS_BCD_SAFE_INTERRUPTS = 1
+	!set HAS_OPCODE_BRA          = 1
+	!set HAS_OPCODES_65C02       = 1
+}
+!ifdef CONFIG_CPU_WDC_65816 {
+	!cpu 65816
+	!set HAS_BCD_SAFE_INTERRUPTS = 1
+	!set HAS_OPCODE_BRA          = 1
+	!set HAS_OPCODES_65C02       = 1
+	!set HAS_OPCODES_65816       = 1
+}
+!ifdef CONFIG_CPU_CSG_65CE02 {
+	!cpu 65ce02
+	!set HAS_BCD_SAFE_INTERRUPTS = 1
+	!set HAS_OPCODE_BRA          = 1
+	!set HAS_OPCODES_65C02       = 1
+	!set HAS_OPCODES_65CE02      = 1
+}
+!ifdef CONFIG_MB_M65 {
+	!cpu m65
+	!set HAS_BCD_SAFE_INTERRUPTS = 1
+	!set HAS_OPCODE_BRA          = 1
+	!set HAS_OPCODES_65C02       = 1
+	!set HAS_OPCODES_65CE02      = 1
+}
 
 
 
