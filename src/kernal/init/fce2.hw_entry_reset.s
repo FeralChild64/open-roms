@@ -16,22 +16,20 @@ hw_entry_reset:
 
 	cld                      ; required for all CPUs - due to possibility of manual call
 
-#if HAS_OPCODES_65CE02
+!ifdef HAS_OPCODES_65CE02 {
 
 	see                      ; disable extended stack
-
-#endif
+}
 
 	ldx #$FF
 	txs
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	jsr m65_reset_part
+}
 
-#endif
-
-#if CONFIG_PLATFORM_COMMODORE_64
+!ifdef CONFIG_PLATFORM_COMMODORE_64 {
 
 	; The following routine is based on reading the public KERNAL jumptable routine
 	; list, and making unimaginative assumptions about what should be done on reset.
@@ -40,16 +38,14 @@ hw_entry_reset:
 
 	; C64 PRG p269
 	jsr cartridge_check
-	bne !+
+	bne @1
 	jmp (ICART_COLD_START)
-!:
+@1:
 
 	; Disable the screen (and set 40 columns) to prevent visual glitches later
 	ldx #$28
 	stx VIC_SCROLX
-
-#endif
-
+}
 	; Initialising IO is obviously required. Also indicated by c64 prg p269.
 	jsr JIOINIT
 
@@ -64,13 +60,11 @@ hw_entry_reset:
 	; "Compute's Mapping the 64" p236
 	jsr JCINT
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	clc
 	jsr M65_MODESET          ; on MEGA65 go to native mode by default
-
-#endif
-
+}
 	; What do we do when finished?  A C64 jumps into the BASIC ROM
 	cli ; allow interrupts to happen
 

@@ -15,7 +15,7 @@ SELDEV:
 
 	ldx FA
 	cpx #$08
-	bcs !+
+	bcs @1
 	ldx #$08
-!:
+@1:
 	rts

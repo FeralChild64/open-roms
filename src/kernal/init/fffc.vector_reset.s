@@ -8,4 +8,4 @@
 
 vector_reset:
 
-	.word hw_entry_reset
+	!word hw_entry_reset

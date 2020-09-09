@@ -8,7 +8,7 @@
 ;
 
 
-#if CONFIG_TAPE_HEAD_ALIGN
+!ifdef CONFIG_TAPE_HEAD_ALIGN {}
 
 
 ; XXX consider broader usage of this method to make IO safer
@@ -55,6 +55,4 @@ nmi_lock:
     ; All done. Unmaskable interrupts are now masked.
 
     rts
-
-
-#endif
+}

@@ -320,10 +320,20 @@
 
 
 
+; Handle sound configuration
+
+!ifdef CONFIG_SID_D4XX { !set CONFIG_SID_D4XX_OR_D5XX = 1 }
+!ifdef CONFIG_SID_D5XX { !set CONFIG_SID_D4XX_OR_D5XX = 1 }
+
+
+
 ; Handle keyboard configuration
 
-!ifdef CONFIG_KEYBOARD_C128 { !set CONFIG_KEYBOARD_C128_OR_C65 = 1 }
-!ifdef CONFIG_KEYBOARD_C65  { !set CONFIG_KEYBOARD_C128_OR_C65 = 1 }
+!ifdef CONFIG_KEYBOARD_C128          { !set CONFIG_KEYBOARD_C128_OR_C65 = 1 }
+!ifdef CONFIG_KEYBOARD_C65           { !set CONFIG_KEYBOARD_C128_OR_C65 = 1 }
+
+!ifdef CONFIG_KEYBOARD_C65           { !set CONFIG_KEYBOARD_C65_OR_CAPS_LOCK = 1 }
+!ifdef CONFIG_KEYBOARD_C65_CAPS_LOCK { !set CONFIG_KEYBOARD_C65_OR_CAPS_LOCK = 1 }
 
 
 

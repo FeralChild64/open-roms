@@ -17,20 +17,18 @@
 
 ; iobase: - commented out to prevent label naming conflict
 
-#if CONFIG_PLATFORM_COMMODORE_64
+!ifdef CONFIG_PLATFORM_COMMODORE_64 {
 
     ldy #$DC
     ldx #$00
 
-#elif CONFIG_PLATFORM_COMMANDER_X16
+} else ifdef CONFIG_PLATFORM_COMMANDER_X16 {
 
     ldy #$9F
     ldx #$60
 
-#else
+} else {
 
-	.error "Please fill-in IOBASE"
-
-#endif
-
+	!error "Please fill-in IOBASE"
+}
     rts

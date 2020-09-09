@@ -9,4 +9,4 @@
 
 vector_irq:
 
-	.word hw_entry_irq
+	!word hw_entry_irq

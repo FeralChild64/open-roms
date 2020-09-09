@@ -8,4 +8,4 @@
 
 vector_nmi:
 
-	.word hw_entry_nmi
+	!word hw_entry_nmi

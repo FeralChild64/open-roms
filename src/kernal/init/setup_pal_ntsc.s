@@ -10,9 +10,9 @@
 setup_pal_ntsc:
 
 	lda VIC_RASTER
-!:
+@1:
 	cmp VIC_RASTER
-	beq !-
+	beq @1
 	bmi setup_pal_ntsc
 
 	; Result in A, if no interrupt happened during the test:
@@ -28,7 +28,7 @@ setup_pal_ntsc:
 setup_pal:
 
 	lda #$01
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 
@@ -52,9 +52,9 @@ setup_irq_timer: ; entry point needed by UP9600 and CIA1 burst mod support
 	; Retrieve video system (0 - NTSC, 1 - PAL), assume PAL for unknown values
 
 	ldx TVSFLG
-	beq !+
+	beq @2
 	ldx #$01
-!:
+@2:
 	; Setup interval for timer A in CIA1
 
 	lda irq_timing_lo, x

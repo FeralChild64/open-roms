@@ -16,14 +16,13 @@
 
 IOINIT:
 
-#if (ROM_LAYOUT_M65 && SEGMENT_KERNAL_0)
+!ifdef SEGMENT_M65_KERNAL_0 {
 
-	jsr     map_KERNAL_1
-	jsr_ind VK1__IOINIT
-	; End by initializing the MEGA65 internal DOS
-	jmp     m65dos_init
+	jsr map_KERNAL_1
+	jsr (VK1__IOINIT)
+	jmp m65dos_init 	               ; end by initializing the MEGA65 internal DOS
 
-#else
+} else {
 
 	;
 	; First initialize the CPU port, to make sure we have correct memory map
@@ -62,48 +61,46 @@ IOINIT:
 
 	lda #$00
 
-#if !CONFIG_MB_M65
+!ifndef CONFIG_MB_M65 {
 
 	; First the standard chip (skip if it is covered by whole $D4XX range)
 
-#if !CONFIG_SID_D4XX
+!ifndef CONFIG_SID_D4XX {
 	sta SID_SIGVOL
-#endif ; !CONFIG_SID_D4XX
+}
 
 	; Silence manually configured 2nd and 3rd SIDs
 
-#if CONFIG_SID_2ND // XXX only addr can be defined now
+!ifdef CONFIG_SID_2ND_ADDRESS {
 	sta SID_SIGVOL - __SID_BASE + CONFIG_SID_2ND_ADDRESS
-#endif ; CONFIG_SID_2ND
+}
 
-#if CONFIG_SID_3RD // XXX only addr can be defined now
+!ifdef CONFIG_SID_3RD_ADDRESS {
 	sta SID_SIGVOL - __SID_BASE + CONFIG_SID_3RD_ADDRESS
-#endif ; CONFIG_SID_3RD
-
+}
 	; Silence whole D4XX and D5XX ranges (if configured)
 
-#if CONFIG_SID_D4XX || CONFIG_SID_D5XX
+!ifdef CONFIG_SID_D4XX_OR_D5XX {
 
 	ldy #$00
-!:
+@1:
 
-#if CONFIG_SID_D4XX 
+!ifdef CONFIG_SID_D4XX {
 	sta SID_SIGVOL + $000, Y
-#endif ; CONFIG_SID_D4XX
-
-#if CONFIG_SID_D5XX 
+}
+!ifdef CONFIG_SID_D5XX {
 	sta SID_SIGVOL + $100, Y
-#endif ; CONFIG_SID_D4XX
+}
 
 	tya
 	clc
 	adc #$20
 	tay
-	bne !-
+	bne @1
 
-#endif ; CONFIG_SID_D4XX || CONFIG_SID_D5XX
+} ; CONFIG_SID_D4XX_OR_D5XX
 
-#else
+} else { ; CONFIG_MB_M65
 
 	; MEGA65 specific handling - it contains 4 SIDs
 
@@ -112,7 +109,7 @@ IOINIT:
 	sta SID_SIGVOL + __SID_L1_OFFSET
 	sta SID_SIGVOL + __SID_L2_OFFSET
 
-#endif ; CONFIG_MB_M65
+}
 
 	;
 	; Now continue the CIAs initialization
@@ -126,12 +123,11 @@ IOINIT:
 	stx CIA1_DDRB    ; $DC03
 	stx CIA2_DDRB    ; $DD03  ; XXX this port is used for RS-232, value here is most likely wrong!
 
-#if CONFIG_KEYBOARD_C65 || CONFIG_KEYBOARD_C65_CAPS_LOCK
+!ifdef CONFIG_KEYBOARD_C65_OR_CAPS_LOCK {
 
 	lda #$02
 	sta C65_EXTKEYS_DDR ; output for most keys, input for CAPS LOCK bit
-
-#endif
+}
 
 	; Set DDR on CIA2 for IEC bus, VIC-II banking (see [CM64], $DDOO description on page 193)
 	lda #$3F
@@ -160,16 +156,15 @@ IOINIT:
 	ldx #$81
 	stx CIA1_ICR     ; $DC0D
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 	; Set IEC bus to its initial idle state
 	jmp iec_set_idle
 
-#else
+} else {
 
 	rts
+}
 
-#endif
 
-
-#endif ; ROM layout
+} ; ROM layout

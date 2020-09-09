@@ -15,13 +15,13 @@
 
 RAMTAS:
 
-#if (ROM_LAYOUT_M65 && SEGMENT_KERNAL_0)
+!ifdef SEGMENT_M65_KERNAL_0 {
 
-	jsr     map_KERNAL_1
-	jsr_ind VK1__RAMTAS
-	jmp     map_NORMAL
+	jsr map_KERNAL_1
+	jsr (VK1__RAMTAS)
+	jmp map_NORMAL
 
-#else
+} else {
 
 	; C64 Programmers Reference guide p291:
 	; Clear $0000-$0101, $0200-$03ff
@@ -36,12 +36,12 @@ RAMTAS:
 
 	ldy #$00
 	lda #$00
-!:
+@1:
 	sta $0300,Y
 	sta $0200,Y
 	sta $0002,Y ; that is why we do not use .X for index, we do not want zeropage addressing here!
 	iny
-	bne !-
+	bne @1
 
 	; Allocate cassette buffer
 	ldx #<$033C
@@ -49,7 +49,7 @@ RAMTAS:
 	ldx #>$033C
 	stx TAPE1+1
 
-#if CONFIG_PLATFORM_COMMODORE_64
+!ifdef CONFIG_PLATFORM_COMMODORE_64 {
 
 	; Set screen address pointer ("Compute's Mapping the 64" p238)
 	; This is obvious boiler plate containing no creative input, but to avoid
@@ -80,7 +80,11 @@ ramtas_40k:
 	; 40K RAM - restore memory content, set MEMSIZK
 
 	ldy #$A0
-!:
+
+	; FALLTROUGH
+
+ramtas_xxk:
+
 	sty MEMSIZK+1
 
 	; Always restore memory, cartridge might have RAM under ROM
@@ -95,9 +99,9 @@ ramtas_32k:
 	; 32K RAM - restore memory content, set MEMSIZK
 
 	ldy #$80
-	bne !- ; branch always
+	bne ramtas_xxk ; branch always
 
-#elif CONFIG_PLATFORM_COMMANDER_X16
+} else ifdef CONFIG_PLATFORM_COMMANDER_X16 {
 
 	ldx #>$0800
 	stx MEMSTR+1
@@ -105,11 +109,11 @@ ramtas_32k:
 	ldy #$9F
 	sty MEMSIZK+1
 
-#else
+} else {
 
-	.error "Please fill-in RAMTAS"
+	!error "Please fill-in RAMTAS"
 
-#endif ; platform
+} ; platform
 
 
-#endif ; ROM layout
+} ; ROM layout
