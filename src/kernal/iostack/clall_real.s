@@ -15,21 +15,21 @@
 clall_real:
 
 	; Store .Y register
-	phy_trash_a
+	+phy_trash_a
 
 	; Original routine probably just sets LDTND to 0, but this is not really safe,
 	; so we actually close all the channels; at least IDE64 does the same for
 	; its channels, see CLALL description in the IDE64 Users Guide
-!:
+@1:
 	ldy LDTND
-	beq !+
+	beq @2
 	dey
 	lda LAT, y
 	jsr JCLOSE
-	jmp !-
-!:
+	jmp @1
+@2:
 	; Restore .Y register
-	ply_trash_a
+	+ply_trash_a
 
 	; 'C64 Programmers Reference Guide', page 281, claims it calls CLRCHN too
 	jsr CLRCHN

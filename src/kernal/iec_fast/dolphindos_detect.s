@@ -18,7 +18,7 @@
 
 
 
-#if CONFIG_IEC_DOLPHINDOS
+!ifdef CONFIG_IEC_DOLPHINDOS {
 
 
 dolphindos_detect:
@@ -62,4 +62,4 @@ dolphindos_detect_success:
 	rts
 
 
-#endif ; CONFIG_IEC_DOLPHINDOS
+} ; CONFIG_IEC_DOLPHINDOS

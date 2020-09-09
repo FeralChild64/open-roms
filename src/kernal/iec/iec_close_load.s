@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_close_load:
@@ -31,4 +31,4 @@ iec_close_load:
 	rts
 
 
-#endif ; CONFIG_IEC
+} ; CONFIG_IEC

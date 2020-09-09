@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 clrchn_iec:
@@ -15,19 +15,19 @@ clrchn_iec:
 	; Check input device
 	lda DFLTN
 	jsr iec_check_devnum_oc
-	bcs !+
+	bcs @1
 
 	; It was IEC device - send UNTALK first
 	jsr UNTLK
-!:
+@1:
 	; Check output device
 	lda DFLTO
 	jsr iec_check_devnum_oc
 
 	; If it was IEC device - send UNLSN first
-	bcc_16 UNLSN
+	+bcc UNLSN
 
 	rts
 
 
-#endif ; CONFIG_IEC
+} ; CONFIG_IEC

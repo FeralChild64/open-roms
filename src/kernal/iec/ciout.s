@@ -14,7 +14,7 @@
 
 CIOUT:
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 	pha
 	lda C3PO
@@ -35,23 +35,22 @@ ciout_store_in_buffer:
 	
 ciout_send_byte:
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr m65dos_check
 	bcc_16 m65dos_ciout                ; branch if device is handeld by internal DOS
-#endif
+}
 
 	clc                                ; send without EOI
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 	jsr iec_tx_dispatch
-#else
+} else {
 	jsr iec_tx_byte
-#endif
+}
 	inc C3PO                           ; tx byte routine sets to 0, but we still have something to send
 	jmp ciout_store_in_buffer
 
-#else
+} else {
 
 	sec ; indicate failure
 	rts
-
-#endif
+}

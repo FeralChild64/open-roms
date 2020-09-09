@@ -14,9 +14,9 @@
 cursor_show_if_enabled:
 
 	lda BLNSW
-	bne !+
+	bne cursor_show_done
 	lda BLNON
-	bne !+
+	bne cursor_show_done
 
 	; FALLTROUGH
 
@@ -30,5 +30,8 @@ cursor_show:
 	lda #$00
 	sta BLNON
 
-!:
+	; FALLTROUGH
+
+cursor_show_done:
+
 	rts

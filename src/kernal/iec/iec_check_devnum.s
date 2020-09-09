@@ -9,7 +9,7 @@
 ;
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 iec_check_devnum_lvs: ; for load/verify/save
 
@@ -33,4 +33,4 @@ iec_check_devnum_failed:
 	sec ; indicate non-IEC device
 	rts
 
-#endif ; CONFIG_IEC
+} ; CONFIG_IEC

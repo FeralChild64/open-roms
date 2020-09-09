@@ -28,23 +28,23 @@ cint_screen_keyboard:
 
 	; Enable cursor repeat - XXX make it configurable
 
-#if CONFIG_KEY_REPEAT_DEFAULT && !CONFIG_KEY_REPEAT_ALWAYS
+!ifdef CONFIG_KEY_REPEAT_DEFAULT { !ifndef CONFIG_KEY_REPEAT_ALWAYS {
 
 	lda #$80
 	sta RPTFLG
-
-#endif
+} }
 
 	; Set keyboard decode vector  (Computes Mapping the 64 p215)
 
-#if CONFIG_LEGACY_SCNKEY
+!ifdef CONFIG_LEGACY_SCNKEY {
 
 	; Set initial variables for our improved keyboard scan routine
 	lda #$FF
 	ldx #6
-!:	sta BufferOld,x
+@1:	
+	sta BufferOld,x
 	dex
-	bpl !-
+	bpl @1
 	sta BufferQuantity
 
 	; Set key repeat delay (Computes Mapping the 64 p215)
@@ -56,8 +56,7 @@ cint_screen_keyboard:
 
 	ldx #22-2 		; Fudge factor to match speed
 	stx DELAY
-	
-#endif
+}
 
 	; Set current colour for text (Computes Mapping the 64 p215)
 	ldx #CONFIG_COLOR_TXT
