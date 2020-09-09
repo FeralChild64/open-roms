@@ -18,14 +18,14 @@
 !macro CONFIG_CUSTOM_BRAND { !pet "CUSTOM BUILD" }
 
 
-
 ; Processor instruction set
 
-!set CONFIG_CPU_MOS_6502 = 1
-; !set CONFIG_CPU_WDC_65C02 = 1
+!set CONFIG_CPU_MOS_6502   = 1
+; !set CONFIG_CPU_DTV_6502   = 1
+; !set CONFIG_CPU_RCW_65C02  = 1
+; !set CONFIG_CPU_WDC_65C02  = 1
+; !set CONFIG_CPU_WDC_65816  = 1
 ; !set CONFIG_CPU_CSG_65CE02 = 1
-; !set CONFIG_CPU_M65_45GS02 = 1
-; !set CONFIG_CPU_WDC_65816 = 1
 
 
 ; Memory model
@@ -36,7 +36,7 @@
 ; !set CONFIG_MEMORY_MODEL_60K = 1
 
 
-; I/O devices
+; IEC bus configuration
 
 !set CONFIG_IEC = 1
 !set CONFIG_IEC_DOLPHINDOS = 1
@@ -45,7 +45,9 @@
 ; !set CONFIG_IEC_JIFFYDOS_BLANK = 1
 ; !set CONFIG_IEC_BURST_CIA1 = 1                 ; please keep disabled for now
 ; !set CONFIG_IEC_BURST_CIA2 = 1                 ; please keep disabled for now
-; !set CONFIG_IEC_BURST_MEGA_65 = 1              ; please keep disabled for now
+ 
+
+; Tape deck configuration
 
 !set CONFIG_TAPE_NORMAL = 1
 !set CONFIG_TAPE_TURBO = 1
@@ -53,8 +55,13 @@
 ; !set CONFIG_TAPE_NO_KEY_SENSE = 1
 ; !set CONFIG_TAPE_NO_MOTOR_CONTROL = 1
 
+
+; RS-232 configuration
+
+; !set CONFIG_RS232_ACIA = 1                     ; please keep disabled for now
 ; !set CONFIG_RS232_UP2400 = 1                   ; please keep disabled for now
 ; !set CONFIG_RS232_UP9600 = 1                   ; please keep disabled for now
+
 
 
 ; Multiple SID support

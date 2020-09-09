@@ -40,153 +40,134 @@
 !ifdef CONFIG_BRAND_CUSTOM_BUILD { !set counter = counter + 1 }
 !ifdef CONFIG_BRAND_GENERIC      { !set counter = counter + 1 }
 !ifdef CONFIG_BRAND_TESTING      { !set counter = counter + 1 }
-!ifdef CONFIG_BRAND_ULTIMATE_64  { !set counter = counter + 1 }
 
 !ifndef CONFIG_PLATFORM_COMMODORE_64 {
 	!if (counter != 0) { !error "Do not use CONFIG_BRAND_* options for non-C64 platforms" }
 } else ifdef CONFIG_MB_M65 {
-	!if (counter != 0) { !error "Do not use CONFIG_BRAND_* options for MEGA65 motherboard" }
+	!if (counter != 0) { !error "Do not use CONFIG_BRAND_* options for the MEGA65 motherboard" }
 } else ifdef CONFIG_MB_MU64 {
-	!if (counter != 0) { !error "Do not use CONFIG_BRAND_* options for Ultimate 64 motherboard" }
+	!if (counter != 0) { !error "Do not use CONFIG_BRAND_* options for the Ultimate 64 motherboard" }
 } else if (counter != 1) {
 	!error "Please select exactly one CONFIG_BRAND_* option"	
 }
 
 
 
+; Check that processor configuration is correct
 
+!set counter = 0
+!ifdef CONFIG_CPU_MOS_6502   { !set counter = counter + 1 }
+!ifdef CONFIG_CPU_DTV_6502   { !set counter = counter + 1 }
+!ifdef CONFIG_CPU_RCW_65C02  { !set counter = counter + 1 }
+!ifdef CONFIG_CPU_WDC_65C02  { !set counter = counter + 1 }
+!ifdef CONFIG_CPU_WDC_65816  { !set counter = counter + 1 }
+!ifdef CONFIG_CPU_CSG_65CE02 { !set counter = counter + 1 }
+
+!ifdef CONFIG_PLATFORM_COMMANDER_X16 {
+	!if (counter != 0) { !error "Do not use CONFIG_CPU_* options for Commander X16 platform" }
+	!set CONFIG_CPU_WDC_65C02 = 1
+} else ifdef CONFIG_MB_M65 {
+	!if (counter != 0) { !error "Do not use CONFIG_CPU_* options for MEGA65 motherboard" }
+	!set CONFIG_CPU_CSG_65CE02 = 1
+} else ifdef CONFIG_MB_U64 {
+	!if (counter != 0) { !error "Do not use CONFIG_CPU_* options for Ultimate 64 motherboard" }
+	!set CONFIG_CPU_MOS_6502 = 1
+} else if (counter != 1) {
+	!error "Please select exactly one CONFIG_CPU_* option"	
+}
+
+
+
+; Check that memory model configuration is correct
+
+!set counter = 0
+!ifdef CONFIG_MEMORY_MODEL_38K { !set counter = counter + 1 }
+!ifdef CONFIG_MEMORY_MODEL_46K { !set counter = counter + 1 }
+!ifdef CONFIG_MEMORY_MODEL_50K { !set counter = counter + 1 }
+!ifdef CONFIG_MEMORY_MODEL_60K { !set counter = counter + 1 }
+
+!ifdef CONFIG_MB_M65 {
+	!ifdef CONFIG_MEMORY_MODEL_60K { !error "Do not use CONFIG_MEMORY_MODEL_60K options for MEGA65 motherboard" }
+}
+!ifdef CONFIG_PLATFORM_COMMANDER_X16 {
+	!if (counter != 0) { !error "Do not use CONFIG_MEMORY_MODEL_* options for Commander X16 platform" }
+	!set CONFIG_MEMORY_MODEL_38K = 1
+} else if (counter != 1) {
+	!error "Please select exactly one CONFIG_MEMORY_MODEL_* option"	
+}
+
+
+
+; Check that IEC configuration is correct
+
+!ifdef CONFIG_PLATFORM_COMMANDER_X16 {
+	!ifdef CONFIG_IEC { !error "Do not use CONFIG_IEC options for Commander X16 platform, it is not implemented" }
+}
+!ifdef CONFIG_MB_MEGA65 {
+	!ifdef CONFIG_IEC_BURST_CIA1 { !error "Do not use CONFIG_IEC_BURST_CIA1 options for MEGA65 motherboard, CONFIG_IEC_BURST_M65 instead" }
+	!ifdef CONFIG_IEC_BURST_CIA2 { !error "Do not use CONFIG_IEC_BURST_CIA2 options for MEGA65 motherboard, CONFIG_IEC_BURST_M65 instead" }
+}
+!ifndef CONFIG_MB_MEGA65 {
+	!ifdef CONFIG_IEC_BURST_M65 { !error "CONFIG_IEC_BURST_M65 is only possible for MEGA65 motherboard" }
+}
+!ifdef CONFIG_IEC_BURST_CIA1 {
+	!ifndef CONFIG_IEC { !error "CONFIG_IEC_BURST_CIA1 requires CONFIG_IEC" }
+}
+!ifdef CONFIG_IEC_BURST_CIA2 {
+	!ifndef CONFIG_IEC { !error "CONFIG_IEC_BURST_CIA2 requires CONFIG_IEC" }
+}
+!ifdef CONFIG_IEC_BURST_CIA1 {
+	!ifdef CONFIG_IEC_BURST_CIA2 { !error "CONFIG_IEC_BURST_CIA1 and CONFIG_IEC_BURST_CIA2 are mutually exclusive" }
+}
+!ifdef CONFIG_IEC_BURST_M65 {
+	!ifndef CONFIG_IEC { !error "CONFIG_IEC_BURST_M65 requires CONFIG_IEC" }
+}
+!ifdef CONFIG_IEC_DOLPHINDOS {
+	!ifndef CONFIG_IEC { !error "CONFIG_IEC_DOLPHINDOS requires CONFIG_IEC" }
+}
+!ifdef CONFIG_IEC_DOLPHINDOS_FAST {
+	!ifndef CONFIG_IEC_DOLPHINDOS { !error "CONFIG_IEC_DOLPHINDOS_FAST requires CONFIG_IEC_DOLPHINDOS" }
+}
+!ifdef CONFIG_IEC_JIFFYDOS {
+	!ifndef CONFIG_IEC { !error "CONFIG_IEC_JIFFYDOS requires CONFIG_IEC" }
+}
+!ifdef CONFIG_IEC_JIFFYDOS_BLANK {
+	!ifndef CONFIG_IEC_JIFFYDOS { !error "CONFIG_IEC_JIFFYDOS_BLANK requires CONFIG_IEC_JIFFYDOS" }
+}
+
+
+; Check that tape deck configuration is correct
+
+!ifdef CONFIG_PLATFORM_COMMANDER_X16 {
+	!ifdef CONFIG_TAPE_NORMAL { !error "Do not use CONFIG_TAPE_NORMAL options for Commander X16 platform, it is not implemented" }
+	!ifdef CONFIG_TAPE_TURBO  { !error "Do not use CONFIG_TAPE_TURBO options for Commander X16 platform, it is not implemented" }
+}
+!ifdef CONFIG_TAPE_AUTODETECT { !ifndef CONFIG_TAPE_NORMAL { !ifndef CONFIG_TAPE_TURBO {
+	!error "CONFIG_TAPE_AUTODETECT requires both CONFIG_TAPE_NORMAL and CONFIG_TAPE_TURBO"
+} } }
+
+
+; Check that RS-232 configuration is correct
+
+!set counter = 0
+!ifdef CONFIG_RS232_ACIA   { !set counter = counter + 1 }
+!ifdef CONFIG_RS232_UP2400 { !set counter = counter + 1 }
+!ifdef CONFIG_RS232_UP9600 { !set counter = counter + 1 }
+
+!ifdef CONFIG_PLATFORM_COMMANDER_X16 {
+	!if (counter != 0) { !error "Do not use CONFIG_RS232_* options for Commander X16 platform, it is not implemented" }
+}
+!ifdef CONFIG_RS232_UP9600 {
+	!ifdef CONFIG_TAPE_NORMAL { !error "CONFIG_RS232_UP9600 is not compatible with CONFIG_TAPE_NORMAL" }
+	!ifdef CONFIG_TAPE_TURBO  { !error "CONFIG_RS232_UP9600 is not compatible with CONFIG_TAPE_TURBO"  }
+}
+!if (counter > 1) { !error "Please select at most one CONFIG_RS232_* option" }
 
 
 
 
 
 // XXX check SID configuration, shouldn't be specified for MEGA65 or COMMANDER X16
-
-
-; Check that processor configuration is correct
-{
-	.var selected = 0;
-
-#if CONFIG_CPU_MOS_6502
-	.eval selected++
-#endif
-#if CONFIG_CPU_WDC_65C02
-	.eval selected++
-#endif
-#if CONFIG_CPU_CSG_65CE02
-	.eval selected++
-#endif
-#if CONFIG_CPU_M65_45GS02
-	.eval selected++
-#endif
-#if CONFIG_CPU_WDC_65816
-	.eval selected++
-#endif
-
-	.if (selected != 1) .error "Please select exactly one CONFIG_CPU_* option" 
-}
-
-
-
-; Check that memory model and ROM layout configurations is correct
-{
-#if ROM_LAYOUT_M65 && !CONFIG_CPU_M65_45GS02
-	.error "MEGA65 ROM layout requires CONFIG_CPU_M65_45GS02"
-#endif
-#if ROM_LAYOUT_M65 && !CONFIG_MB_MEGA_65
-	.error "MEGA65 ROM layout requires CONFIG_MB_MEGA_65"
-#endif
-
-	.var selected = 0;
-
-#if CONFIG_MEMORY_MODEL_38K
-	.eval selected++
-#endif
-#if CONFIG_MEMORY_MODEL_46K
-	.eval selected++
-#endif
-#if CONFIG_MEMORY_MODEL_50K
-	.eval selected++
-#endif
-#if CONFIG_MEMORY_MODEL_60K
-	.eval selected++
-#endif
-
-	.if (selected != 1) .error "Please select exactly one CONFIG_MEMORY_MODEL_* option" 
-}
-
-
-
-; Check that IEC configuration is correct
-{
-#if CONFIG_IEC_JIFFYDOS && !CONFIG_IEC
-	.error "CONFIG_IEC_JIFFYDOS requires CONFIG_IEC"
-#endif
-
-#if CONFIG_IEC_JIFFYDOS_BLANK && !CONFIG_IEC_JIFFYDOS
-	.error "CONFIG_IEC_JIFFYDOS_BLANK requires CONFIG_IEC_JIFFYDOS"
-#endif
-
-#if CONFIG_IEC_DOLPHINDOS && !CONFIG_IEC
-	.error "CONFIG_IEC_DOLPHINDOS requires CONFIG_IEC"
-#endif
-
-#if CONFIG_IEC_DOLPHINDOS_FAST && !CONFIG_IEC_DOLPHINDOS
-	.error "CONFIG_IEC_DOLPHINDOS_FAST requires CONFIG_IEC_DOLPHINDOS"
-#endif
-
-#if (CONFIG_IEC_BURST_CIA1 || CONFIG_IEC_BURST_CIA1 || CONFIG_IEC_BURST_MEGA_65) && !CONFIG_IEC
-	.error "CONFIG_IEC_BURST_* requires CONFIG_IEC"
-#endif
-
-#if CONFIG_IEC_BURST_MEGA_65 && !CONFIG_MB_MEGA_65
-	.error "CONFIG_IEC_BURST_MEGA_65 requires CONFIG_MB_MEGA_65"
-#endif
-
-	.var selected_iec_burst = 0;
-
-#if CONFIG_IEC_BURST_CIA1
-	.eval selected_iec_burst++
-#endif
-#if CONFIG_IEC_BURST_CIA2
-	.eval selected_iec_burst++
-#endif
-#if CONFIG_IEC_BURST_MEGA_65
-	.eval selected_iec_burst++
-#endif
-
-	.if (selected_iec_burst > 1) .error "Please select at most one CONFIG_IEC_BURST_* option" 
-}
-
-
-
-; Check that tape configuration is correct
-{
-#if (!CONFIG_TAPE_NORMAL || !CONFIG_TAPE_TURBO) && CONFIG_TAPE_AUTODETECT
-	.error "CONFIG_TAPE_AUTODETECT requires both CONFIG_TAPE_NORMAL and CONFIG_TAPE_TURBO"
-#endif
-}
-
-
-
-; Check that RS-232 configuration is correct
-{
-#if CONFIG_RS232_UP9600 && (CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO)
-	.error "CONFIG_RS232_UP9600 is not compatible with CONFIG_TAPE_*"
-#endif
-
-	.var selected_rs232 = 0;
-
-#if CONFIG_RS232_UP2400
-	.eval selected_rs232++
-#endif
-#if CONFIG_RS232_UP9600
-	.eval selected_rs232++
-#endif
-
-	.if (selected_rs232 > 1) .error "Please select at most one CONFIG_RS232_* option" 
-}
-
 
 
 ; Check that startup banner configuration is correct

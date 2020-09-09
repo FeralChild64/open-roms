@@ -31,7 +31,7 @@ Select if the ROM is going to be used exclusively on the specified motherboard. 
 
 ## Brand
 
-Branding is only allowed for C64 platform if no motherboard is specified.
+Branding is only allowed for C64 platform, if no motherboard is specified.
 
 ### `CONFIG_BRAND_CUSTOM`
 
@@ -47,6 +47,8 @@ Use this one for any kind of testing/experimental build.
 
 ## Processor instruction set
 
+Processor type should be set only for C64 platform, if no motherboard is specified. Otherwise, it will be selected automatically. Setting proper CPU allows to enable various size/performance optimizations.
+
 ### `CONFIG_CPU_MOS_6502`
 
 Choose if your CPU only supports the original MOS Technology 6502 instruction set, like:
@@ -57,34 +59,19 @@ Choose if your CPU only supports the original MOS Technology 6502 instruction se
 
 If unsure - select this one.
 
+### `CONFIG_CPU_DTV_6502`
+
+Choose if your CPU only supports extended C64 DTV instruction set.
+
+### `CONFIG_CPU_RCW_65C02`
+
+Choose if your CPU supports the Rockwell 65C02 instruction set.
+
 ### `CONFIG_CPU_WDC_65C02`
 
 Choose if your CPU supports the Western Design Center 65C02 instruction set, like:
 
 * WDC 65C02 - used in the Turbo Master accelerator
-
-It enables some speed/size code optimizations.
-
-### `CONFIG_CPU_CSG_65CE02`
-
-Choose if your CPU supports the Commodore Semiconductor Group 65CE02 instruction set, like:
-
-* CSG 65CE02 
-* CSG 4510 - microcontroller used in the Commodore 65 prototypes
-
-It enables some speed/size code optimizations.
-
-### `CONFIG_CPU_CSG_4510`
-
-Choose if your CPU supports the Commodore Semiconductor Group 4510 instruction set, like:
-
-* CSG 4510 - microcontroller used in the Commodore 65 prototypes
-
-It enables some speed/size code optimizations and allows C65 memory mapping to work.
-
-### `CONFIG_CPU_M65_45GS02`
-
-Choose if you have a MEGA65 FPGA board. It enables some speed/size code optimizations and allows MEGA65 memory mapping to work.
 
 ### `CONFIG_CPU_WDC_65816`
 
@@ -93,7 +80,12 @@ Choose if your CPU supports the 16-bit Western Design Center 65816 instruction s
 * WDC 65C816 - used in the Flash 8 accelerator
 * WDC 65C816S - used in the SuperCPU accelerator
 
-It enables some speed/size code optimizations.
+### `CONFIG_CPU_CSG_65CE02`
+
+Choose if your CPU supports the Commodore Semiconductor Group 65CE02 instruction set, like:
+
+* CSG 65CE02 
+* CSG 4510 - microcontroller used in the Commodore 65 prototypes
 
 ## Memory model
 
@@ -115,7 +107,9 @@ It is currently not compatible with MEGA65 extended ROMs.
 
 Comparing to standard memory model, it needs about 180 bytes in BASIC segment and 80 bytes in KERNAL segment - at the moment of doing the test, these values are expected to change often.
 
-## IEC devices
+## IEC bus
+
+IEC bus, also known as Serial Port, is a standard interface to connect disk drives, printers, SD2IEC device, etc.
 
 ### `CONFIG_IEC`
 
@@ -145,7 +139,7 @@ Needs about 430 bytes in KERNAL segment. If unsure - enable.
 
 Causes screen blanking during JiffyDOS file loading to increase performance.
 
-## Tape support
+## Tape deck
 
 Note: for MEGA65 most of the tape support code is placed in it's extended ROM; very little of the (tiny) KERNAL segment is used.
 

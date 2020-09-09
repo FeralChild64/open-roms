@@ -17,31 +17,24 @@
 !set CONFIG_MB_M65                = 1
 
 
-
-; Processor instruction set
-
-; !set CONFIG_CPU_MOS_6502 = 1
-; !set CONFIG_CPU_WDC_65C02 = 1
-; !set CONFIG_CPU_CSG_65CE02 = 1
-!set CONFIG_CPU_M65_45GS02 = 1
-; !set CONFIG_CPU_WDC_65816 = 1
-
-
 ; Memory model
 
 ; !set CONFIG_MEMORY_MODEL_38K = 1
 ; !set CONFIG_MEMORY_MODEL_46K = 1
 !set CONFIG_MEMORY_MODEL_50K = 1
-; !set CONFIG_MEMORY_MODEL_60K = 1
 
 
-; I/O devices
+; IEC bus configuration
 
 !set CONFIG_IEC = 1
 ; !set CONFIG_IEC_DOLPHINDOS = 1
 ; !set CONFIG_IEC_DOLPHINDOS_FAST = 1
 !set CONFIG_IEC_JIFFYDOS = 1
 !set CONFIG_IEC_JIFFYDOS_BLANK = 1
+; !set CONFIG_IEC_BURST_M65 = 1               ; please keep disabled for now
+
+
+; Tape deck configuration
 
 !set CONFIG_TAPE_NORMAL = 1
 !set CONFIG_TAPE_TURBO = 1
