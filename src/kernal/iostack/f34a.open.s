@@ -19,24 +19,25 @@ OPEN:
 
 	; Check if the logical file number is unique
 	ldy LDTND
-!:
-	beq !+
+@1:
+	beq @3
 	dey
 	lda LAT, y
 	cmp LA
-	bne open_not_yet_open
+	bne @2
 	jmp kernalerror_FILE_ALREADY_OPEN
 
-open_not_yet_open:
+@2: ; not yet open
+
 	cpy #$00
-	jmp !-
-!:
+	jmp @1
+@3:
 	; Check if we have space in tables
 
 	ldy LDTND
 	cpy #$0A
 	bcc open_has_space
-!:
+
 	; Table is full
 	jmp kernalerror_TOO_MANY_OPEN_FILES
 
@@ -59,20 +60,17 @@ open_has_space:
 
 	lda FA
 
-#if HAS_RS232
+!ifdef HAS_RS232 {
 
 	cmp #$02
-	beq_16 open_rs232
+	+beq open_rs232
+}
 
-#endif
-
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 	jsr iec_check_devnum_oc
-	bcc_16 open_iec
-
-#endif
-	
+	+bcc open_iec
+}	
 	; FALLTROUGH
 
 open_done_success:

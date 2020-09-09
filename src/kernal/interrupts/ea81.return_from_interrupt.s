@@ -16,8 +16,8 @@ return_from_interrupt:
 	; Restore registers and return
 	; Sequence according to Computes Mapping the 64 p73
 
-	ply_trash_a
-	plx_trash_a
+	+ply_trash_a
+	+plx_trash_a
 	pla
 
 	; FALLTROUGH

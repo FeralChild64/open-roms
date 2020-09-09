@@ -25,15 +25,15 @@ CLOSE:
 
 	; Perform device-specific actions
 
-#if HAS_RS232
+!ifdef HAS_RS232 {
 	cmp #$02
-	beq_16 close_rs232
-#endif
+	+beq close_rs232
+}
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 	jsr iec_check_devnum_oc
-	bcc_16 close_iec
-#endif
+	+bcc close_iec
+}
 
 	; FALLTROUGH
 
@@ -42,7 +42,7 @@ close_remove_from_table:
 	; Remove channel from the table
 	iny
 	cpy #$0A
-	bpl !+
+	bpl @1
 	lda LAT, y
 	sta LAT-1, y
 	lda FAT, y
@@ -50,7 +50,7 @@ close_remove_from_table:
 	lda SAT, y
 	sta SAT-1, y
 	jmp close_remove_from_table
-!:
+@1:
 	; Decrement the list size variable
 	dec LDTND
 

@@ -16,7 +16,7 @@ CHKIN:
 
 	; Store registers for preservation
 	pha
-	phy_trash_a
+	+phy_trash_a
 
 	; Reset status
 	jsr kernalstatus_reset
@@ -25,7 +25,7 @@ CHKIN:
 
 	txa
 	jsr find_fls
-	bcs_16 chkinout_file_not_open
+	+bcs chkinout_file_not_open
 
 	; Now we have table index in Y
 
@@ -37,24 +37,23 @@ CHKIN:
 
 	; Tape not supported here
 
-#if HAS_RS232
+!ifdef HAS_RS232 {
 
 	cmp #$02
-	beq_16 chkin_rs232
+	+beq chkin_rs232
+}
 
-#endif ; HAS_RS232
-
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 	jsr iec_check_devnum_oc
-	bcc_16 chkin_iec
-
-#endif ; CONFIG_IEC
+	+bcc chkin_iec
+}
 
 	cmp #$03 ; screen - only legal one left
-	bne_16 chkinout_device_not_present
+	+bne chkinout_device_not_present
 
 chkin_set_device:
+
 	lda FAT,Y
 	sta DFLTN
 
@@ -62,13 +61,13 @@ chkin_set_device:
 
 chkinout_end:
 
-	ply_trash_a
+	+ply_trash_a
 	pla
 	clc ; indicate success
 	rts
 
 chkin_file_not_input:
 
-	ply_trash_a
+	+ply_trash_a
 	pla
 	jmp kernalerror_FILE_NOT_INPUT

@@ -14,22 +14,20 @@ screen_scroll_up:
 
 	; First handle CTRL and NO_SCRL keys
 
-#if CONFIG_KEYBOARD_C128 || CONFIG_KEYBOARD_C65
+!ifdef CONFIG_KEYBOARD_C128_OR_C65 {
 
 	; Do not scroll if NO_SCRL is pressed and interrupts are enabled
-!:
+@1:
 	php
 	pla
 	and #%00000010
-	bne !+                             ; branch if IRQs disabled, we cannot detect NO_SCRL status
+	bne @2                             ; branch if IRQs disabled, we cannot detect NO_SCRL status
 
 	lda SHFLAG
 	and #KEY_FLAG_NO_SCRL
-	bne !-
-!:
-
-#endif
-
+	bne @1
+@2:
+}
 	; Check if CTRL key pressed - if so, perform a delay
 
 	lda SHFLAG
@@ -37,11 +35,11 @@ screen_scroll_up:
 	beq screen_scroll_up_delay_done
 
 	ldy #$09
-!:
+@3:
 	ldx #$FF
 	jsr wait_x_bars
 	dey
-	bne !-
+	bne @3
 
 	; FALLTROUGH
 
@@ -50,12 +48,12 @@ screen_scroll_up_delay_done: ; entry point for cursor move control codes
 	; Scroll the LDTB1 (line link table)
 
 	ldy #$00
-!:
+@4:
 	lda LDTB1+1, y
 	sta LDTB1+0, y
 	iny
 	cpy #24
-	bne !-
+	bne @4
 
 	lda #$80
 	sta LDTB1+24
@@ -93,11 +91,11 @@ screen_scroll_up_loop:
 	; Check if this was the last byte (last destination byte for color copy is #DBBF)
 
 	cpy #$BF
-	bne !+                             ; definitely not the last byte
+	bne @5                             ; definitely not the last byte
 	lda USER+1
 	cmp #$DB
 	beq screen_scroll_up_loop_done
-!:
+@5:
 	; Increment .Y, possibly advance pointers
 
 	iny

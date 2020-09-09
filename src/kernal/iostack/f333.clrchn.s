@@ -14,15 +14,13 @@
 
 CLRCHN:
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 	jsr clrchn_iec
-#else
-	nop ; just to prevent double label
-#endif
 
 	; FALLTROUGH
 
 clrchn_reset: ; entry needed by vicii_init
+}
 
 	; Set input device number to keyboard
 	lda #$00

@@ -16,7 +16,7 @@ CKOUT:
 
 	; Store registers for preservation
 	pha
-	phy_trash_a
+	+phy_trash_a
 
 	; Reset status
 	jsr kernalstatus_reset
@@ -25,7 +25,7 @@ CKOUT:
 
 	txa
 	jsr find_fls
-	bcs_16 chkinout_file_not_open
+	+bcs chkinout_file_not_open
 
 	; Now we have table index in Y
 
@@ -37,29 +37,29 @@ CKOUT:
 
 	; Tape not supported here
 
-#if HAS_RS232
+!ifdef HAS_RS232 {
 
 	cmp #$02
-	beq_16 ckout_rs232
+	+beq ckout_rs232
+}
 
-#endif ; HAS_RS232
-
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 	jsr iec_check_devnum_oc
-	bcc_16 ckout_iec
-
-#endif ; CONFIG_IEC
+	+bcc ckout_iec
+}
 
 	cmp #$03 ; screen - only legal one left
-	bne_16 chkinout_device_not_present
+	+bne chkinout_device_not_present
 
 ckout_set_device:
+
 	lda FAT,Y
 	sta DFLTO
 	jmp chkinout_end
 
 ckout_file_not_output:
-	ply_trash_a
+
+	+ply_trash_a
 	pla
 	jmp kernalerror_FILE_NOT_OUTPUT

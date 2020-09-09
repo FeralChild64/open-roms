@@ -19,20 +19,20 @@
 screen_clear_line:
 
 	; First, calculate PNT and USER
-	phx_trash_a
+	+phx_trash_a
 	jsr screen_calculate_PNT_USER_from_X
-	plx_trash_a
+	+plx_trash_a
 
 	; Now clear the line
 	ldy #39
-!:
+@1:
 	lda COLOR
 	sta (USER), y
 	lda #$20                           ; space character screen code
 	sta (PNT), y
 
 	dey
-	bpl !-
+	bpl @1
 
 	; Done
 	rts

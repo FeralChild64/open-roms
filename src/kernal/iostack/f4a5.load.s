@@ -35,40 +35,38 @@ LOAD:
 	; Reset status
 	jsr kernalstatus_reset
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	; We need our helpers to get to filenames under ROMs or IO area
 	jsr install_ram_routines
-#endif
+}
 
 	; Check whether we support the requested device
 	lda FA
 
 
-#if !CONFIG_TAPE_AUTODETECT
+!ifndef CONFIG_TAPE_AUTODETECT {
 
-#if CONFIG_TAPE_NORMAL
+!ifdef CONFIG_TAPE_NORMAL {
 	cmp #$01
 	beq_16 load_tape_normal
-#endif
-#if CONFIG_TAPE_TURBO
+}
+!ifdef CONFIG_TAPE_TURBO {
 	cmp #$07
-	beq_16 load_tape_turbo
-#endif
+	+beq load_tape_turbo
+}
 
-#else ; CONFIG_TAPE_AUTODETECT
+} else { ; CONFIG_TAPE_AUTODETECT
 
 	cmp #$01
-	beq_16 load_tape_auto
+	+beq load_tape_auto
 	cmp #$07
-	beq_16 load_tape_auto
+	+beq load_tape_auto
+}
 
-#endif
 
-
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 	jsr iec_check_devnum_lvs
-	bcc_16 load_iec
-#endif
-
+	+bcc load_iec
+}
 
 	jmp lvs_illegal_device_number

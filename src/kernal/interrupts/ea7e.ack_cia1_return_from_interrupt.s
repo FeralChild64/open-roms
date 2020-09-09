@@ -14,4 +14,4 @@ clear_cia1_interrupt_flag_and_return_from_interrupt:
 	; in 3 bytes and minimum cycles. Thus we randomly choose LDY.
 	ldy CIA1_ICR
 
-	; FALL THROUGH to $EA81
+	; FALLTHROUGH to $EA81

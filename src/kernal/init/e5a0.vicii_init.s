@@ -65,6 +65,10 @@ vicii_init:
 
 	; Setup default I/O devices
 
+!ifdef CONFIG_IEC {
 	jmp clrchn_reset
+} else {
+	jmp CLRCHN
+}
 
 } ; ROM layout

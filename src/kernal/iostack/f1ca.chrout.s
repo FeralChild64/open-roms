@@ -21,8 +21,8 @@ CHROUT:
 	; do not get modified, in agreement with C64 PRG
 	; description of CHROUT)
 
-	phx_trash_a
-	phy_trash_a
+	+phx_trash_a
+	+phy_trash_a
 
 	php
 
@@ -30,17 +30,17 @@ CHROUT:
 	lda DFLTO
 
 	cmp #$03 ; screen
-	beq_16 chrout_screen
+	+beq chrout_screen
 
-#if HAS_RS232
+!ifdef HAS_RS232 {
 	cmp #$02 
-	beq_16 chrout_rs232
-#endif
+	+beq chrout_rs232
+}
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 	jsr iec_check_devnum_oc
-	bcc_16 chrout_iec
-#endif
+	+bcc chrout_iec
+}
 
 	; FALLTROUGH
 
@@ -49,8 +49,8 @@ chrout_done_fail:
 	plp
 
 	; Restore X and Y
-	ply_trash_a
-	plx_trash_a
+	+ply_trash_a
+	+plx_trash_a
 
 	sec ; indicate failure
 	rts
@@ -60,8 +60,8 @@ chrout_done_unknown_device:
 	plp
 
 	; Restore X and Y
-	ply_trash_a
-	plx_trash_a
+	+ply_trash_a
+	+plx_trash_a
 
 	; End wioth error
 	jmp lvs_device_not_found_error
@@ -72,8 +72,8 @@ chrout_done_success:
 	cli ; needed for screen (checked calling the routine on original ROMs), XXX what about other devices?
 
 	; Restore X and Y
-	ply_trash_a
-	plx_trash_a
+	+ply_trash_a
+	+plx_trash_a
 
 	lda SCHAR
 	clc ; indicate success

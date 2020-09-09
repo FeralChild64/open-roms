@@ -320,6 +320,13 @@
 
 
 
+; Handle keyboard configuration
+
+!ifdef CONFIG_KEYBOARD_C128 { !set CONFIG_KEYBOARD_C128_OR_C65 = 1 }
+!ifdef CONFIG_KEYBOARD_C65  { !set CONFIG_KEYBOARD_C128_OR_C65 = 1 }
+
+
+
 ; Handle debug configuration
 
 !macro STUB_IMPLEMENTATION_RTS { 
