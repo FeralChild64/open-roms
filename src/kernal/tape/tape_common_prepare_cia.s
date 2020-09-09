@@ -34,7 +34,7 @@
 ;        rts
 ;
 
-#if CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO
+!ifdef HAS_TAPE {
 
 
 tape_common_prepare_cia:
@@ -61,5 +61,4 @@ tape_common_prepare_cia_by_x:          ; entry point for head align tool
 	stx CIA2_CRA    ; $DD0E
 
 	rts
-
-#endif
+}

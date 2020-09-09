@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_PANIC_SCREEN
+!ifdef CONFIG_PANIC_SCREEN {
 
 panic:
 
@@ -20,7 +20,7 @@ panic:
 	sei
 	jsr IOINIT
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	; Make sure we are in legacy mode with normal memory mapping
 
@@ -29,26 +29,24 @@ panic:
 	jsr M65_MODESET          ; switch to legacy C64 compatibility mode
 	sei
 
-#else
+} else {
 
 	jsr vicii_init
-
-#endif
+}
 
 	jsr clear_screen
 
 	; Disable NMIs
 
-#if CONFIG_TAPE_HEAD_ALIGN
+!ifdef CONFIG_TAPE_HEAD_ALIGN {
 
 	jsr nmi_lock
 
-#else
+} else {
 
 	lda #$00
 	sta NMINV + 1            ; our routine does not allow zeropage vectors
-
-#endif
+}
 
 	; Display KERNAL PANIC message
 
@@ -83,17 +81,17 @@ panic:
 	; Display some raster effect in the infinitew loop
 
 kernal_panic_infinite_loop:
+
 	ldx #$00
 	stx VIC_EXTCOL
-!:
+@1:
 	inx
-	bpl !-
+	bpl @1
 
 	ldx #$06
 	stx VIC_EXTCOL
 
-	nop
+	+nop
 
 	bne kernal_panic_infinite_loop ; branch always
-
-#endif ; CONFIG_PANIC_SCREEN
+}

@@ -58,7 +58,10 @@
 
 !set CONFIG_PROGRAMMABLE_KEYS = 1
 
-!macro CONFIG_KEYCMD_RUN  { !pet "\$5FL" }
+!macro CONFIG_KEYCMD_RUN  {
+	!byte $5F
+	!pet "L"
+}
 
 !macro CONFIG_KEYCMD_F1   { !pet "@" }
 !macro CONFIG_KEYCMD_F2   { !pet "" }
