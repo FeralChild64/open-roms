@@ -22,12 +22,12 @@ chrout_screen_RETURN:
 	
 	ldy TBLX
 	cpy #24
-	beq !+                             ; last line on screen - no need for a double line skip
+	beq @1                             ; last line on screen - no need for a double line skip
 
 	lda LDTB1+1, y
-	bmi !+                             ; current line is not continued
+	bmi @1                             ; current line is not continued
 
 	inc TBLX
 	jsr screen_calculate_PNT_USER
-!:
+@1:
 	jmp screen_advance_to_next_line

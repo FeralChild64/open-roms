@@ -18,7 +18,7 @@ chrout_screen_quote:
 	; so we need to make it be $80 + $40 + char
 	; as we will have flipped back to just $00 + char, we should
 	; now add $c0 if C is set from overflow
-	bcc !+
+	bcc @1
 	adc #$BF    ; C=1, so adding $BF + C = add $C0
-!:	
+@1:	
 	jmp chrout_screen_literal

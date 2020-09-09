@@ -11,16 +11,16 @@ chrout_to_screen_code:
 
 	; Codes $C0-$DF become $40-$5F
 	cmp #$E0
-	bcs !+
+	bcs @1
 	cmp #$C0
-	bcc !+
+	bcc @1
 	
 	and #$7F
 	rts                                ; not high char
-!:
+@1:
 	; Range $20-$3F is unchanged
 	cmp #$40
-	bcc !+                             ; not high char
+	bcc @done                          ; not high char
 
 	; Unshifted letters and symbols from $40-$5F
 	; all end up being -$40
@@ -35,10 +35,14 @@ chrout_to_screen_code:
 
 	; Fix shifted chars by adding $20 again
 	cmp #$20
-	bcc !+                             ; not high char
+	bcc @done                          ; not high char
 	cmp #$40
-	bcs !+                             ; not high char
+	bcs @done                          ; not high char
 	clc
 	adc #$20
-!:
+
+	; FALLTROUGH
+
+@done:
+
 	rts

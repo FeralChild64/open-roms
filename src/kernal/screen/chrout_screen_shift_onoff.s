@@ -11,7 +11,7 @@
 chrout_screen_SHIFT_ON:
 
 	lda #$00 ; enable SHIFT+VENDOR combination
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 
