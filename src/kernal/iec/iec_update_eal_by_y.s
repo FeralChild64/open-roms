@@ -7,7 +7,7 @@
 ;
 
 
-#if (CONFIG_IEC_JIFFYDOS || CONFIG_IEC_DOLPHINDOS) && !CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_IEC_JIFFYDOS_OR_DOLPHINDOS { !ifndef CONFIG_MEMORY_MODEL_60K {
 
 
 iec_update_EAL_by_Y: ; note: Carry has to be set by caller!
@@ -19,6 +19,4 @@ iec_update_EAL_by_Y: ; note: Carry has to be set by caller!
 	inc EAL+1
 @1:
 	rts
-
-
-#endif
+} }

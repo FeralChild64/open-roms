@@ -16,7 +16,7 @@ iec_rx_check_eoi:
 	; Loop iteraction takes 11 cycles, 19 full iterations are enough
 
 	ldx #$13                           ; 2 cycles
-:
+@1:
 	bit CIA2_PRA                       ; 4 cycles
 	bvc iec_rx_check_eoi_done          ; 2 cycles if not jumped
 	dex                                ; 2 cycles

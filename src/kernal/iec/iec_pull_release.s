@@ -12,7 +12,7 @@
 
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 iec_pull_atn_clk_release_data:
@@ -28,7 +28,11 @@ iec_pull_clk_release_data:
 	lda CIA2_PRA
 	ora #BIT_CIA2_PRA_CLK_OUT          ; pull
 	sta CIA2_PRA
-!:
+
+	; FALLTROUGH
+
+iec_pull_clk_release_data_1:
+
 	and #$FF - BIT_CIA2_PRA_DAT_OUT    ; release
 	bne iec_pull_release_end           ; branch always
 
@@ -36,7 +40,7 @@ iec_pull_clk_release_data_oneshot:
 
 	lda CIA2_PRA
 	ora #BIT_CIA2_PRA_CLK_OUT          ; pull
-	bne !-                             ; branch always
+	bne iec_pull_clk_release_data_1    ; branch always
 
 iec_release_atn_clk_data:
 
@@ -83,6 +87,4 @@ iec_pull_release_end:
 
 	sta CIA2_PRA
 	rts
-
-
-#endif ; CONFIG_IEC
+}

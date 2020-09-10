@@ -22,12 +22,12 @@
 
 irq_timing_hi:                         ; high bytes
 
-#if !CONFIG_RS232_UP9600
+!ifndef CONFIG_RS232_UP9600 {
 
-	.byte >17045                       ; NTSC
-	.byte >16421                       ; PAL
+	!byte >17045                       ; NTSC
+	!byte >16421                       ; PAL
 
-#else
+} else {
 
 ;
 ; Timer values needed by UP9600
@@ -36,7 +36,6 @@ irq_timing_hi:                         ; high bytes
 ; these causes the tick to be generated 64 times per second
 ;
 
-	.byte $42                          ; NTSC
-	.byte $40                          ; PAL
-
-#endif
+	!byte $42                          ; NTSC
+	!byte $40                          ; PAL
+}

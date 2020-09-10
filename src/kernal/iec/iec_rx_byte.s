@@ -9,27 +9,27 @@
 ; Preserves .X and .Y registers
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 
 iec_rx_dispatch:
 
 	lda IECPROTO
 	cmp #IEC_JIFFY
-	beq_16 jiffydos_rx_byte
+	+beq jiffydos_rx_byte
 
 	; FALLTROUGH
 
-#endif ; CONFIG_IEC_JIFFYDOS
+} ; CONFIG_IEC_JIFFYDOS
 
 
 iec_rx_byte:
 
 	; Store .X and .Y on the stack - preserve them
-	phx_trash_a
-	phy_trash_a
+	+phx_trash_a
+	+phy_trash_a
 
 	; Timing is critical here - execute on disabled IRQs
 	; The best practice would be to do PHP first, but it seems this is not
@@ -50,7 +50,7 @@ iec_rx_byte:
 	; Check if EOI
 	jsr iec_rx_check_eoi
 
-#if CONFIG_IEC_DOLPHINDOS
+!ifdef CONFIG_IEC_DOLPHINDOS {
 
 	; Check if DolphinDOS was detected
 	lda IECPROTO
@@ -64,7 +64,7 @@ iec_rx_byte:
 
 iec_rx_no_dolphindos:
 
-#endif ; CONFIG_IEC_DOLPHINDOS
+} ; CONFIG_IEC_DOLPHINDOS
 
 	; Latch input bits in on rising edge of CLK, eight times for eight bits.
 	ldx #7
@@ -100,9 +100,10 @@ iec_rx_bit_loop:
 	; Move data bit into C flag, and loop until bit 6 clears
 	; i.e., the clock has been released.
 
-!:	lda CIA2_PRA
+@1:	
+	lda CIA2_PRA
 	rol
-	bpl !-
+	bpl @1
 
 	; Pull it into the data byte
 	pla
@@ -115,7 +116,7 @@ iec_rx_bit_loop:
 iec_rx_clk_wait2:
 	lda CIA2_PRA            ; 4 cycles
 	rol                     ; 2 cycles, to put CLK in as the last bit
-	bpl !+                  ; 2 cycles if not jumped
+	bpl @2                  ; 2 cycles if not jumped
 	dey                     ; 2 cycles
     bne iec_rx_clk_wait2    ; 3 cycles if jumped
     
@@ -124,7 +125,7 @@ iec_rx_clk_wait2:
 	pla
 
 	jmp iec_rx_end
-!:
+@2:
 	; More bits?
 	dex
 	bpl iec_rx_bit_loop
@@ -149,13 +150,11 @@ iec_rx_acknowledge:
 
 iec_rx_end:
 
-	ply_trash_a
-	plx_trash_a
+	+ply_trash_a
+	+plx_trash_a
 	lda TBTCNT
 
 	clc
 	cli
 	rts
-
-
-#endif ; CONFIG_IEC
+}

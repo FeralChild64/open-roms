@@ -297,12 +297,21 @@
 
 
 
+; Handle memory model
+
+!ifdef CONFIG_MEMORY_MODEL_46K { !set CONFIG_MEMORY_MODEL_46K_OR_50K = 1 }
+!ifdef CONFIG_MEMORY_MODEL_50K { !set CONFIG_MEMORY_MODEL_46K_OR_50K = 1 }
+
+
+
 ; Handle IEC configuration
 
 !ifdef CONFIG_IEC_BURST_CIA1 { !set HAS_IEC_BURST = 1 }
 !ifdef CONFIG_IEC_BURST_CIA2 { !set HAS_IEC_BURST = 1 }
 !ifdef CONFIG_IEC_BURST_M65  { !set HAS_IEC_BURST = 1 }
 
+!ifdef CONFIG_IEC_JIFFYDOS   { !set CONFIG_IEC_JIFFYDOS_OR_DOLPHINDOS = 1 }
+!ifdef CONFIG_IEC_DOLPHINDOS { !set CONFIG_IEC_JIFFYDOS_OR_DOLPHINDOS = 1 }
 
 
 ; Handle tape configuration

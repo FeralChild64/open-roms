@@ -10,33 +10,33 @@
 ; Preserves .X and .Y registers
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 
 iec_tx_dispatch:
 
 	php                                ; preserve C flag for EOI indication
 	lda IECPROTO
 	cmp #IEC_JIFFY
-	bne !+
+	bne @1
 
 	plp
 	jmp jiffydos_tx_byte
-!:
+@1:
 	plp
 	
 	; FALLTROUGH
 
-#endif ; CONFIG_IEC_JIFFYDOS
+} ; CONFIG_IEC_JIFFYDOS
 
 
 iec_tx_byte:
 
 	; Store .X and .Y on the stack - preserve them
-	phx_trash_a
-	phy_trash_a
+	+phx_trash_a
+	+phy_trash_a
 
 	; Notify all devices that we are going to send a byte
 	; and it is going to be a data byte (released ATN)
@@ -57,7 +57,7 @@ iec_tx_common:
 	; Wait till all receivers are ready, they should all release DATA
 	jsr iec_wait_for_data_release
 
-	bcc !+
+	bcc @2
 
 	; At this point a delay 256 usec or more is considered EOI,
 	; receiver should now acknowledge it by pulling data for at least 60 usec
@@ -66,8 +66,8 @@ iec_tx_common:
 	
 	jsr iec_wait_for_data_pull
 	jsr iec_wait_for_data_release
-!:
-#if CONFIG_IEC_DOLPHINDOS
+@2:
+!ifdef CONFIG_IEC_DOLPHINDOS {
 
 	; Check if DolphinDOS was detected
 	lda IECPROTO
@@ -88,7 +88,7 @@ iec_tx_common:
 
 iec_tx_no_dolphindos:
 
-#endif ; CONFIG_IEC_DOLPHINDOS
+} ; CONFIG_IEC_DOLPHINDOS
 
 	; Pull CLK back to indicate that DATA is not valid, keep it for 60us
 	; We can use this routine as we don't hold DATA anyway (and its state doesn't even matter)
@@ -101,29 +101,29 @@ iec_tx_no_dolphindos:
 
 iec_tx_common_sendbit:
 
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 
-	bne !+                             ; branch if not sending the last bit
+	bne @3                             ; branch if not sending the last bit
     lda IECPROTO
-    beq !+                             ; branch if standard protocol
+    beq @3                             ; branch if standard protocol
 
     ; JiffyDOS ROM performs detection loop on every command; it seems we have to
     ; replicate this behaviour for compatibility with at least 1541 JiffyDOS ROM
 
     jsr jiffydos_detect
-!:
-#endif ; CONFIG_IEC_JIFFYDOS
+@3:
+} ; CONFIG_IEC_JIFFYDOS
 
 	; Is next bit 0 or 1?
 	lda TBTCNT
 	lsr
 	sta TBTCNT
-	bcs !+
+	bcs @4
 
 	; Bit is 0
 	jsr iec_release_clk_pull_data
 	jmp iec_tx_common_bit_is_sent
-!:
+@4:
 	; Bit is 1
 	jsr iec_release_clk_data
 
@@ -150,17 +150,15 @@ iec_tx_common_finalize:
 	; Give devices time to tell if they are busy by pulling DATA
 	; They should do it within 1ms
 	ldx #$FF
-!:
+@5:
 	lda CIA2_PRA
 	; BPL here is checking that bit 7 clears,
 	; i.e, that the DATA line is pulled by drive
-	bpl !+
+	bpl @6
 	dex
-	bne !-
-	bmi !+
+	bne @5
+	bmi @6
 	jmp iec_return_DEVICE_NOT_FOUND
-!:
+@6:
 	jmp iec_return_success
-
-
-#endif ; CONFIG_IEC
+}

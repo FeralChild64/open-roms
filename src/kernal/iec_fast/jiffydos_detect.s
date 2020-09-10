@@ -16,7 +16,7 @@
 ; this behaviour for compatibility with at least 1541 JiffyDOS ROM
 
 
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 
 
 jiffydos_detect:
@@ -49,6 +49,4 @@ jiffydos_store_proto:
 
 jiffydos_detect_end:
 	rts
-
-
-#endif ; CONFIG_IEC_JIFFYDOS
+}
