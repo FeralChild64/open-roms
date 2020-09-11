@@ -11,7 +11,7 @@
 ;
 
 
-#ifndef CONFIG_LEGACY_SCNKEY {
+!ifndef CONFIG_LEGACY_SCNKEY {
 
 
 kb_matrix_bucky_filter:

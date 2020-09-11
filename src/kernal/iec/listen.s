@@ -16,34 +16,34 @@
 
 LISTEN:
 
-#if CONFIG_IEC || ROM_LAYOUT_M65
+!ifdef ROM_LAYOUT_M65 {
 
 	; According to serial-bus.pdf (page 15) this routine flushes the IEC out buffer
 	jsr iec_tx_flush
 
-#endif
-
-#if ROM_LAYOUT_M65
-
 	jsr m65dos_detect
-	bcc_16 m65dos_listen                 ; branch if device is handeld by internal DOS
+	+bcc m65dos_listen                   ; branch if device is handeld by internal DOS
 
-#endif
+} else ifdef CONFIG_IEC {
 
-#if CONFIG_IEC
+	; According to serial-bus.pdf (page 15) this routine flushes the IEC out buffer
+	jsr iec_tx_flush
+}
+
+
+!ifdef CONFIG_IEC {
 
 	; Check whether device number is correct
 	jsr iec_check_devnum_oc
-	bcc !+
+	bcc @1
 	jmp kernalerror_DEVICE_NOT_FOUND
-!:
+@1:
 	; Encode and execute the command
 	ora #$20
 
 	jmp common_talk_listen
 
-#else
+} else {
 
 	jmp kernalerror_ILLEGAL_DEVICE_NUMBER
-
-#endif
+}

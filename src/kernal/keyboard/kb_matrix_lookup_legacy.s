@@ -16,17 +16,16 @@
 ; This lookup table is used by TWW/CTR keyboard routine only!
 
 
-#if CONFIG_LEGACY_SCNKEY
+!ifdef CONFIG_LEGACY_SCNKEY {
 
 kb_matrix_lookup:
 
-	.byte $00 		; Normal
-	.byte $40		; Shifted
-	.byte $80		; Control
-	.byte $80		; Control + SHIFT
-	.byte $C0		; Vendor
-	.byte $C0 		; Vendor + SHIFT
-	.byte $80		; Vendor + CTRL
-	.byte $80		; Vendor + CTRL + SHIFT
-
-#endif ; CONFIG_LEGACY_SCNKEY
+	!byte $00 		; Normal
+	!byte $40		; Shifted
+	!byte $80		; Control
+	!byte $80		; Control + SHIFT
+	!byte $C0		; Vendor
+	!byte $C0 		; Vendor + SHIFT
+	!byte $80		; Vendor + CTRL
+	!byte $80		; Vendor + CTRL + SHIFT
+}

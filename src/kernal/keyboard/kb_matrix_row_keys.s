@@ -11,7 +11,7 @@
 ;
 
 
-#if !CONFIG_LEGACY_SCNKEY
+!ifndef CONFIG_LEGACY_SCNKEY {
 
 
 kb_matrix_row_keys:
@@ -20,14 +20,13 @@ kb_matrix_row_keys:
 	; - first 3 values also meant for VIC_XSCAN for C128 keyboards
 	; - also used to scan a single row
 
-	.byte %11111110
-	.byte %11111101
-	.byte %11111011
-	.byte %11110111
-	.byte %11101111
-	.byte %11011111
-	.byte %10111111
-	.byte %01111111
+	!byte %11111110
+	!byte %11111101
+	!byte %11111011
+	!byte %11110111
+	!byte %11101111
+	!byte %11011111
+	!byte %10111111
+	!byte %01111111
 
-
-#endif ; no CONFIG_LEGACY_SCNKEY
+} ; no CONFIG_LEGACY_SCNKEY

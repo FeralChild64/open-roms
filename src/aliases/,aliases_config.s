@@ -344,6 +344,8 @@
 !ifdef CONFIG_KEYBOARD_C65           { !set CONFIG_KEYBOARD_C65_OR_CAPS_LOCK = 1 }
 !ifdef CONFIG_KEYBOARD_C65_CAPS_LOCK { !set CONFIG_KEYBOARD_C65_OR_CAPS_LOCK = 1 }
 
+!ifdef CONFIG_JOY1_CURSOR            { !set CONFIG_JOY1_OR_JOY2_CURSOR = 1 }
+!ifdef CONFIG_JOY2_CURSOR            { !set CONFIG_JOY1_OR_JOY2_CURSOR = 1 }
 
 
 ; Handle debug configuration
