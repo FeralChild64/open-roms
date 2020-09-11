@@ -6,7 +6,7 @@
 ; JiffyDOS protocol support for IEC - optimized load loop
 ;
 
-#if CONFIG_IEC_JIFFYDOS && !CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_IEC_JIFFYDOS { !ifndef CONFIG_MEMORY_MODEL_60K {
 
 
 ; Note: original JiffyDOS LOAD loop checks for RUN/STOP key every time a sector is read,
@@ -25,7 +25,7 @@ jiffydos_load:
 	; Timing is critical, do not allow interrupts
 	sei
 
-#if CONFIG_IEC_JIFFYDOS_BLANK
+!ifdef CONFIG_IEC_JIFFYDOS_BLANK {
 
 	; Preserve register with screen status (blank/visible)
 	lda VIC_SCROLY
@@ -40,13 +40,12 @@ jiffydos_load:
 	and #%00000111
 	sta C3PO
 
-#else
+} else {
 
 	; Store previous sprite status in temporary variable
 	jsr jiffydos_prepare
 	sta TBTCNT
-
-#endif
+}
 
 	; A trick to shorten EAL update time
 	ldy #$FF
@@ -62,23 +61,22 @@ jiffydos_load_loop:
 	lda CIA2_PRA
 	and #$FF - BIT_CIA2_PRA_DAT_OUT    ; release
 
-#if CONFIG_IEC_JIFFYDOS_BLANK
+!ifdef CONFIG_IEC_JIFFYDOS_BLANK {
 
 	; It seems JiffyDOS needs some time here; waste few cycles
-	nop
+	+nop
 	jsr iec_wait_rts
 
 	; Ask device to start sending bits
 	sta CIA2_PRA
 
-#else
+} else {
 
 	; Wait for appropriate moment, ask device to start sending bits
 	tax
 	jsr jiffydos_wait_line
 	stx CIA2_PRA                       ; cycles: 4
-
-#endif
+}
 
 	; Prepare 'data pull' byte, cycles: 3 + 2 + 2 = 7
 	lda C3PO
@@ -86,8 +84,8 @@ jiffydos_load_loop:
 	tax
 
 	; Delay, JiffyDOS needs some time, 4 cycles
-	nop
-	nop
+	+nop
+	+nop
 
 	; Get bits, cycles: 4 + 2 + 2 = 8
 	lda CIA2_PRA                       ; bits 0 and 1 on CLK/DATA
@@ -95,7 +93,7 @@ jiffydos_load_loop:
 	lsr
 
 	; Delay, JiffyDOS needs some time, 2 cycles
-	nop
+	+nop
 
 	; Get bits, cycles: 4 + 2 + 2 = 8
 	ora CIA2_PRA                       ; bits 2 and 3 on CLK/DATA
@@ -148,19 +146,18 @@ jiffydos_load_end:
 	lda #IEC_JIFFY
 	sta IECPROTO
 
-#if CONFIG_IEC_JIFFYDOS_BLANK
+!ifdef CONFIG_IEC_JIFFYDOS_BLANK {
 
 	; Restore screen state
 	lda TBTCNT
 	sta VIC_SCROLY
 
-#else
+} else {
 
 	; Re-enable sprites
 	lda TBTCNT
 	sta VIC_SPENA
-
-#endif
+}
 
 	; Store last byte as unoptimized LOAD routine would
 	stx TBTCNT
@@ -172,4 +169,4 @@ jiffydos_load_end:
 	jmp load_iec_loop_end
 
 
-#endif ; CONFIG_IEC_JIFFYDOS and not CONFIG_MEMORY_MODEL_60K
+} } ; CONFIG_IEC_JIFFYDOS and not CONFIG_MEMORY_MODEL_60K

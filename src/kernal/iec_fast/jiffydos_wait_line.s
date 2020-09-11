@@ -8,7 +8,7 @@
 ;
 
 
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 
 
 jiffydos_wait_line:
@@ -22,16 +22,14 @@ jiffydos_wait_line:
 	lda VIC_RASTER
 	cmp #$2E
 	bcc jiffydos_wait_line_done        ; we are safe, border - lot of time till badline
-!:
+@1:
 	lda VIC_RASTER                     ; carry+ is definitely set here!
 	sbc VIC_SCROLY
 	and #$07                           ; we want 8 lowest bits
 	cmp #$06
-	bcs !-
+	bcs @1
 
 jiffydos_wait_line_done:
 
 	rts
-
-
-#endif ; CONFIG_IEC_JIFFYDOS
+}

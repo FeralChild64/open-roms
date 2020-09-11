@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 
 
 jiffydos_prepare:
@@ -27,6 +27,4 @@ jiffydos_prepare:
 	stx VIC_SPENA
 
 	rts
-
-
-#endif ; CONFIG_IEC_JIFFYDOS
+}

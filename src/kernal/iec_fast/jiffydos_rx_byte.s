@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 
 
 jiffydos_rx_byte:
@@ -16,8 +16,8 @@ jiffydos_rx_byte:
 	sei
 
 	; Store .X and .Y on the stack - preserve them
-	phx_trash_a
-	phy_trash_a
+	+phx_trash_a
+	+phy_trash_a
 
 	; Store previous sprite status on stack
 	jsr jiffydos_prepare
@@ -74,8 +74,8 @@ jiffydos_rx_byte:
 
 	; Delay, JiffyDOS needs some time; for PAL one NOP would be enough,
 	; but NTSC machines are clocked slightly faster; cycles: 4
-	nop
-	nop
+	+nop
+	+nop
 
 	; Retrieve status bits, cycles: 4
 	bit CIA2_PRA
@@ -116,6 +116,4 @@ jiffydos_rx_byte_error:
 
 	jsr kernalerror_IEC_TIMEOUT_READ
 	bcs jiffydos_rx_byte_end           ; branch always
-
-
-#endif ; CONFIG_IEC_JIFFYDOS
+}

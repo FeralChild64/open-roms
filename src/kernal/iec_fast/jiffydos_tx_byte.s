@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 
 
 jiffydos_tx_byte:
@@ -16,12 +16,12 @@ jiffydos_tx_byte:
 	sei
 
 	; If EOI requested (carry flag set), mark this in IECPROTO as 0
-	bcc !+
+	bcc @1
 	dec IECPROTO                       ; turns 1 into 0
-!:
+@1:
 	; Store .X and .Y on the stack - preserve them
-	phx_trash_a
-	phy_trash_a
+	+phx_trash_a
+	+phy_trash_a
 
 	; Make sure we are not sending data on ATN
 	jsr iec_release_atn
@@ -106,6 +106,4 @@ jiffydos_tx_byte_wait_eoi:
 	; (which should be stored in C3PO), so there is nothing to do here.
 
 	jmp jiffydos_tx_byte_finalize
-
-
-#endif ; CONFIG_IEC_JIFFYDOS
+}
