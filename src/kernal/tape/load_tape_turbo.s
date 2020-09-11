@@ -11,18 +11,17 @@
 ; but heavily reworked since then. Still, original authors deserve credits!
 
 
-#if CONFIG_TAPE_TURBO
+!ifdef CONFIG_TAPE_TURBO {
 
 
-#if !CONFIG_TAPE_AUTODETECT
+!ifndef CONFIG_TAPE_AUTODETECT {
 
 load_tape_turbo:
 
-#else
+} else {
 
 load_tape_auto:
-
-#endif
+}
 
 	jsr tape_ditch_verify              ; only LOAD is supported, no VERIFY
 
@@ -32,20 +31,19 @@ load_tape_auto:
 	; Start playing
 	jsr tape_common_prepare_cia
 	jsr tape_ask_play
-#if CONFIG_TAPE_HEAD_ALIGN
+!ifdef CONFIG_TAPE_HEAD_ALIGN {
 	jsr tape_prepare_reading
-#endif
+}
 
 	; FALLTROUGH
 
-#if CONFIG_TAPE_AUTODETECT
+!ifdef CONFIG_TAPE_AUTODETECT {
 
 load_tape_turbo_takeover:             ; entry point for normal->turbo takeover
 
 	jsr tape_common_autodetect
-	bcc_16 load_tape_normal_takeover
-
-#endif
+	+bcc load_tape_normal_takeover
+}
 
 	; FALLTROUGH
 
@@ -62,9 +60,9 @@ load_tape_turbo_header:
 	; 16 bytes         - filename, padded with 0x20
 
 	jsr tape_turbo_sync_header
-#if CONFIG_TAPE_AUTODETECT
-	bcs_16 load_tape_normal_takeover   ; failure, probably not a turbo tape file
-#endif
+!ifdef CONFIG_TAPE_AUTODETECT {
+	+bcs load_tape_normal_takeover   ; failure, probably not a turbo tape file
+}
 	ldy #$00
 	sta (TAPE1), y                     ; store header type
 	iny
@@ -77,21 +75,21 @@ load_tape_turbo_header_loop:
 	sta (TAPE1), y
 	iny
 	cpy #$05
-	bne !+
+	bne @1
 	jsr tape_turbo_get_byte            ; tape timing - skip this one
-!:
+@1:
 	cpy #$C0                           ; header is 192 bytes long in total
 	bne load_tape_turbo_header_loop
 
 	; For non-relocatable files, override secondary address
 	ldy #$00                           ; XXX optimize out for 65C02
 	lda (TAPE1), y
-	beq !+
+	beq @2
 	and #$01
-	bne !+
+	bne @2
 	lda #$01                           ; XXX for 65C02 just set the bit with one instruction
 	sta SA
-!:
+@2:
 	; Handle the header
 
 	jsr tape_clean_sid
@@ -105,11 +103,11 @@ load_tape_turbo_payload:
 	; Copy helper byte store routine to RAM, provide default memory mapping
 
 	ldx #(__tape_turbo_bytestore_size - 1)
-!:
+@3:
 	lda tape_turbo_bytestore_source, x
 	sta __tape_turbo_bytestore, x
 	dex
-	bpl !-
+	bpl @3
 
 	lda CPU_R6510
 	sta __tape_turbo_bytestore_defmap
@@ -120,11 +118,11 @@ load_tape_turbo_payload:
 	sta PRTY
 
 	; Read file payload
-!:
+@4:
 	jsr tape_turbo_sync_payload
-#if CONFIG_TAPE_AUTODETECT
-	bcs !-
-#endif
+!ifdef CONFIG_TAPE_AUTODETECT {
+	bcs @4
+}
 
 	; FALLTROUGH
 
@@ -137,11 +135,11 @@ load_tape_turbo_loop:
 	sta PRTY
 
 	; Advance MEMUSS (see Mapping the C64, page 36)
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr lvs_advance_MEMUSS
-#else
+} else {
 	inw MEMUSS+0
-#endif
+}
 	jsr lvs_check_EAL
 	bne load_tape_turbo_loop
 
@@ -154,8 +152,6 @@ load_tape_turbo_loop:
 
 	; Verify the checksum
 	cpx PRTY
-	beq_16 tape_load_success
+	+beq tape_load_success
 	jmp tape_load_error
-
-
-#endif ; CONFIG_TAPE_TURBO
+}

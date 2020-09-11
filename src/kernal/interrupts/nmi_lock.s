@@ -8,7 +8,7 @@
 ;
 
 
-!ifdef CONFIG_TAPE_HEAD_ALIGN {}
+!ifdef CONFIG_TAPE_HEAD_ALIGN {
 
 
 ; XXX consider broader usage of this method to make IO safer

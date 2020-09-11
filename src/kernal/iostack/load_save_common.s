@@ -17,7 +17,7 @@ lvs_handle_byte_load_verify:
 	; Thus we have to use a helper routine in low memory
 	; to do the memory access
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 	; Save byte under ROMs and IO if required
 	php
@@ -30,12 +30,11 @@ lvs_handle_byte_load_verify:
 	stx $01
 	plp
 
-#else
+} else {
 
 	ldy #0
 	sta (EAL),y
-
-#endif
+}
 
 	; FALLTROUGH
 
@@ -47,7 +46,7 @@ lvs_handle_byte_load_verify_end:
 
 lvs_handle_byte_verify:
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 	; Store byte for comparing
 	sta TBTCNT
@@ -66,7 +65,7 @@ lvs_handle_byte_verify:
 	; Compare with stored byte
 	cmp TBTCNT
 
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else if CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 	; Store byte for comparing
 	sta TBTCNT
@@ -77,19 +76,18 @@ lvs_handle_byte_verify:
 	; Compare with stored byte
 	cmp TBTCNT
 
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 
 	ldy #0
 	cmp (EAL),y
-
-#endif
+}
 
 	beq lvs_handle_byte_load_verify_end
 
 	sec
 	rts
 
-#if CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO || CONFIG_IEC
+!ifdef HAS_TAPE_OR_IEC {
 
 lvs_STAL_to_MEMUSS:
 
@@ -99,33 +97,28 @@ lvs_STAL_to_MEMUSS:
 	sta MEMUSS+1
 	rts
 
-#endif
-
-#if CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO || CONFIG_IEC
-
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 
 lvs_advance_MEMUSS:
 
 	; Advance pointer
 
 	inc MEMUSS+0
-	bne !+
+	bne @1
 	inc MEMUSS+1
-!:
+@1:
 	rts
-
-#endif
+}
 
 
 lvs_check_EAL:
 
 	lda MEMUSS+1
 	cmp EAL+1
-	bne !+
+	bne @2
 	lda MEMUSS+0
 	cmp EAL+0
-!:
+@2:
 	rts
 
 
@@ -138,22 +131,22 @@ lvs_display_searching_for:
 	jsr print_kernal_message
 
 	ldy #$00
-!:
+@3:
 	cpy FNLEN
 	beq lvs_display_end
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<FNADDR+0
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_FNADDR
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (FNADDR),y
-#endif
+}
 
 	jsr JCHROUT
 	iny
-	jmp !-
+	jmp @3
 
 lvs_display_end:
 	rts
@@ -167,9 +160,9 @@ lvs_display_loading_verifying:
 
 	ldx #__MSG_KERNAL_LOADING
 	lda VERCKK
-	beq !+
+	beq @4
 	ldx #__MSG_KERNAL_VERIFYING
-!:
+@4:
 	jsr print_kernal_message
 
 	; FALLTHROUGH
@@ -179,20 +172,20 @@ lvs_display_start_addr:
 	ldx #__MSG_KERNAL_FROM_HEX
 	jsr print_kernal_message
 
-#if CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO
+!ifdef HAS_TAPE {
 
 	lda FA
 
-#if CONFIG_TAPE_NORMAL
+!ifdef CONFIG_TAPE_NORMAL {
 	cmp #$01
 	beq lvs_display_addr_STAL
-#endif
-#if CONFIG_TAPE_TURBO
+}
+!ifdef CONFIG_TAPE_TURBO {
 	cmp #$07
 	beq lvs_display_addr_STAL
-#endif
+}
 
-#endif
+}
 
 	; FALLTROUGH
 
@@ -230,14 +223,14 @@ lvs_display_saving:
 	jsr print_kernal_message
 
 	ldy #$00
-!:	
+@5:	
 	cpy FNLEN
-	beq !+
+	beq @6
 	lda (FNADDR), y
 	jsr JCHROUT
 	iny
-	bne !- ; jump always
-!:
+	bne @5 ; jump always
+@6:
 	rts
 
 lvs_error_end:
@@ -257,8 +250,7 @@ lvs_success_end:
 
 	clc
 	rts
-
-#endif
+}
 
 lvs_device_not_found_error:
 
@@ -270,7 +262,7 @@ lvs_illegal_device_number:
 	jsr kernalstatus_DEVICE_NOT_FOUND
 	jmp kernalerror_ILLEGAL_DEVICE_NUMBER
 
-#if CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO || CONFIG_IEC
+!ifdef HAS_TAPE_OR_IEC {
 
 lvs_load_verify_error:
 	; XXX should we really return BASIC error code here?
@@ -284,5 +276,4 @@ lvs_verify_error:
 	lda #B_ERR_VERIFY
 	sec
 	rts
-
-#endif
+}

@@ -314,10 +314,15 @@
 !ifdef CONFIG_IEC_DOLPHINDOS { !set CONFIG_IEC_JIFFYDOS_OR_DOLPHINDOS = 1 }
 
 
+
 ; Handle tape configuration
 
 !ifdef CONFIG_TAPE_NORMAL { !set HAS_TAPE = 1 }
 !ifdef CONFIG_TAPE_TURBO  { !set HAS_TAPE = 1 }
+
+!ifdef CONFIG_TAPE_NORMAL { !set HAS_TAPE_OR_IEC = 1 }
+!ifdef CONFIG_TAPE_TURBO  { !set HAS_TAPE_OR_IEC = 1 }
+!ifdef CONFIG_IEC         { !set HAS_TAPE_OR_IEC = 1 }
 
 
 
