@@ -99,8 +99,7 @@ __str_offset_F14:     !ifdef CONFIG_KEYCMD_F14  { +CONFIG_KEYCMD_F14
 
 __programmable_keys_strings_end:
 
-	!if (__programmable_keys_strings_end - programmable_keys_strings > 255)
-	{
+	!if (__programmable_keys_strings_end - programmable_keys_strings > 255) {
 		!error "Programmable keys took too much space"
 	}
 

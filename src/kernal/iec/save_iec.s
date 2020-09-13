@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 
 save_iec_dev_not_found:
@@ -18,7 +18,7 @@ save_iec:
 
 	; Check file name
 	lda FNLEN
-	beq_16 kernalerror_FILE_NAME_MISSING
+	+beq kernalerror_FILE_NAME_MISSING
 
 	; Display SAVING
 	jsr lvs_display_saving
@@ -42,67 +42,70 @@ save_iec:
 	jsr LISTEN
 	bcs save_iec_dev_not_found
 
-#if CONFIG_IEC_BURST_CIA1 || CONFIG_IEC_BURST_CIA2 || CONFIG_IEC_BURST_MEGA_65
+!ifdef HAS_BURST {
 	jsr burst_advertise
-#endif
+}
 
 	lda #$61 ; open channel / data (p3) , required according to p13
 	sta TBTCNT
 	jsr iec_tx_command
 	bcs save_iec_dev_not_found
 
-#if CONFIG_IEC_DOLPHINDOS
+!ifdef CONFIG_IEC_DOLPHINDOS {
 	jsr dolphindos_detect
-#endif
+}
 
 	; Save start address
 	lda STAL+0
 	sta TBTCNT
 	clc
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 	jsr iec_tx_dispatch
-#else
+} else {
 	jsr iec_tx_byte
-#endif
+}
 
 	lda STAL+1
 	sta TBTCNT
 	clc
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 	jsr iec_tx_dispatch
-#else
+} else {
 	jsr iec_tx_byte
-#endif
+}
 
 	jsr lvs_STAL_to_MEMUSS
 	ldy #$00
+
+	; FALLTROUGH
+
 iec_save_loop:
 
 	; Retrieve byte to send
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<MEMUSS+0
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_MEMUSS
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (MEMUSS),y
-#endif
+}
 
 	; Send the byte
 	sta TBTCNT
 	clc
-#if CONFIG_IEC_JIFFYDOS
+!ifdef CONFIG_IEC_JIFFYDOS {
 	jsr iec_tx_dispatch
-#else
+} else {
 	jsr iec_tx_byte
-#endif
+}
 
 	; Next iteration
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr lvs_advance_MEMUSS
-#else
+} else {
 	inw MEMUSS+0
-#endif
+}
 	jsr lvs_check_EAL
 	bne iec_save_loop
 
@@ -127,6 +130,4 @@ iec_save_loop_end:
 	; Return success
 	clc
 	rts
-
-
-#endif ; CONFIG_IEC
+}
