@@ -58,27 +58,42 @@
 
 !set CONFIG_PROGRAMMABLE_KEYS = 1
 
+!set   CONFIG_KEYCMD_RUN = 1
 !macro CONFIG_KEYCMD_RUN  {
 	!byte $5F
-	!pet "L"
-}
+	!pet "L" }
 
+!set   CONFIG_KEYCMD_F1 = 1
 !macro CONFIG_KEYCMD_F1   { !pet "@" }
-!macro CONFIG_KEYCMD_F2   { !pet "" }
+; !set   CONFIG_KEYCMD_F2 = 1
+; !macro CONFIG_KEYCMD_F2   { !pet "" }
+!set   CONFIG_KEYCMD_F3 = 1
 !macro CONFIG_KEYCMD_F3   { !pet "RUN:" }
-!macro CONFIG_KEYCMD_F4   { !pet "" }
+; !set   CONFIG_KEYCMD_F4 = 1
+; !macro CONFIG_KEYCMD_F4   { !pet "" }
+!set   CONFIG_KEYCMD_F5 = 1
 !macro CONFIG_KEYCMD_F5   { !pet "LOAD" }
-!macro CONFIG_KEYCMD_F6   { !pet "" }
+; !set   CONFIG_KEYCMD_F6 = 1
+; !macro CONFIG_KEYCMD_F6   { !pet "" }
+!set   CONFIG_KEYCMD_F7 = 1
 !macro CONFIG_KEYCMD_F7   { !pet "@$" }
-!macro CONFIG_KEYCMD_F8   { !pet "" }
+; !set   CONFIG_KEYCMD_F8 = 1
+; !macro CONFIG_KEYCMD_F8   { !pet "" }
 
+!set   CONFIG_KEYCMD_HELP = 1
 !macro CONFIG_KEYCMD_HELP { !pet "LIST" }
 
+!set   CONFIG_KEYCMD_F9 = 1
 !macro CONFIG_KEYCMD_F9   { !pet "BOOT" }
+!set   CONFIG_KEYCMD_F10 = 1
 !macro CONFIG_KEYCMD_F10  { !pet "REM F10" }
+!set   CONFIG_KEYCMD_F11 = 1
 !macro CONFIG_KEYCMD_F11  { !pet "MONITOR" }
+!set   CONFIG_KEYCMD_F12 = 1
 !macro CONFIG_KEYCMD_F12  { !pet "REM F12" }
-!macro CONFIG_KEYCMD_F13  { !pet "\$5FH" }
+!set   CONFIG_KEYCMD_F13 = 1
+!macro CONFIG_KEYCMD_F13  { !byte $5F !pet "H" }
+!set   CONFIG_KEYCMD_F14 = 1
 !macro CONFIG_KEYCMD_F14  { !pet "REM F14" }
 
 

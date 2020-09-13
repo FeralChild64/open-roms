@@ -3,12 +3,10 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 ;
-; !!! PROPOSAL ONLY !!! PROPOSAL ONLY !!! NOT FOR USING EXTERNALLY YET !!!
+; Do not change - unless there is a really important reason!
+; Ideally, locations of the following data should be constant - now and forever!
 ;
-;
-; Do not change! Locations of the following data should be constant - now and forever!
-;
-; If you want to integrate Open ROMs support in your emulator, FPGA ccomputer, etc. - this
+; If you want to integrate Open ROMs support in your emulator, FPGA computer, etc. - this
 ; is the official way to recognize the ROM and its revision.
 ;
 
@@ -20,30 +18,30 @@
 	; use a 'panic' pseudocommand with error code (will be passed using .A)
 	; #P_ERR_ROM_MISMATCH - it should remain stable even between releases
 
-#if CONFIG_PANIC_SCREEN
+!ifdef CONFIG_PANIC_SCREEN {
 	.word panic
-#else
-	.word hw_entry_reset
-#endif
+} else {
+	!word hw_entry_reset
+}
 
 
 rom_revision_kernal:
 
 	; $E4B9
 
-	.text "OR"                ; project signature, after "Open ROMs"
-	.byte CONFIG_ID           ; config file ID, might change between revisions
+	!pet "OR"                 ; project signature, "OR" stands for "Open ROMs"
+	!byte CONFIG_ID           ; config file ID - this may change between revisions, without any warning
 
 rom_revision_kernal_string:
 
 	; $E4BC
 
-#if !CONFIG_BRAND_CUSTOM_BUILD
-	.text "(DEVEL SNAPSHOT)"  ; actual ROM revision string; up to 16 characters
-#else
-	.text "(CUSTOM BUILD)"
-#endif
+!ifndef !CONFIG_BRAND_CUSTOM_BUILD {
+	!pet "(DEVEL SNAPSHOT)"   ; ROM revision string; up to 16 characters, string format will change in the future
+} else {
+	!pet "(CUSTOM BUILD)"
+}
 
-	.byte $00                 ; marks the end of string
+	!byte $00                 ; marks the end of string
 
 __rom_revision_kernal_end:
