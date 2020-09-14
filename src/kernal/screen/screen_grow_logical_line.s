@@ -43,17 +43,17 @@ screen_grow_logical_line:
 
 	; Scroll LDTB1 down (start from the end)
 	ldy #23
-!:
+@1:
 	cpy TBLX
-	beq !+
-	bcc !+
+	beq @2
+	bcc @2
 
 	lda LDTB1+0, y
 	sta LDTB1+1, y
 
 	dey
-	bne !-
-!:
+	bne @1
+@2:
 	; Mark current line as grown
 	ldy TBLX
 	lda #$00
@@ -95,13 +95,13 @@ screen_grow_logical_line_loop:
 	; Scroll down one line each loop iteration
 
 	ldy #39
-!:
+@3:
 	lda (SAL),  y
 	sta (EAL),  y
 	lda (PNT),  y
 	sta (USER), y
 	dey
-	bpl !-
+	bpl @3
 
 	; Decrement SAL/PNT pointers by 40 (optimized due to fact they share LSB)
 
@@ -110,10 +110,10 @@ screen_grow_logical_line_loop:
 	sbc #40
 	sta SAL+0
 	sta PNT+0
-	bcs !+
+	bcs @4
 	dec SAL+1
 	dec PNT+1
-!:
+@4:
 	; Decrement EAL/USER pointers by 40 (optimized due to fact they share LSB)
 
 	lda EAL+0
@@ -121,10 +121,10 @@ screen_grow_logical_line_loop:
 	sbc #40
 	sta EAL+0
 	sta USER+0
-	bcs !+
+	bcs @5
 	dec EAL+1
 	dec USER+1
-!:
+@5:
 	; Next loop iteration
 
 	dex

@@ -15,7 +15,7 @@
 
 SCREEN:
 
-#if !ROM_LAYOUT_M65
+!ifndef CONFIG_MB_M65 {
 
 	; There are only 2 sane ways to implement this routine,
 	; I hope this one is different than what Commodore picked :)
@@ -25,11 +25,11 @@ SCREEN:
 
 	rts
 
-#else
+} else {
 
 	php
 	jsr M65_MODEGET
-	bcc !+
+	bcc @1
 
 	plp
 
@@ -37,7 +37,7 @@ SCREEN:
 	ldx #40 ; 40 rows
 
 	rts
-!:
+@1:
 	; Screen dimensions depends on text mode
 
 	plp
@@ -50,5 +50,4 @@ SCREEN:
 
 	pla
 	rts
-
-#endif
+}

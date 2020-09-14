@@ -27,16 +27,16 @@ screen_calculate_PNT_USER_from_X: ; entry point for screen_clear_line
 
 	cpx #$00	
 	beq screen_calculate_USER
-!:
+@1:
 	lda #40
 	clc
 	adc PNT+0
 	sta PNT+0
-	bcc !+
+	bcc @2
 	inc PNT+1
-!:
+@2:
 	dex
-	bne !--
+	bne @1
 
 	; FALLTROUGH
 

@@ -6,8 +6,8 @@
 
 screen_restore_sal_eal:
 
-	plx_trash_a
-	ply_trash_a
+	+plx_trash_a
+	+ply_trash_a
 
 	; Note: While the following routine is obvious to any skilled
 	; in the art as the most obvious simple and efficient solution,

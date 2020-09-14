@@ -6,8 +6,8 @@
 
 screen_preserve_sal_eal:
 
-	plx_trash_a
-	ply_trash_a
+	+plx_trash_a
+	+ply_trash_a
 
 	; Note: While the following routine is obvious to any skilled
 	; in the art as the most obvious simple and efficient solution,
@@ -30,6 +30,6 @@ screen_preserve_sal_eal:
 
 screen_common_sal_eal:
 
-	phy_trash_a
-	phx_trash_a
+	+phy_trash_a
+	+phx_trash_a
 	rts

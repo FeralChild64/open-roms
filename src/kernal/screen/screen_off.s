@@ -8,7 +8,7 @@
 ;
 
 
-#if ((CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO)) || (CONFIG_IEC_JIFFYDOS && !CONFIG_MEMORY_MODEL_60K)
+#if HAS_TAPE || (CONFIG_IEC_JIFFYDOS && !CONFIG_MEMORY_MODEL_60K)
 
 
 screen_off:
@@ -19,12 +19,12 @@ screen_off:
 
 	; To be sure there are no badlines we have to wait till the next screen,
 	; as the bit is checked by VIC-II at the start of the frame only
-!:
+@1:
 	lda VIC_SCROLY                     ; wait for higher part of screen
-	bpl !-
-!:
+	bpl @1
+@2:
 	lda VIC_SCROLY                     ; wait for lower part of the screen
-	bmi !-
+	bmi @2
 
 	rts
 

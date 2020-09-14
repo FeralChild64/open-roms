@@ -10,12 +10,12 @@
 screen_check_toggle_quote:
 
 	cmp #$22
-	bne !+
+	bne @1
 
 	lda QTSW
 	eor #$80
 	sta QTSW
 
 	lda #$22                           ; restore previous .A valuee
-!:
+@1:
 	rts
