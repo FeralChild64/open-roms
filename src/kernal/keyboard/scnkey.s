@@ -26,7 +26,7 @@
 
 
 
-#if !CONFIG_LEGACY_SCNKEY
+!ifndef CONFIG_LEGACY_SCNKEY {
 
 ; Routine takes some ideas from TWW/CTR proposal, see here:
 ; - http://codebase64.org/doku.php?id=base:scanning_the_keyboard_the_correct_and_non_kernal_way
@@ -41,25 +41,25 @@ SCNKEY:
 	lda #$00
 	sta SHFLAG
 
-#if !CONFIG_JOY2_CURSOR && CONFIG_KEY_FAST_SCAN
+!ifndef CONFIG_JOY2_CURSOR { !ifdef CONFIG_KEY_FAST_SCAN {
 
 	; Check for any activity - speed optimization, but cannot be done
 	; that early if we are to scan the joystick #2
 
 	ldx #$00
 	stx CIA1_PRA                       ; connect all the rows
-#if CONFIG_KEYBOARD_C128
+!ifdef CONFIG_KEYBOARD_C128 {
 	stx VIC_XSCAN
-#endif
+}
 	dex                                ; puts $FF
 	cpx CIA1_PRB
 	beq scnkey_no_keys
 
-#endif
+} }
 
 	; Retrieve SHIFT / VENDOR / CTRL / ALT / CAPS LOCK status
 
-#if CONFIG_KEYBOARD_C128_CAPS_LOCK
+!ifdef CONFIG_KEYBOARD_C128_CAPS_LOCK {
 
 	; First check if this is really a C128 - to avoid false positive
 	ldx #$00
@@ -76,13 +76,11 @@ SCNKEY:
 	sta SHFLAG
 !:
 
-#if !CONFIG_KEYBOARD_C128
+!ifndef !CONFIG_KEYBOARD_C128 {
 	stx VIC_XSCAN                      ; disconnect C128 keys if no C128 keyboard is supported
-#endif
+} }
 
-#endif
-
-#if CONFIG_KEYBOARD_C65_CAPS_LOCK
+!ifdef CONFIG_KEYBOARD_C65_CAPS_LOCK {
 
 	lda C65_EXTKEYS_PR
 	and #$01
@@ -92,25 +90,23 @@ SCNKEY:
 	sta SHFLAG
 !:
 
-#if !CONFIG_KEYBOARD_C65
+!ifndef CONFIG_KEYBOARD_C65 {
 	ldx #$FF
-	stx C65_EXTKEYS_PR                 ; disconnect C128 keys if no C128 keyboard is supported
-#endif
-
-#endif
+	stx C65_EXTKEYS_PR                 ; disconnect C65 keys if no C65 keyboard is supported
+} }
 
 	ldy #(__kb_matrix_bucky_confmask_end - kb_matrix_bucky_confmask - 1)
 scnkey_bucky_loop:
 	lda kb_matrix_bucky_confmask, y
 	sta CIA1_PRA
-#if CONFIG_KEYBOARD_C128
+!ifdef CONFIG_KEYBOARD_C128 {
 	lda kb_matrix_bucky_confmask_c128, y
 	sta VIC_XSCAN
-#endif
-#if CONFIG_KEYBOARD_C65
+}
+!ifdef CONFIG_KEYBOARD_C65 {
 	lda kb_matrix_bucky_confmask_c65, y
 	sta C65_EXTKEYS_PR
-#endif
+}
 	lda kb_matrix_bucky_testmask, y
 	and CIA1_PRB
 	bne !+                             ; branch if not pressed
@@ -126,18 +122,18 @@ scnkey_bucky_loop:
 	lda KEYLOG+1
 	bne !+
 	jsr scnkey_set_keytab              ; KEYLOG routine on zeropage? most likely vector not set
-	jmp_8 scnkey_keytab_set_done
+	+bra scnkey_keytab_set_done
 
 !:
-#if HAS_OPCODES_65CE02
-	jsr_ind KEYLOG
-#else
+!ifdef HAS_OPCODES_65CE02 {
+	jsr (KEYLOG)
+} else {
 	jsr scnkey_via_keylog
-#endif
+}
 
 scnkey_keytab_set_done:
 
-#if CONFIG_JOY2_CURSOR
+!ifdef CONFIG_JOY2_CURSOR {
 
 	; Check for control port 2 activity
 
@@ -154,33 +150,32 @@ scnkey_keytab_set_done:
 
 	bne scnkey_joystick_filtered
 
-#if CONFIG_KEY_FAST_SCAN
+!ifdef CONFIG_KEY_FAST_SCAN {
 
 	inx                                ; puts $00
 	stx CIA1_PRA                       ; connect all the rows
-#if CONFIG_KEYBOARD_C128
+!ifdef CONFIG_KEYBOARD_C128 {
 	stx VIC_XSCAN
-#endif
-#if CONFIG_KEYBOARD_C65
+}
+!ifdef CONFIG_KEYBOARD_C65 {
 	stx C65_EXTKEYS_PR
-#endif
+}
 	dex                                ; puts $FF
 	cpx CIA1_PRB
 	beq scnkey_no_keys
 
-#endif ; CONFIG_KEY_FAST_SCAN
-
-#endif ; CONFIG_JOY2_CURSOR
+} ; CONFIG_KEY_FAST_SCAN
+} ; CONFIG_JOY2_CURSOR
 
 	; Check for control port 1 activity (can interfere with keyboard)
 
 	jsr keyboard_disconnect            ; disconnect all the rows, .X will be $FF
 	cpx CIA1_PRB                       ; only control port activity will be reported
-#if CONFIG_JOY1_CURSOR
+!ifdef CONFIG_JOY1_CURSOR {
 	bne scnkey_joystick_1              ; use joystick for cursor keys
-#else
+} else {
 	bne scnkey_no_keys                 ; if activity detected do not scan the keyboard
-#endif
+}
 
 	; Check if KEYTAB is not 0 (happens if more than one bucky key is pressed)
 	; High byte equal to 0 = table considered invalid
@@ -191,12 +186,12 @@ scnkey_keytab_set_done:
 	; Scan the keyboard matrix
 
 	ldy #$FF                           ; offset in key matrix table, $FF for not found yet
-#if CONFIG_KEYBOARD_C128
+!ifdef CONFIG_KEYBOARD_C128 {
 	jsr scnkey_128
-#endif
-#if CONFIG_KEYBOARD_C65
+}
+!ifdef CONFIG_KEYBOARD_C65 {
 	jsr scnkey_65
-#endif
+}
 	ldx #$07
 scnkey_matrix_loop:
 	lda kb_matrix_row_keys, x
@@ -246,7 +241,7 @@ scnkey_no_keys:
 	sta LSTX
 	rts
 
-#if CONFIG_JOY1_CURSOR
+!ifdef CONFIG_JOY1_CURSOR {
 
 scnkey_joystick_1:
 
@@ -256,10 +251,9 @@ scnkey_joystick_1:
 	and #%00001111                     ; filter out anything but movement
 
 	; FALLTROUGH
+}
 
-#endif
-
-#if CONFIG_JOY1_CURSOR || CONFIG_JOY2_CURSOR
+!ifdef CONFIG_JOY1_OR_JOY2_CURSOR {
 
 scnkey_joystick_filtered:
 
@@ -286,8 +280,7 @@ scnkey_joystick_filtered:
 	tay
 	
 	; FALLTROUGH
-
-#endif
+}
 
 scnkey_got_key: ; .Y should now contain the key offset in matrix pointed by KEYTAB
 
@@ -303,11 +296,11 @@ scnkey_got_key: ; .Y should now contain the key offset in matrix pointed by KEYT
 	;
 	; Besides - since I am the one who writes the code, I will make the values exactly how I like them :D
 
-#if !CONFIG_RS232_UP9600
+!ifndef CONFIG_RS232_UP9600 {
 	lda #$16
-#else
+} else {
 	lda #$18
-#endif
+}
 	sta DELAY
 
 	; FALLTROUGH
@@ -327,14 +320,14 @@ scnkey_output_key:
 
 	; Retrieve the PETSCII code
 
-#if CONFIG_KEYBOARD_C128 || CONFIG_KEYBOARD_C65
+!ifdef CONFIG_KEYBOARD_C128_OR_C65 {
 
 	cpy #$40
 	bcc !+
 
-#if CONFIG_KEYBOARD_C128
+!ifdef CONFIG_KEYBOARD_C128 {
 	lda kb_matrix_128 - $41, y         ; retrieve key code from C128 extended matrix
-#elif CONFIG_KEYBOARD_C65
+} else ifdef CONFIG_KEYBOARD_C65
 
 	; Select key matrix (normal or shifted) for extended C65 keys
 
@@ -342,7 +335,7 @@ scnkey_output_key:
 	and #%00000111 ; KEY_FLAG_SHIFT + KEY_FLAG_VENDOR + KEY_FLAG_CTRL
 	beq scnkey_output_65_no_shift
 	cmp #KEY_FLAG_SHIFT
-	; XXX how to behave on VENDOR/CTRL key? Harmonize this with claasic keys behavior
+	; XXX how to behave on VENDOR/CTRL key? Harmonize this with clasic keys behavior
 	bne scnkey_no_keys                 ; no scanning for this bucky key combination
 
 	lda kb_matrix_65_shifted - $41, y
@@ -351,24 +344,24 @@ scnkey_output_key:
 scnkey_output_65_no_shift:
 
 	lda kb_matrix_65 - $41, y 
+}
 
-#endif
 	jmp scnkey_got_petscii
 !:
 	lda (KEYTAB), y	                   ; retrieve key code from standard matrix
 
-#endif ; CONFIG_KEYBOARD_C128 or CONFIG_KEYBOARD_C65
+} ; CONFIG_KEYBOARD_C128 or CONFIG_KEYBOARD_C65
 
-#if CONFIG_KEYBOARD_C128_CAPS_LOCK || CONFIG_KEYBOARD_C65_CAPS_LOCK
+!ifdef CONFIG_KEYBOARD_CAPS_LOCK {
 
 	; Check if we need special handling for a CAPS LOCK key
 	; This is shorter than a separate set of tables
 
 scnkey_handle_caps_lock:
 
-#if !CONFIG_KEYBOARD_C128 && !CONFIG_KEYBOARD_C65
+!ifndef CONFIG_KEYBOARD_C128_OR_C65 {
 	lda (KEYTAB), y
-#endif
+}
 	tax 
 	lda SHFLAG
 	and #(%00000111 + KEY_CAPS_LOCK)
@@ -387,19 +380,18 @@ scnkey_handle_caps_lock:
 !:
 	txa
 
-#endif ; CONFIG_KEYBOARD_C128_CAPS_LOCK or CONFIG_KEYBOARD_C65_CAPS_LOCK
+} ; CONFIG_KEYBOARD_C128_CAPS_LOCK or CONFIG_KEYBOARD_C65_CAPS_LOCK
 
-#if !CONFIG_KEYBOARD_C128 && !CONFIG_KEYBOARD_C128_CAPS_LOCK && !CONFIG_KEYBOARD_C65 && !CONFIG_KEYBOARD_C65_CAPS_LOCK
+!ifndef CONFIG_KEYBOARD_C128_OR_C65 { !ifndef CONFIG_KEYBOARD_CAPS_LOCK {
 
 	lda (KEYTAB), y
-
-#endif
+} }
 
 	; Output PETSCII code to the keyboard buffer
 
 scnkey_got_petscii:
 
-#if CONFIG_KEYBOARD_C128 && CONFIG_EDIT_TABULATORS
+!ifdef CONFIG_KEYBOARD_C128 [ !ifdef CONFIG_EDIT_TABULATORS {
 
 	; Special handling for SHIFT+TAB; it is easier than creating new matrix
 
@@ -413,7 +405,7 @@ scnkey_got_petscii:
 !:
 	txa
 
-#endif ; CONFIG_KEYBOARD_C128 and CONFIG_EDIT_TABULATORS
+} ; CONFIG_KEYBOARD_C128 and CONFIG_EDIT_TABULATORS
 
 	beq scnkey_no_keys                 ; branch if we have no PETSCII code for this key
 	ldy NDX
@@ -428,7 +420,7 @@ scnkey_done:
 
 scnkey_try_repeat:
 
-#if !CONFIG_KEY_REPEAT_ALWAYS
+!ifndef CONFIG_KEY_REPEAT_ALWAYS {
 
 	; Check whether we should repeat keys - first the flag, afterwards hardcoded list
 
@@ -446,7 +438,7 @@ scnkey_try_repeat:
 
 scnkey_handle_repeat:
 
-#endif ; no CONFIG_KEY_REPEAT_ALWAYS
+} ; no CONFIG_KEY_REPEAT_ALWAYS
 
 	; Countdown before first repeat
 
@@ -475,4 +467,4 @@ scnkey_early_repeat:
 
 	rts
 
-#endif ; no CONFIG_LEGACY_SCNKEY
+} ; no CONFIG_LEGACY_SCNKEY
