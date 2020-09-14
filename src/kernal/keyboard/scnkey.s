@@ -66,15 +66,15 @@ SCNKEY:
 	stx VIC_XSCAN
 	dex                                ; puts $FF
 	cpx VIC_XSCAN
-	beq !+                             ; branch if C64, C128 will keep some bits cleared
+	beq @1                             ; branch if C64, C128 will keep some bits cleared
 
 	lda CPU_R6510
 	and #$40
-	bne !+                             ; branch if no CAPS LOCK
+	bne @1                             ; branch if no CAPS LOCK
 
 	lda #KEY_CAPS_LOCK
 	sta SHFLAG
-!:
+@1:
 
 !ifndef !CONFIG_KEYBOARD_C128 {
 	stx VIC_XSCAN                      ; disconnect C128 keys if no C128 keyboard is supported
@@ -84,11 +84,11 @@ SCNKEY:
 
 	lda C65_EXTKEYS_PR
 	and #$01
-	bne !+                             ; branch if no CAPS LOCK
+	bne @2                             ; branch if no CAPS LOCK
 
 	lda #KEY_CAPS_LOCK
 	sta SHFLAG
-!:
+@2:
 
 !ifndef CONFIG_KEYBOARD_C65 {
 	ldx #$FF
@@ -109,22 +109,22 @@ scnkey_bucky_loop:
 }
 	lda kb_matrix_bucky_testmask, y
 	and CIA1_PRB
-	bne !+                             ; branch if not pressed
+	bne @3                             ; branch if not pressed
 	lda SHFLAG
 	ora kb_matrix_bucky_shflag, y
 	sta SHFLAG
-!:
+@3:
 	dey
 	bpl scnkey_bucky_loop
 
 	; Set KEYTAB vector
 
 	lda KEYLOG+1
-	bne !+
+	bne @11
 	jsr scnkey_set_keytab              ; KEYLOG routine on zeropage? most likely vector not set
 	+bra scnkey_keytab_set_done
 
-!:
+@11:
 !ifdef HAS_OPCODES_65CE02 {
 	jsr (KEYLOG)
 } else {
@@ -206,13 +206,13 @@ scnkey_matrix_loop:
 	ldy #$07
 scnkey_matrix_loop_inner:
 	cmp kb_matrix_row_keys, y
-	bne !+                             ; not this particular key
+	bne @4                             ; not this particular key
 	tya                                ; now .A contains key offset within a row
 	clc
 	adc kb_matrix_row_offsets, x       ; now .A contains key offset from the matrix start
 	tay
 	jmp scnkey_matrix_loop_next
-!:
+@4:
 	dey
 	bpl scnkey_matrix_loop_inner
 	bmi scnkey_no_keys                 ; branch always, multiple keys must have been pressed
@@ -260,16 +260,16 @@ scnkey_joystick_filtered:
 	; Set appropriate keyboard matrix and key code for joystick event
 
 	ldy #$03
-!:
+@5:
 	cmp kb_matrix_joy_status, y
-	beq !+ 
+	beq @6 
 	dey
-	bpl !-
+	bpl @5
 
 	; Not found
 
 	rts
-!:
+@6:
 	; Found
 
 	lda kb_matrix_joy_keytab_lo, y
@@ -323,7 +323,7 @@ scnkey_output_key:
 !ifdef CONFIG_KEYBOARD_C128_OR_C65 {
 
 	cpy #$40
-	bcc !+
+	bcc scnkey_output_get_keycode
 
 !ifdef CONFIG_KEYBOARD_C128 {
 	lda kb_matrix_128 - $41, y         ; retrieve key code from C128 extended matrix
@@ -347,7 +347,11 @@ scnkey_output_65_no_shift:
 }
 
 	jmp scnkey_got_petscii
-!:
+
+	; FALLTROUGH
+
+scnkey_output_get_keycode:
+
 	lda (KEYTAB), y	                   ; retrieve key code from standard matrix
 
 } ; CONFIG_KEYBOARD_C128 or CONFIG_KEYBOARD_C65
@@ -366,18 +370,18 @@ scnkey_handle_caps_lock:
 	lda SHFLAG
 	and #(%00000111 + KEY_CAPS_LOCK)
 	cmp #KEY_CAPS_LOCK
-	bne !+                             ; branch if no special CAPS LOCK handling needed
+	bne @7                             ; branch if no special CAPS LOCK handling needed
 
 	cpx #$41                           ; 'A'
-	bcc !+
+	bcc @7
 	cpx #$5B                           ; 'Z' + 1
-	bcs !+
+	bcs @7
 
 	txa
 	clc
 	adc #$20                           ; turn lowercase into uppercase
 	tax 
-!:
+@7:
 	txa
 
 } ; CONFIG_KEYBOARD_C128_CAPS_LOCK or CONFIG_KEYBOARD_C65_CAPS_LOCK
@@ -397,12 +401,12 @@ scnkey_got_petscii:
 
 	tax
 	cmp #KEY_C64_TAB_FW
-	bne !+
+	bne @8
 	lda SHFLAG
 	and #KEY_FLAG_SHIFT
-	beq !+
+	beq @8
 	ldx #KEY_C64_TAB_BW
-!:
+@8:
 	txa
 
 } ; CONFIG_KEYBOARD_C128 and CONFIG_EDIT_TABULATORS
@@ -429,11 +433,11 @@ scnkey_try_repeat:
 
 	tya
 	ldx #(__kb_matrix_alwaysrepeat_end - kb_matrix_alwaysrepeat - 1)
-!:
+@9:
 	cmp kb_matrix_alwaysrepeat, x
 	beq scnkey_handle_repeat
 	dex
-	bpl !-
+	bpl @9
 	bmi scnkey_done
 
 scnkey_handle_repeat:
@@ -443,11 +447,11 @@ scnkey_handle_repeat:
 	; Countdown before first repeat
 
 	lda DELAY
-	beq !+
+	beq @10
 	dec DELAY
 
 	rts
-!:
+@10:
 	; Countdown before subsequent repeats
 
 	lda KOUNT
