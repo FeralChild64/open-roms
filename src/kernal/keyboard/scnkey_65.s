@@ -11,7 +11,7 @@
 ;
 
 
-#if CONFIG_KEYBOARD_C65 && !CONFIG_LEGACY_SCNKEY
+!ifdef CONFIG_KEYBOARD_C65 { !ifndef CONFIG_LEGACY_SCNKEY {
 
 
 ; Inlining this within SCNKEY would both overcomplicate the implementation
@@ -36,14 +36,14 @@ scnkey_65:
 	ldy #$07
 scnkey_matrix_65_loop:
 	cmp kb_matrix_row_keys, y
-	bne !+                             ; not this particular key
+	bne @1                             ; not this particular key
 	tya                                ; now .A contains key offset within a row
 	clc
 	adc kb_matrix_row_offsets, x       ; now .A contains key offset from the matrix start
 	adc #$41                           ; now .A contains offset after the standard matrix
 	tay
 	jmp scnkey_65_done
-!:
+@1:
 	dey
 	bpl scnkey_matrix_65_loop
 
@@ -65,4 +65,4 @@ scnkey_65_done:
 	rts
 
 
-#endif ; CONFIG_KEYBOARD_C65 and no CONFIG_LEGACY_SCNKEY
+} } ; CONFIG_KEYBOARD_C65 and no CONFIG_LEGACY_SCNKEY

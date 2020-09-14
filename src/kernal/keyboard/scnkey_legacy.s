@@ -18,7 +18,7 @@
 ;       RAM available to Open ROMs it will always be a serious compatibility risk.
 
 
-#if CONFIG_LEGACY_SCNKEY
+!ifdef CONFIG_LEGACY_SCNKEY {
 
 
 ; Scan the keyboard..
@@ -98,12 +98,12 @@ sk_start:
 	; Stuff each key pressed into the keyboard buffer
 
 	ldy #$00
-!:
+@1:
 	lda Buffer,y
 	jsr accept_key
 	iny
 	cpy BufferQuantity
-	bne !-
+	bne @1
 no_keys_waiting:
 	
 	rts
@@ -197,11 +197,11 @@ ReturnNoKeys:
 	lda #$FF
 	sta LSTX
 	ldx #MaxKeyRollover-1
-!:
+@2:
 	sta Buffer,x
 	sta BufferOld,x
 	dex
-	bpl !-
+	bpl @2
 
 	rts
 
@@ -249,20 +249,20 @@ JoystickActivity:
 	lda CIA1_PRB
 	and #$03
 	cmp #$01
-	bne !+
+	bne @3
 	; down
 	ldx #$07       		; UP/DOWN
 	jsr KeyFound
-!:
+@3:
 	cmp #$02
-	bne !+
+	bne @4
 	; Up
 	; Mark shift as pressed
 	ldx #$01
 	stx SHFLAG
 	ldx #$07		; UP/DOWN
 	jsr KeyFound
-!:
+@4:
 	;  Only allow up/down OR left/right, since
 	; else we have confusing situation with SHIFT required
 	; for one, but not the other.
@@ -270,23 +270,23 @@ JoystickActivity:
 	; feed the key input at a higher level, rather than
 	; simulating directly pressing the cursor keys.
 	cmp #$03
-	beq !+
+	beq @5
 	jmp skdone
-!:
+@5:
 	lda CIA1_PRB
 	and #$0c
 	cmp #$04
-	bne !+
+	bne @6
 	ldx #$02
 	jsr KeyFound		; LEFT/RIGHT
-!:
+@6:
 	cmp #$08
-	bne !+
+	bne @7
 	ldx #$01
 	stx SHFLAG
 	ldx #$02
 	jsr KeyFound		; LEFT/RIGHT
-!:
+@7:
 	jmp skdone
 
 
@@ -326,9 +326,9 @@ next_row:
 
 	stx CIA1_PRA    ; Disconnect all Keyboard Rows
 	cpx CIA1_PRB    ; Only Control Port activity will be detected
-	beq !+
+	beq @8
 	jmp ReturnNoKeys
-!:
+@8:
 	; Make X = $00, assumed below
 	inx
 
@@ -456,9 +456,9 @@ RecordKeypress:
     ; New Key Detected
 	ldy BufferQuantity
 	cpy #MaxKeyRollover
-	bcc !+
+	bcc @9
 	jmp ReturnNoKeys ; too many new keys
-!:
+@9:
 AcceptKeyEvent:	
     sta Buffer,y
 	iny
@@ -470,11 +470,11 @@ ConsiderNextKey:
 
 	; Copy new presses to old list
 	ldx #MaxKeyRollover-1
-!:
+@10:
 	lda BufferNew,x
 	sta BufferOld,x
 	dex
-	bpl !-
+	bpl @10
 	
 	; Return success and set of pressed keys
 	clc
@@ -530,4 +530,4 @@ KeyRepeatWait:
 	jmp ConsiderNextKey
 
 
-#endif ; CONFIG_LEGACY_SCNKEY
+} ; CONFIG_LEGACY_SCNKEY

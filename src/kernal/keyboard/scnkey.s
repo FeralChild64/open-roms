@@ -327,7 +327,7 @@ scnkey_output_key:
 
 !ifdef CONFIG_KEYBOARD_C128 {
 	lda kb_matrix_128 - $41, y         ; retrieve key code from C128 extended matrix
-} else ifdef CONFIG_KEYBOARD_C65
+} else ifdef CONFIG_KEYBOARD_C65 {
 
 	; Select key matrix (normal or shifted) for extended C65 keys
 
@@ -395,7 +395,7 @@ scnkey_handle_caps_lock:
 
 scnkey_got_petscii:
 
-!ifdef CONFIG_KEYBOARD_C128 [ !ifdef CONFIG_EDIT_TABULATORS {
+!ifdef CONFIG_KEYBOARD_C128 { !ifdef CONFIG_EDIT_TABULATORS {
 
 	; Special handling for SHIFT+TAB; it is easier than creating new matrix
 
@@ -409,7 +409,7 @@ scnkey_got_petscii:
 @8:
 	txa
 
-} ; CONFIG_KEYBOARD_C128 and CONFIG_EDIT_TABULATORS
+} } ; CONFIG_KEYBOARD_C128 and CONFIG_EDIT_TABULATORS
 
 	beq scnkey_no_keys                 ; branch if we have no PETSCII code for this key
 	ldy NDX

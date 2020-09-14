@@ -13,11 +13,11 @@
 scnkey_set_keytab:
 
 
-#if CONFIG_LEGACY_SCNKEY ; routine not compatible with legacy SCNKEY
+!ifdef CONFIG_LEGACY_SCNKEY { ; routine not compatible with legacy SCNKEY
 
 	rts
 
-#else
+} else {
 
 
 	; Set initial KEYTAB value
@@ -42,7 +42,7 @@ scnkey_set_keytab:
 	; of KEYTAB to 0 (I do not think anyone would put keyboard decoding table
     ; at zeropage)
 	lda #$00
-	beq !+ ; branch always
+	beq scnkey_valid_offset_cont ; branch always
 
 scnkey_valid_offset:
 
@@ -52,13 +52,17 @@ scnkey_valid_offset:
 	sta KEYTAB+0
 	lda #$00
 	adc KEYTAB+1
-!:
+
+	; FALLTROUGH
+
+scnkey_valid_offset_cont:
+
 	sta KEYTAB+1
 
 	; FALLTROUGH
 
 
-#endif ; no CONFIG_LEGACY_SCNKEY
+} ; no CONFIG_LEGACY_SCNKEY
 
 
 scnkey_toggle_if_needed: ; entry for SCNKEY (TWW/CTR version)
@@ -66,44 +70,44 @@ scnkey_toggle_if_needed: ; entry for SCNKEY (TWW/CTR version)
 	; Check if we should toggle the character set
 
 	lda MODE
-	bne !+ ; not allowed to toggle
+	bne @1 ; not allowed to toggle
 	lda SHFLAG
 	and #$03
 	cmp #$03
-	bne !+ ; no SHIFT + VENDOR pressed
+	bne @1 ; no SHIFT + VENDOR pressed
 	lda LSTSHF
 	and #$03
 	cmp #$03
-	beq !+ ; already toggled
+	beq @1 ; already toggled
 
 	; Toggle char set
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	jsr M65_MODEGET
-	bcc !++
+	bcc @2
 
 	; Toggling charsets for C64 mode
 
 	lda VIC_YMCSB
 	eor #$02
 	sta VIC_YMCSB
-!:
+@1:
 	rts
 
 	; Toggling charsets for M65 mode
-!:
+@2:
 	lda VIC_CHARPTR+1
 	eor #%00001000
 	sta VIC_CHARPTR+1
 	rts
 
-#else
+} else {
 
 	lda VIC_YMCSB
 	eor #$02
 	sta VIC_YMCSB
-!:
+@1:
 	rts
 
-#endif
+}
