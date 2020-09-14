@@ -16,36 +16,35 @@
 
 UNLSN:
 
-#if CONFIG_IEC || ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	; According to serial-bus.pdf (page 15) this routine flushes the IEC out buffer
 	jsr iec_tx_flush
 
-#endif
-
-#if ROM_LAYOUT_M65
-
 	jsr m65dos_check
-	bcc_16 m65dos_unlsn                ; branch if device is handeld by internal DOS
+	+bcc m65dos_unlsn                  ; branch if device is handeld by internal DOS
 
-#endif
+} else ifdef CONFIG_IEC {
 
-#if CONFIG_IEC
+	; According to serial-bus.pdf (page 15) this routine flushes the IEC out buffer
+	jsr iec_tx_flush
+}
 
-#if CONFIG_IEC_JIFFYDOS || CONFIG_IEC_DOLPHINDOS
+
+!ifdef CONFIG_IEC {
+
+!ifdef CONFIG_IEC_JIFFYDOS_OR_DOLPHINDOS {
 
 	lda #$FF                           ; do not use JiffyDOS / DolphinDOS anymore, trigger JiffyDOS detection
 	sta IECPROTO
-
-#endif
+}
 
 	; Buffer empty, send the command
 	lda #$3F
 
 	jmp common_open_close_unlsn_second
 
-#else
+} else {
 
 	jmp kernalerror_ILLEGAL_DEVICE_NUMBER
-
-#endif
+}
