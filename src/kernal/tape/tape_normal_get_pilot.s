@@ -13,7 +13,7 @@
 ; - $4F for repeated header/data
 
 
-#if CONFIG_TAPE_NORMAL
+!ifdef CONFIG_TAPE_NORMAL {
 
 
 tape_normal_get_pilot_header:          ; entry point, reset calibration, require 128x $40 pulses
@@ -28,19 +28,19 @@ tape_normal_get_pilot_header:          ; entry point, reset calibration, require
 
 	lda #$80
 
-#if CONFIG_TAPE_AUTODETECT
+!ifdef CONFIG_TAPE_AUTODETECT {
 	ldy #$FF                           ; marker: try to detect turbo
 	bmi tape_normal_get_pilot_header_cont
-#else
-	skip_2_bytes_trash_nvz
-#endif
+} else {
+	+skip_2_bytes_trash_nvz
+}
 
 	; FALLTROUGH
 
 tape_normal_get_pilot_data:            ; entry point, require 4x $40 pulses
 
 	lda #$04
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 
@@ -48,14 +48,14 @@ tape_normal_get_pilot_short:           ; entry point, require 1x $40 pulses
 
 	lda #$01
 
-#if CONFIG_TAPE_AUTODETECT
+!ifdef CONFIG_TAPE_AUTODETECT {
 	ldy #$00                           ; marker: do not try to detect turbo
 	; FALLTROUGH
 tape_normal_get_pilot_header_cont:
 	sty INBIT
-#else
-	skip_2_bytes_trash_nvz
-#endif
+} else {
+	+skip_2_bytes_trash_nvz
+}
 
 	; FALLTROUGH
 
@@ -86,14 +86,14 @@ tape_normal_get_pilot_common_loop_inner:
 	jsr tape_common_get_pulse
 	bcc tape_normal_get_pilot_common_restart     ; not a pilot - try again
 
-#if CONFIG_TAPE_AUTODETECT
+!ifdef CONFIG_TAPE_AUTODETECT {
 	bit INBIT
-	bpl !+
-	; Try to distinguish turbo by cheecking for short signals
+	bpl @1
+	; Try to distinguish turbo by checking for short signals
 	cmp #$B9                                     ; see comment in tape_common_autodetect.s
-	bcs !++
-!:
-#endif
+	bcs @2
+@1:
+}
 
 	jsr tape_normal_calibrate_during_pilot
 
@@ -104,8 +104,6 @@ tape_normal_get_pilot_common_loop_inner:
 	bne tape_normal_get_pilot_common_loop_outer
 
 	clc
-!:
+@2:
 	rts
-
-
-#endif
+}

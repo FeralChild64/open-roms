@@ -10,7 +10,7 @@
 ; - https://codebase64.pokefinder.org/doku.php?id=base:turbotape_loader_source
 
 
-#if CONFIG_TAPE_TURBO
+!ifdef CONFIG_TAPE_TURBO {
 
 
 tape_turbo_sync_header:
@@ -21,51 +21,50 @@ tape_turbo_sync_header:
 
 	; Synchronize with start of sync sequence
 	jsr tape_turbo_sync_first
-#if CONFIG_TAPE_AUTODETECT
+!ifdef CONFIG_TAPE_AUTODETECT {
 	bcs tape_turbo_sync_done
-#endif
+}
 
 	; Perform synchronization, double loop, total $C0 * $04 iterations
 	ldx #$C0
-!:
+@1:
 	ldy #$04
-!:
+@2:
 	stx XSAV
 	jsr tape_turbo_get_byte
 	cmp #$02
 	bne tape_turbo_sync_header         ; branch if failure
 
 	dey
-	bne !-
+	bne @2
 	ldx XSAV
 	dex
-	bne !--
+	bne @1
 
 	; FALLTROUGH
 
 tape_turbo_sync_payload:
 
 	jsr tape_turbo_sync_first
-#if CONFIG_TAPE_AUTODETECT
+!ifdef CONFIG_TAPE_AUTODETECT {
 	bcs tape_turbo_sync_done           ; this shopuld not happen
-#endif
-!:
+}
 	ldx #$09                           ; 9, 8, ...
-!:
+@3:
  	jsr tape_turbo_get_byte
  	cmp #$02
- 	beq !-
+ 	beq @3
  	ldy #$00
-!: 
+@4: 
 	cpx INBIT
 	bne tape_turbo_sync_payload
 	jsr tape_turbo_get_byte
 	dex
-	bne !-
+	bne @4
 
-#if CONFIG_TAPE_AUTODETECT
+!ifdef CONFIG_TAPE_AUTODETECT {
 	clc
-#endif
+}
 
 	; FALLTROUGH
 
@@ -74,4 +73,4 @@ tape_turbo_sync_done:
 	rts
 
 
-#endif ; CONFIG_TAPE_TURBO
+} ; CONFIG_TAPE_TURBO

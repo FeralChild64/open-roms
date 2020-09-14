@@ -9,7 +9,7 @@
 ; .Y not equal to 0 - returns error if data block is longer (length includes checksum)
 
 
-#if CONFIG_TAPE_NORMAL
+!ifdef CONFIG_TAPE_NORMAL {
 
 
 tape_normal_get_data_1:
@@ -64,21 +64,21 @@ tape_normal_get_data_1_loop:
 tape_normal_get_data_1_loop_byte_OK:
 
 	jsr tape_normal_get_marker
-	bcc !+
+	bcc @1
 
 	; End of the block
 	jsr tape_normal_update_checksum
 	jmp tape_normal_get_data_1_success
 
-!:
+@1:
 	; Store byte, calculate checksum
 	lda INBIT
 	ldy #$00
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr tape_normal_byte_store
-#else
+} else {
 	sta (MEMUSS), y
-#endif
+}
 	jsr tape_normal_update_checksum
 	
 	; FALLTROUGH
@@ -86,11 +86,11 @@ tape_normal_get_data_1_loop_byte_OK:
 tape_normal_get_data_1_loop_advance:
 
 	; Advance pointer
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr lvs_advance_MEMUSS
-#else
+} else {
 	inw MEMUSS+0
-#endif
+}
 
 	jmp tape_normal_get_data_1_loop
 
@@ -104,6 +104,4 @@ tape_normal_get_data_1_fail:
 
 	sec
 	rts
-
-
-#endif
+}

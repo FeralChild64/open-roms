@@ -15,22 +15,22 @@
 ; but it means we can safely use this area for our purposes
 
 
-#if CONFIG_TAPE_TURBO
+!ifdef CONFIG_TAPE_TURBO {
 
 
-#if ROM_LAYOUT_M65
-.label __tape_turbo_bytestore_defmap  = __tape_turbo_bytestore + 10
-#else
-.label __tape_turbo_bytestore_defmap  = __tape_turbo_bytestore + 7
-#endif
-.label __tape_turbo_bytestore_size    = __tape_turbo_bytestore_source_end - tape_turbo_bytestore_source
+!ifdef CONFIG_MB_M65 {
+!addr __tape_turbo_bytestore_defmap  = __tape_turbo_bytestore + 10
+} else {
+!addr __tape_turbo_bytestore_defmap  = __tape_turbo_bytestore + 7
+}
+!addr __tape_turbo_bytestore_size    = __tape_turbo_bytestore_source_end - tape_turbo_bytestore_source
 
 
 tape_turbo_bytestore_source:
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr KERNAL_0.map_NORMAL
-#endif
+}
 
 	; Set all memory as RAM, tape motor ON
 	ldx #$00
@@ -43,15 +43,15 @@ tape_turbo_bytestore_source:
 	ldx #$00                           ; value will be determined later, offset from start: 7 bytes
 	stx CPU_R6510
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	; Restore default map and quit
 	jmp KERNAL_0.map_KERNAL_1
-#else
+} else {
 	; Go back
 	rts
-#endif
+}
 
 __tape_turbo_bytestore_source_end:
 
 
-#endif ; CONFIG_TAPE_TURBO
+} ; CONFIG_TAPE_TURBO

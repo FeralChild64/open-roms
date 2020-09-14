@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_TAPE_NORMAL
+!ifdef CONFIG_TAPE_NORMAL {
 
 
 tape_normal_get_data_2:
@@ -50,16 +50,16 @@ tape_normal_get_data_2_loop_from_log:
 	; This is a byte from the log
 
 	jsr tape_normal_get_marker
-	bcs !+
+	bcs @1
 
 	lda INBIT
 	ldy #$00
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr tape_normal_byte_store
-#else
+} else {
 	sta (MEMUSS), y
-#endif
-!:
+}
+@1:
 	jsr tape_normal_update_checksum
 
 	; FALLTROUGH
@@ -67,11 +67,11 @@ tape_normal_get_data_2_loop_from_log:
 tape_normal_get_data_2_loop_advance:
 
 	; Advance pointer
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr lvs_advance_MEMUSS
-#else
+} else {
 	inw MEMUSS+0
-#endif
+}
 
 	jmp tape_normal_get_data_2_loop
 
@@ -99,19 +99,17 @@ load_cmp_log_MEMUSS:
 	ldx PTR2
 	lda STACK+0, x
 	cmp MEMUSS+0
-	bne !+
+	bne @2
 
 	lda STACK+1, x
 	cmp MEMUSS+1
-	bne !+
+	bne @2
 
 	; MEMUSS matches address from the log
 
 	inc PTR2
 	inc PTR2
 	lda #$00                                     ; to set Zero flag
-!:
+@2:
 	rts
-
-
-#endif
+}

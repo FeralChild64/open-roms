@@ -3,7 +3,7 @@
 ;; #LAYOUT# *   *        #IGNORE
 
 
-#if CONFIG_MEMORY_MODEL_46K ||CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 
 peek_under_roms_via_MEMUSS:
@@ -53,7 +53,7 @@ peek_under_roms_via_FNADDR:
 
 	; Continue using common code
 
-	jmp_8 peek_under_roms_finalize
+	+bra peek_under_roms_finalize
 
 
 peek_under_roms_via_EAL:
@@ -71,7 +71,6 @@ peek_under_roms_via_EAL:
 
 	; Continue using common code
 
-	jmp_8 peek_under_roms_finalize
+	+bra peek_under_roms_finalize
+}
 
-
-#endif

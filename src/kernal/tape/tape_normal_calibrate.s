@@ -51,7 +51,7 @@ tape_normal_calibrate_after_S:                   ; recalibration after short pul
 
 	sta __normal_time_S
 	rts
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 
