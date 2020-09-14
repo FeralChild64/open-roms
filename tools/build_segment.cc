@@ -22,8 +22,8 @@
 
 const std::string LAB_OUT_START = "__routine_START_";
 const std::string LAB_OUT_END   = "__routine_END_";
-const std::string LAB_IN_START  = ".label __routine_START_";
-const std::string LAB_IN_END    = ".label __routine_END_";
+const std::string LAB_IN_START  = "\t" + LAB_OUT_START;
+const std::string LAB_IN_END    = "\t" + LAB_OUT_END;
 
 //
 // Command line settings
@@ -68,7 +68,7 @@ void printBannerBinCompile()
     printBannerLineBottom();
 }
 
-std::string toZoneName(const std::string &fileName)
+std::string toLabel(const std::string &fileName)
 {
     std::string retVal = fileName;
 
@@ -307,7 +307,7 @@ void calcRoutineSizes()
     {
         outFile << "\n\n\n\n";
         outFile << ";--- Source file" << sourceFile.fileName << "\n\n";
-        outFile << "!zone " << toZoneName(sourceFile.fileName) << "\n\n";
+        outFile << "!zone " << toLabel(sourceFile.fileName) << "\n\n";
         outFile << LAB_OUT_START << sourceFile.label << ":" << "\n\n";
 
         outFile << std::string(sourceFile.content.begin(), sourceFile.content.end());
@@ -321,8 +321,9 @@ void calcRoutineSizes()
 
     // All written - now launch the assembler
 
-    const std::string cmd = "cd " + filePath + " && " + CMD_assembler + " " +
-                            outFileNameBare + " -symbolfile -o /dev/null";
+    const std::string cmd = "cd " + filePath + " && " + CMD_assembler +
+                            " -o /dev/null -l " + CMD_segName + "_sizetest.sym " +
+                            outFileNameBare;
     std::cout << "command: " << cmd << "\n" << std::flush;
     if (0 != system(cmd.c_str()))
     {
@@ -527,7 +528,7 @@ void compileSegment()
     {
         outFile << "\n\n\n\n";
         outFile << ";--- Source file" << sourceFile.fileName << "\n\n";
-        outFile << "!zone " << toZoneName(sourceFile.fileName) << "\n\n";
+        outFile << "!zone " << toLabel(sourceFile.fileName) << "\n\n";
         outFile << std::string(sourceFile.content.begin(), sourceFile.content.end());
         outFile << "\n";
     }
@@ -538,7 +539,7 @@ void compileSegment()
     {
         outFile << "\n\n\n\n";
         outFile << ";--- Source file" << routine.second->fileName << "\n\n";
-        outFile << "!zone " << toZoneName(routine.second->fileName) << "\n\n";
+        outFile << "!zone " << toLabel(routine.second->fileName) << "\n\n";
         outFile << "\t* = $" << std::hex << routine.first << "\n\n";
         outFile << std::string(routine.second->content.begin(), routine.second->content.end());
         outFile << "\n";
@@ -646,12 +647,9 @@ SourceFile::SourceFile(const std::string &fileName, const std::string &dirName) 
 
     preprocess();
 
-    // Generate KickAss compatible label from the file name
+    // Generate assembler compatible label from the file name
 
-    label = fileName.substr(0, fileName.length() - 2);
-
-    std::replace(label.begin(), label.end(), '.', '_');
-    std::replace(label.begin(), label.end(), ',', '_');
+    label = toLabel(fileName);
 }
 
 void SourceFile::preprocess()
