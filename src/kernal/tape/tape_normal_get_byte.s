@@ -9,7 +9,7 @@
 ;
 
 
-#if CONFIG_TAPE_NORMAL
+!ifdef CONFIG_TAPE_NORMAL {
 
 
 tape_normal_get_byte:
@@ -26,7 +26,7 @@ tape_normal_get_byte_loop:
 
 	jsr tape_normal_get_bit
 	bcs tape_normal_get_byte_error
-	beq !+
+	beq @1
 
 	; Handle parity bit
 	lda #$01
@@ -34,7 +34,7 @@ tape_normal_get_byte_loop:
 	sta PRTY
 
 	sec
-!:                                     ; moved bit state from Zero to Carry flag
+@1:                                    ; moved bit state from Zero to Carry flag
 
 	ror INBIT                          ; put the bit in
 	bcs tape_normal_get_byte_loop      ; loop if no canary bit reached
@@ -43,9 +43,9 @@ tape_normal_get_byte_loop:
 
 	jsr tape_normal_get_bit
 	bcs tape_normal_get_byte_error
-	beq !+
+	beq @2
 	lda #$01
-!:
+@2:
 	eor PRTY
 	bne tape_normal_get_byte_error
 
@@ -68,6 +68,4 @@ tape_normal_get_byte_error:
 	ldx #$09
 	sec                                ; make sure Carry is set to indicate error
 	bcs tape_normal_get_byte_done
-
-
-#endif
+}

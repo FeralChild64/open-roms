@@ -8,7 +8,7 @@
 ; Carry clear - normal, Carry set - turbo
 ;
 
-#if CONFIG_TAPE_AUTODETECT
+!ifdef CONFIG_TAPE_AUTODETECT {
 
 
 tape_common_autodetect:
@@ -17,12 +17,12 @@ tape_common_autodetect:
 	lda #$0B
 	sta VIC_EXTCOL
 	lda #$00
-#if CONFIG_MB_M65
+!ifdef CONFIG_MB_M65 {
 	sta SID_SIGVOL + __SID_R1_OFFSET
 	sta SID_SIGVOL + __SID_L1_OFFSET
-#else
+} else {
 	sta SID_SIGVOL
-#endif
+}
 
 	; FALLTROUGH
 
@@ -59,17 +59,17 @@ tape_common_autodetect_loop:
 	; give us threshold of ($CD + $A5) / 2 = $B9
 
 	cmp #$B9
-	bcc !+
+	bcc @1
 	dec XSAV                           ; above $B9 (so signal is shorter), looks like turbo 
-!:
+@1:
 	; Now try to distinguish turbo signals (reference: $B1 or higher)
 	; from normal medium/long signals (reference: $7D or below), these values
 	; give us threshold of ($B1 + $7D) / 2 = $97
 
 	cmp #$97
-	bcs !+
+	bcs @2
 	inc XSAV
-!:
+@2:
 	; The sync for turbo is not too long - if we have enough evidence,
 	; assume turbo recording already
 
@@ -97,6 +97,4 @@ tape_common_autodetect_turbo:
 
 	sec
 	rts
-
-
-#endif
+}

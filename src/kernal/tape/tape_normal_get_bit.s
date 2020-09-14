@@ -9,7 +9,7 @@
 ;
 
 
-#if CONFIG_TAPE_NORMAL
+!ifdef CONFIG_TAPE_NORMAL {
 
 
 tape_normal_get_bit:
@@ -65,4 +65,4 @@ tape_normal_get_bit_error:
 	rts
 
 
-#endif ; CONFIG_TAPE_NORMAL
+} ; CONFIG_TAPE_NORMAL

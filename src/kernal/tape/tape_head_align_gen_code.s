@@ -7,13 +7,13 @@
 ;
 
 
-#if CONFIG_TAPE_HEAD_ALIGN
+!ifdef CONFIG_TAPE_HEAD_ALIGN {
 
 
 ; Helper variables - reuse BASIC numeric work area on zero page
 
-.label __ha_lda_addr = TEMPF1 + 0;     ; 2 bytes, for code generator
-.label __ha_sta_addr = TEMPF1 + 2;     ; 2 bytes, for code generator
+!addr __ha_lda_addr = TEMPF1 + 0;     ; 2 bytes, for code generator
+!addr __ha_sta_addr = TEMPF1 + 2;     ; 2 bytes, for code generator
 
 
 tape_head_align_gen_code:
@@ -37,16 +37,16 @@ tape_head_align_gen_code:
 	sty __ha_sta_addr + 1
 
 	; Emit code to move 7 rows of one 8x8 cell
-!:
+@1:
 	ldx #$07
-!:
+@2:
 	jsr tape_head_align_gen_code_emit_pair
 
 	dec __ha_lda_addr + 0
 	dec __ha_sta_addr + 0
 
 	dex
-	bne !-
+	bne @2
 
 	; Emit code to fetch a top row from the cell above
 
@@ -75,10 +75,10 @@ tape_head_align_gen_code:
 
 	lda __ha_sta_addr + 0
 	cmp #<(__ha_chart + 7)
-	bne !--
+	bne @1
 	lda __ha_sta_addr + 1
 	cmp #>(__ha_chart + 7)
-	bne !--
+	bne @1
 
 	; Last pair to be generated starts from LDA #$00
 
@@ -123,16 +123,15 @@ tape_head_align_gen_code_emit_byte:
 
 	ldy #$00
 	sta (SAL), y
-#if HAS_OPCODES_65CE02
+!ifdef HAS_OPCODES_65CE02 {
 	inw SAL
-#else
+} else {
 	inc SAL+0
-	bne !+
+	bne @3
 	inc SAL+1
-!:
-#endif
-
+@3:
+}
 	rts
 
 
-#endif ; CONFIG_TAPE_HEAD_ALIGN
+} ; CONFIG_TAPE_HEAD_ALIGN

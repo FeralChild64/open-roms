@@ -6,7 +6,7 @@
 
 ; Computes Mapping the 64, p89 - 8 character name
 
-!ifdef ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65
 
 	; 'M65BASIC'
 

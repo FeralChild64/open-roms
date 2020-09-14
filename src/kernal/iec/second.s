@@ -18,14 +18,13 @@
 
 SECOND:
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	jsr m65dos_check
-	bcc_16 m65dos_second                 ; branch if device is handeld by internal DOS
+	+bcc m65dos_second                   ; branch if device is handeld by internal DOS
+}
 
-#endif
-
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 	; Due to OPEN/CLOSE/TKSA/SECOND command encoding, allowed channels are 0-15; it is the caller
 	; responsibility, hovewer, to provide value ORed with $60
@@ -34,8 +33,7 @@ SECOND:
 
 	jmp common_open_close_unlsn_second
 
-#else
+} else {
 
 	jmp kernalerror_ILLEGAL_DEVICE_NUMBER
-
-#endif
+}

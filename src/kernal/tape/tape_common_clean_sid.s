@@ -7,16 +7,16 @@
 ;
 
 
-#if CONFIG_TAPE_TURBO
+!ifdef CONFIG_TAPE_TURBO {
 
 
 tape_clean_sid:
 
 	lda #$00
 	ldy #$1C
-!:
+@1:
 
-#if CONFIG_MB_M65
+!ifdef CONFIG_MB_M65 {
 
 	; It should be safer than cleaning whole $D400-D47C range
 
@@ -25,16 +25,14 @@ tape_clean_sid:
 	sta __SID_BASE + __SID_L1_OFFSET, y
 	sta __SID_BASE + __SID_L2_OFFSET, y
 
-#else
+} else {
 
 	sta __SID_BASE, y
 
-#endif
+}
 
 	dey
-	bpl !-
+	bpl @1
 
 	rts
-
-
-#endif
+}

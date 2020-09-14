@@ -15,14 +15,13 @@
 
 TKSA:
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_MEGA65 {
 
 	jsr m65dos_check
-	bcc_16 m65dos_tksa                   ; branch if device is handeld by internal DOS
+	+bcc m65dos_tksa                     ; branch if device is handeld by internal DOS
+}
 
-#endif
-
-#if CONFIG_IEC
+!ifdef CONFIG_IEC {
 
 	; Due to OPEN/CLOSE/TKSA/SECOND command encoding, allowed channels are 0-15; it is the caller
 	; responsibility, hovewer, to provide value ORed with $60
@@ -33,8 +32,7 @@ TKSA:
 
 	jmp common_untlk_tksa
 
-#else
+} else {
 
 	jmp kernalerror_ILLEGAL_DEVICE_NUMBER
-
-#endif
+}

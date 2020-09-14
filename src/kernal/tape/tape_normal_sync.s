@@ -9,7 +9,7 @@
 ; Carry set = failed
 
 
-#if CONFIG_TAPE_NORMAL
+!ifdef CONFIG_TAPE_NORMAL {
 
 
 tape_normal_sync:
@@ -40,6 +40,4 @@ tape_normal_sync_fail:
 
 	sec
 	rts
-
-
-#endif
+}

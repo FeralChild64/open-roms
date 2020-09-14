@@ -16,7 +16,7 @@
 
 LISTEN:
 
-!ifdef ROM_LAYOUT_M65 {
+!ifdef CONFIG_MB_M65 {
 
 	; According to serial-bus.pdf (page 15) this routine flushes the IEC out buffer
 	jsr iec_tx_flush

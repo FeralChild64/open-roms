@@ -7,12 +7,12 @@
 ;
 
 
-#if CONFIG_TAPE_HEAD_ALIGN
+!ifdef CONFIG_TAPE_HEAD_ALIGN {
 
 
 ; Helper variable - reuse BASIC numeric work area on zero page
 
-.label __ha_storage = TEMPF1;          ; 1 byte
+!addr __ha_storage = TEMPF1;          ; 1 byte
 
 
 tape_head_align_print_help:
@@ -29,7 +29,7 @@ tape_head_align_print_help:
 	ldy #$00
 
 	; Retrieve address
-!:
+@1:
 	lda tape_head_align_help_text, y
 	iny
 	cmp #$FF
@@ -39,19 +39,19 @@ tape_head_align_print_help:
 	lda tape_head_align_help_text, y
 	iny
 	sta EAL+1
-!:
+@2:
 	; Retrieve and print character
 
 	lda tape_head_align_help_text, y
 	iny
 	cmp #$FF
-	beq !--
+	beq @1
 
 	sty __ha_storage
 	jsr tape_head_align_print_char
 	ldy __ha_storage
 
-	bne !-                             ; branch alwats
+	bne @2                             ; branch alwats
 
 
 tape_head_align_print_end:
@@ -89,11 +89,11 @@ tape_head_align_print_char:
 	; Print out the character
 
 	ldy #$07
-!:
+@3:
 	lda (SAL), y
 	sta (EAL), y
 	dey
-	bpl !-
+	bpl @3
 
 	; Prepare EAL for the next character
 
@@ -101,9 +101,9 @@ tape_head_align_print_char:
 	clc
 	adc #$08
 	sta EAL+0
-	bne !+
+	bne @4
 	inc EAL+1
-!:
+@4:
 	rts
 
 
@@ -121,27 +121,25 @@ tape_head_align_help_text:
 	; - text in screencodes
 	; - $FF to mark end
 
-	.word $2000 + (40 * 8) * 0 + 8 * 1
-	.text "COMPUTER HAS TO TELL THE SIGNALS APART"
-	.byte $FF
+	!word $2000 + (40 * 8) * 0 + 8 * 1
+	!scr  "COMPUTER HAS TO TELL THE SIGNALS APART"
+	!byte $FF
 
-	.word $2000 + (40 * 8) * 3 + 8 * 6
-	.text "ALIGN HEAD FOR MINIMUM NOISE"
-	.byte $FF
+	!word $2000 + (40 * 8) * 3 + 8 * 6
+	!scr  "ALIGN HEAD FOR MINIMUM NOISE"
+	!byte $FF
 
-	.word $2000 + (40 * 8) * 6 + 8 * 2
-	.text "IF THE DECK HAS A PITCH (TAPE SPEED)"
-	.byte $FF
+	!word $2000 + (40 * 8) * 6 + 8 * 2
+	!scr  "IF THE DECK HAS A PITCH (TAPE SPEED)"
+	!byte $FF
 
-	.word $2000 + (40 * 8) * 7 + 8 * 1
-	.text "CONTROL, TWEAK IT SO THAT DOTTED LINES"
-	.byte $FF
+	!word $2000 + (40 * 8) * 7 + 8 * 1
+	!scr  "CONTROL, TWEAK IT SO THAT DOTTED LINES"
+	!byte $FF
 
-	.word $2000 + (40 * 8) * 8 + 8 * 5
-	.text "ARE HALF A WAY BETWEEN SIGNALS"
-	.byte $FF
+	!word $2000 + (40 * 8) * 8 + 8 * 5
+	!scr  "ARE HALF A WAY BETWEEN SIGNALS"
+	!byte $FF
 
-	.byte $FF                          ; end of strings
-
-
-#endif
+	!byte $FF                          ; end of strings
+}

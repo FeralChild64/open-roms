@@ -16,27 +16,27 @@
 
 TALK:
 
-#if CONFIG_IEC || ROM_LAYOUT_M65
+
+!ifdef CONFIG_MB_M65 {
 
 	; According to serial-bus.pdf (page 15) this routine flushes the IEC out buffer
 	jsr iec_tx_flush
 
-#endif
-
-#if ROM_LAYOUT_M65
-
 	jsr m65dos_detect
-	bcc_16 m65dos_talk                 ; branch if device is handeld by internal DOS
+	+bcc m65dos_talk                   ; branch if device is handeld by internal DOS
 
-#endif
+} else ifdef CONFIG_IEC {
 
-#if CONFIG_IEC
+	; According to serial-bus.pdf (page 15) this routine flushes the IEC out buffer
+	jsr iec_tx_flush
+}
+
+!ifdef CONFIG_IEC {
 
 	; Check whether device number is correct
 	jsr iec_check_devnum_oc
-	bcc !+
-	jmp kernalerror_DEVICE_NOT_FOUND
-!:
+	+bcs kernalerror_DEVICE_NOT_FOUND
+
 	; Encode and execute the command
 	ora #$40
 
@@ -46,17 +46,15 @@ common_talk_listen: ; common part of TALK and LISTEN
 
 	sta TBTCNT
 
-#if CONFIG_IEC_JIFFYDOS || CONFIG_IEC_DOLPHINDOS
+!ifdef CONFIG_IEC_JIFFYDOS_OR_DOLPHINDOS {
 
 	lda #$FF                           ; force JiffyDOS detection, clear DolphinDOS mark
 	sta IECPROTO
-
-#endif
+}
 
 	jmp iec_tx_command
 
-#else
+} else {
 
 	jmp kernalerror_ILLEGAL_DEVICE_NUMBER
-
-#endif
+}

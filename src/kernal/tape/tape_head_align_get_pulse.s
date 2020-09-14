@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_TAPE_HEAD_ALIGN
+!ifdef CONFIG_TAPE_HEAD_ALIGN {
 
 
 tape_head_align_get_pulse:
@@ -18,16 +18,16 @@ tape_head_align_get_pulse:
 	; - it returns value in .Y
 
 	lda #$10
-!:
+@1:
 	; Loop to detect signal
 
 	ldy CIA2_TIMBLO ; $DD06
 	bit CIA1_ICR    ; $DC0D
-	bne !+
+	bne @2
 
 	cpy #$FF
-	bne !-
-!:
+	bne @1
+@2:
 	; FALLTROUGH
 
 tape_head_align_get_pulse_start_timer:
@@ -42,4 +42,4 @@ tape_head_align_get_pulse_start_timer:
 	rts
 
 
-#endif ; CONFIG_TAPE_HEAD_ALIGN
+} ; CONFIG_TAPE_HEAD_ALIGN

@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_TAPE_NORMAL
+!ifdef CONFIG_TAPE_NORMAL {
 
 
 tape_normal_update_checksum:
@@ -17,6 +17,4 @@ tape_normal_update_checksum:
 	sta RIPRTY
 
 	rts
-
-
-#endif
+}

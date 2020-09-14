@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO
+!ifdef HAS_TAPE {
 
 
 ;
@@ -29,15 +29,14 @@ tape_break_error:
 
 tape_ask_play:
 
-#if !CONFIG_TAPE_NO_KEY_SENSE
+!ifndef CONFIG_TAPE_NO_KEY_SENSE {
 
 	; First check whether the button is already pressed
 
 	lda CPU_R6510
 	and #$10
 	beq tape_wait_play_done
-
-#endif
+}
 
 	; Display message
 
@@ -46,7 +45,7 @@ tape_ask_play:
 
 	; FALLTROUGH
 
-#if !CONFIG_TAPE_NO_KEY_SENSE
+!ifndef CONFIG_TAPE_NO_KEY_SENSE {
 
 tape_wait_play_loop:
 
@@ -59,7 +58,7 @@ tape_wait_play_loop:
 
 	; FALLTROUGH
 
-#else
+} else {
 
 	; The ROM is configured for tape adapter without the key sense - but it is still
 	; possible, that regular Datasette or Tapuino is connected
@@ -69,13 +68,13 @@ tape_wait_play_loop:
 	beq tape_wait_first_pulse          ; branch if button reported pressed, most likely really no key sense
 
 	; We have key sense - perform regular waiting
-!:
+@1:
 	jsr STOP
 	bcs tape_break_error
 
 	lda CPU_R6510
 	and #$10
-	beq !-
+	beq @1
 
 tape_wait_first_pulse:
 
@@ -83,22 +82,21 @@ tape_wait_first_pulse:
 
 	jsr tape_motor_on
 
-!:
+@2:
 	jsr STOP
 	bcs tape_break_error
 
 	lda #$10
 	bit CIA1_ICR    ; $DC0D
-	bne !-
-!:
+	bne @2
+@3:
 	jsr STOP
 	bcs tape_break_error
 	
 	lda #$10
 	bit CIA1_ICR    ; $DC0D
-	beq !-
-
-#endif
+	beq @3
+}
 
 	; FALLTROUGH
 
@@ -107,22 +105,21 @@ tape_wait_play_done:
 	lda #$01
 	sta CAS1                           ; set the interlock
 
-#if CONFIG_TAPE_HEAD_ALIGN
+!ifdef CONFIG_TAPE_HEAD_ALIGN {
 
 	rts
 
 tape_prepare_reading:
 
-#endif ; CONFIG_TAPE_HEAD_ALIGN
+} ; CONFIG_TAPE_HEAD_ALIGN
 
-#if CONFIG_MB_M65
+!ifdef CONFIG_MB_M65 {
 
 	; Display confirmation
 
 	ldx #__MSG_KERNAL_OK_SEARCHING
 	jsr print_kernal_message
-
-#endif
+}
 
 	; Prepare for reading
 
@@ -136,11 +133,10 @@ tape_prepare_reading:
 
 tape_handle_header:
 
-#if !CONFIG_TAPE_NO_MOTOR_CONTROL
+!ifndef CONFIG_TAPE_NO_MOTOR_CONTROL {
 
 	jsr tape_screen_on_motor_off
-
-#endif
+}
 
 	; Print FOUND + file name
 
@@ -148,21 +144,20 @@ tape_handle_header:
 	jsr print_kernal_message
 
 	ldy #$05
-!:
+@4:
 	lda (TAPE1), y
 	jsr JCHROUT
 	iny
 	cpy #$15
-	bne !-
+	bne @4
 
-#if !CONFIG_TAPE_NO_MOTOR_CONTROL
+!ifndef CONFIG_TAPE_NO_MOTOR_CONTROL {
 
 	; Header, wait for user decision
 
 	jsr tape_header_get_decision
 	bcs tape_break_error
-
-#endif
+}
 
 	; Check if file name matches
 
@@ -190,7 +185,7 @@ tape_handle_header:
 	; Handle the secondary address, 0 means loading to location from MEMUSS
 
 	lda SA
-	bne !+
+	bne @5
 
 	; EAL = EAL - STAL
 
@@ -218,18 +213,17 @@ tape_handle_header:
 	lda EAL+1
 	adc STAL+1
 	sta EAL+1
-!:
+@5:
 	; Setup MEMUSS (see Mapping the C64, page 36)
 
 	jsr lvs_STAL_to_MEMUSS
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	; Switch to legacy mode if needed
 
 	jsr m65_load_autoswitch_tape
-
-#endif
+}
 
 	; Print LOADING and start address
 
@@ -237,7 +231,7 @@ tape_handle_header:
 
 	; FALLTROUGH
 
-#if !CONFIG_TAPE_NO_MOTOR_CONTROL
+!ifndef CONFIG_TAPE_NO_MOTOR_CONTROL {
 
 tape_handle_header_displayed:
 
@@ -246,8 +240,7 @@ tape_handle_header_displayed:
 	jsr tape_screen_off_motor_on
 
 	; FALLTROUGH
-
-#endif
+}
 
 tape_return_ok:
 
@@ -284,9 +277,9 @@ tape_match_loop:
 
 	lda #$20                           ; default byte, for padding
 	cpy FNLEN
-	bcs !+                             ; end of pattern
+	bcs @6                             ; end of pattern
 	lda (FNADDR), y                    ; byte from pattern
-!:
+@6:
 	cmp #KEY_ASTERISK
 	beq tape_return_ok
 
@@ -311,7 +304,7 @@ tape_match_loop:
 	rts
 
 
-#if !CONFIG_TAPE_NO_MOTOR_CONTROL
+!ifndef CONFIG_TAPE_NO_MOTOR_CONTROL {
 
 ;
 ; Get user decision whether to load the file or not
@@ -320,7 +313,7 @@ tape_match_loop:
 tape_header_get_decision:
 
 	ldy #$00
-!:
+@7:
 	jsr udtim_keyboard
 	lda STKEY
 	bpl tape_header_wait_stop          ; STOP pressed
@@ -333,7 +326,7 @@ tape_header_get_decision:
 	jsr wait_x_bars
 
 	dey
-	bne !-
+	bne @7
 
 	; FALLTROUGH - timeout
 
@@ -346,8 +339,7 @@ tape_header_wait_stop:
 	
 	sec
 	rts
-
-#endif
+}
 
 
 ;
@@ -364,6 +356,4 @@ tape_load_error:
 
 	jsr tape_screen_on_motor_off
 	jmp lvs_load_verify_error
-
-
-#endif
+}

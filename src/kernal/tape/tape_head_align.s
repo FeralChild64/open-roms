@@ -7,24 +7,24 @@
 ;
 
 
-#if CONFIG_TAPE_HEAD_ALIGN
+!ifdef CONFIG_TAPE_HEAD_ALIGN {
 
 
-.label __ha_start       = 12           ; starting row of the chart
-.label __ha_rows        = 11           ; number of rows for scrolling
+!set __ha_start        = 12           ; starting row of the chart
+!set __ha_rows         = 11           ; number of rows for scrolling
 
 ; Helper tables
 
-.label __ha_offsets     = $1000;
-.label __ha_masks       = $1100;
+!addr __ha_offsets     = $1000;
+!addr __ha_masks       = $1100;
 
 ; Generated code location
 
-.label __ha_scroll      = $1300;
+!addr __ha_scroll      = $1300;
 
 ; Flag for GFX effects - reuse BASIC numeric work area on zero page
 
-.label __ha_gfxflag     = TEMPF2;       ; 1 byte
+!addr __ha_gfxflag     = TEMPF2;       ; 1 byte
 
 
 tape_head_align:
@@ -58,7 +58,7 @@ tape_head_align:
 	; Clear color data ($0800)
 
 	ldy #$00
-!:
+@1:
 	lda #(CONFIG_COLOR_TXT * $10 + CONFIG_COLOR_BG)
 
 	sta $0800, y
@@ -67,7 +67,7 @@ tape_head_align:
 	sta $0B00, y
 
 	iny
-	bne !-
+	bne @1
 
 	; Clear bitmap data ($2000)
 
@@ -75,15 +75,15 @@ tape_head_align:
 	sta SAL+1
 	tya                                ; put 0 to .A
 	sta SAL+0
-!:
+@2:
 	sta (SAL), y
 	iny
-	bne !-
+	bne @2
 
 	inc SAL+1
 	ldx SAL+1
 	cpx #$40
-	bne !-
+	bne @2
 
 	; Print help message
 
@@ -93,12 +93,12 @@ tape_head_align:
 
 	lda #(CONFIG_COLOR_TXT * $10 + CONFIG_COLOR_TXT)
 	ldy #$24
-!:
+@3:
 	sta $0800 + __ha_start * 40 + 1, y
 	sta $0800 + __ha_start * 40 + 1 + (__ha_rows + 1) * 40, y
 	
 	dey
-	bne !-
+	bne @3
 
 	; Set graphics mode
 
@@ -114,7 +114,7 @@ tape_head_align:
 
 	ldx #$00                           ; loop index
 	ldy #$00                           ; temporary value for mask calculation
-!:
+@4:
 	; Byte offset is simple, just zero the 3 least significant bits
 
 	txa
@@ -126,16 +126,16 @@ tape_head_align:
 	tya
 	clc
 	ror
-	bne !+
+	bne @5
 	lda #%10000000
-!:
+@5:
 	tay
 	sta __ha_masks, x
 
 	; Next iteration
 
 	inx
-	bne !--
+	bne @4
 
 	; Initialize flag for additional GFX effects
 
@@ -183,14 +183,14 @@ tape_head_align_loop_1:
 	; Scroll the whole chart one line down
 
 	ldx #$00
-!:
+@6:
 	jsr __ha_scroll                    ; scroll one column down, using fast generated code
 
 	txa
 	clc
 	adc #$08
 	tax
-	bne !-
+	bne @6
 
 	; Draw decorations
 
@@ -199,14 +199,14 @@ tape_head_align_loop_1:
 	clc
 	adc #$08
 	and #%00001100
-	bne !+
+	bne @7
 	ldy #%11110001
 	lda #%10001111
-	bne !++
-!:
+	bne @8
+@7:
 	ldy #%00000001
 	lda #%10000000
-!:
+@8:
 	ora __ha_chart + 7 + 8 * 0
 	sta __ha_chart + 7 + 8 * 0
 
@@ -218,7 +218,7 @@ tape_head_align_loop_1:
 
 	lda __ha_gfxflag
 	and #%00000010
-	beq !+
+	beq @9
 
 	; For 'normal'
 
@@ -235,7 +235,7 @@ tape_head_align_loop_1:
 	lda #%00010000
 	ora __ha_chart + 7 + 8 * 21
 	sta __ha_chart + 7 + 8 * 21
-!:
+@9:
 	; FALLTROUGH
 
 tape_head_align_loop_2:
@@ -256,12 +256,12 @@ tape_head_align_quit:
 
 	ldx #$00
 	txa
-!:
+@10:
 	sta $0800, x
 	inx
-	bne !-
+	bne @10
 
 	jmp hw_entry_reset
 
 
-#endif ; CONFIG_TAPE_HEAD_ALIGN
+} ; CONFIG_TAPE_HEAD_ALIGN

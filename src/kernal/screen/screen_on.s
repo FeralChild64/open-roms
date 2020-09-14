@@ -8,7 +8,12 @@
 ;
 
 
-#if HAS_TAPE || (CONFIG_IEC_JIFFYDOS && !CONFIG_MEMORY_MODEL_60K)
+!set NEEDED = 0
+!ifdef HAS_TAPE { !set NEEDED = 1 }
+!ifdef CONFIG_IEC_JIFFYDOS { !ifndef CONFIG_MEMORY_MODEL_60K { !set NEEDED = 1 } }
+
+!if (NEEDED = 1) {
+
 
 
 screen_on:
@@ -18,6 +23,4 @@ screen_on:
 	sta VIC_SCROLY
 
 	rts
-
-
-#endif
+}

@@ -9,7 +9,7 @@
 ;
 
 
-#if CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO
+!ifdef HAS_TAPE {
 
 
 tape_common_get_pulse:
@@ -19,15 +19,13 @@ tape_common_get_pulse:
 	; implementation is probably just shorter
 
 	lda #$10
-!:
+@1:
 	bit CIA1_ICR    ; $DC0D
-	beq !-                             ; busy loop to detect signal, restart timer afterwards
+	beq @1                             ; busy loop to detect signal, restart timer afterwards
 	lda CIA2_TIMBLO ; $DD06
 	ldx #%01010001                     ; start timer, force latch reload, count timer A underflows
 	stx CIA2_CRB    ; $DD0F
 
 	cmp __pulse_threshold              ; default pulse check
 	rts
-
-
-#endif
+}

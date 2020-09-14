@@ -53,7 +53,7 @@ screen_calculate_LNMX:
 screen_calculate_lnmx_39:
 
 	lda #39
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 

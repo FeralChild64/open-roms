@@ -95,7 +95,7 @@ load_iec:
 	lda STAL+1
 	sta EAL+1	
 @1:
-!ifdef ROM_LAYOUT_M65 {
+!ifdef CONFIG_MB_M65 {
 
 	; Switch to legacy mode if needed
 

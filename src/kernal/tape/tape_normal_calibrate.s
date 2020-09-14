@@ -9,7 +9,7 @@
 ;
 
 
-#if CONFIG_TAPE_NORMAL
+!ifdef CONFIG_TAPE_NORMAL {
 
 
 tape_normal_calibrate_during_pilot:              ; reecalibration during the pilot
@@ -121,6 +121,4 @@ tape_normal_calibrate_threshold_inc:
 tape_normal_calibrate_done:
 
 	rts
-
-
-#endif
+}
