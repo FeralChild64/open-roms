@@ -519,9 +519,8 @@ void compileSegment()
 
     outFile << "!set SEGMENT_" << CMD_segName << " = 1\n";
     outFile << "!set ROM_LAYOUT_" << CMD_romLayout << " = 1\n\n";
-    // XXX outFile << "\t* = $" << std::hex << CMD_loAddress << "\n";
-    // XXX outFile << "\t!fill $" << std::hex << (CMD_hiAddress + 1 - CMD_loAddress) << "\n";
-    // XXX outFile << "\t* = $" << std::hex << CMD_loAddress << "\n\n";
+    outFile << "\t* = $" << std::hex << CMD_loAddress << ", INVISIBLE\n";
+    outFile << "\t!fill $" << std::hex << (CMD_hiAddress + 1 - CMD_loAddress) << "\n\n";
 
     // Write files which only contain definitions (no routines)
 
