@@ -306,7 +306,7 @@ void calcRoutineSizes()
     for (const auto &sourceFile : GLOBAL_sourceFiles)
     {
         outFile << "\n\n\n\n";
-        outFile << ";--- Source file" << sourceFile.fileName << "\n\n";
+        outFile << ";--- Source file " << sourceFile.fileName << "\n\n";
         outFile << "!zone " << toLabel(sourceFile.fileName) << "\n\n";
         outFile << LAB_OUT_START << sourceFile.label << ":" << "\n\n";
 
@@ -322,7 +322,7 @@ void calcRoutineSizes()
     // All written - now launch the assembler
 
     const std::string cmd = "cd " + filePath + " && " + CMD_assembler +
-                            " -o /dev/null -l " + CMD_segName + "_sizetest.sym " +
+                            " --color --outfile /dev/null --symbollist " + CMD_segName + "_sizetest.sym " +
                             outFileNameBare;
     std::cout << "command: " << cmd << "\n" << std::flush;
     if (0 != system(cmd.c_str()))
@@ -357,8 +357,8 @@ void calcRoutineSizes()
 
         auto eqPos = line.rfind('=');
 
-        auto address         = strtol(line.substr(eqPos + 2).c_str(), nullptr ,16);
-        std::string refLabel = line.substr(0, eqPos);
+        auto address         = strtol(line.substr(eqPos + 3).c_str(), nullptr , 16);
+        std::string refLabel = line.substr(0, eqPos - 1);
 
         for (auto &sourceFile : GLOBAL_sourceFiles)
         {
@@ -503,31 +503,32 @@ void compileSegment()
     // First combine everything into one assembler file
 
     const std::string outFileNameBare = CMD_segName + "_combined.s";
+    const std::string vlfFileNamePath = CMD_segName + "_combined.vs";
+    const std::string repFileNamePath = CMD_segName + "_combined.rep";
+    const std::string symFileNamePath = CMD_segName + "_combined.sym";
     const std::string filePath        = CMD_outDir + DIR_SEPARATOR;
     const std::string outFileNamePath = filePath + outFileNameBare;
     unlink(outFileNamePath.c_str());
+    unlink(vlfFileNamePath.c_str());
+    unlink(repFileNamePath.c_str());
+    unlink(symFileNamePath.c_str());
     std::ofstream outFile(outFileNamePath, std::fstream::out | std::fstream::trunc);
     if (!outFile.good()) ERROR(std::string("can't open temporary file '") + outFileNamePath + "'");
 
     // Write the header
 
-    outFile << "\n" <<
-               ".segment " << CMD_segName <<
-               " [start=$" << std::hex << CMD_loAddress <<
-               ", min=$" << std::hex << CMD_loAddress <<
-               ", max=$" << std::hex << CMD_hiAddress <<
-               ", outBin=\"" << CMD_outFile << "\", fill]" <<
-               "\n";
     outFile << "!set SEGMENT_" << CMD_segName << " = 1\n";
-    outFile << "!set ROM_LAYOUT_" << CMD_romLayout << " = 1\n";
-    outFile << ".namespace " << CMD_segName << " {" << "\n\n";
+    outFile << "!set ROM_LAYOUT_" << CMD_romLayout << " = 1\n\n";
+    // XXX outFile << "\t* = $" << std::hex << CMD_loAddress << "\n";
+    // XXX outFile << "\t!fill $" << std::hex << (CMD_hiAddress + 1 - CMD_loAddress) << "\n";
+    // XXX outFile << "\t* = $" << std::hex << CMD_loAddress << "\n\n";
 
     // Write files which only contain definitions (no routines)
 
     for (const auto &sourceFile : GLOBAL_sourceFiles_noCode)
     {
         outFile << "\n\n\n\n";
-        outFile << ";--- Source file" << sourceFile.fileName << "\n\n";
+        outFile << ";--- Source file " << sourceFile.fileName << "\n\n";
         outFile << "!zone " << toLabel(sourceFile.fileName) << "\n\n";
         outFile << std::string(sourceFile.content.begin(), sourceFile.content.end());
         outFile << "\n";
@@ -538,22 +539,27 @@ void compileSegment()
     for (const auto &routine : GLOBAL_binningProblem.fixedRoutines)
     {
         outFile << "\n\n\n\n";
-        outFile << ";--- Source file" << routine.second->fileName << "\n\n";
+        outFile << ";--- Source file " << routine.second->fileName << "\n\n";
         outFile << "!zone " << toLabel(routine.second->fileName) << "\n\n";
         outFile << "\t* = $" << std::hex << routine.first << "\n\n";
         outFile << std::string(routine.second->content.begin(), routine.second->content.end());
         outFile << "\n";
     }
 
-    outFile << "\n\n" << "} // namespace" << "\n";
+    outFile << "\n\n";
 
     if (!outFile.good()) ERROR(std::string("error writing temporary file '") + outFileNamePath + "'");
     outFile.close();
 
     // All written - now launch the assembler
 
-    const std::string cmd = "cd " + filePath + " && " + CMD_assembler + " " +
-                            outFileNameBare + " -symbolfile -vicesymbols -o " + CMD_outFile;
+    const std::string cmd = "cd " + filePath + " && " + CMD_assembler +
+                            " --strict-segments --color" +
+                            " --outfile "     + CMD_outFile +
+                            " --symbollist "  + symFileNamePath +
+                            " --vicelabels "  + vlfFileNamePath +
+                            " --report "      + repFileNamePath +
+                            " " + outFileNameBare;
     std::cout << "command: " << cmd << "\n" << std::flush;
     if (0 != system(cmd.c_str()))
     {
