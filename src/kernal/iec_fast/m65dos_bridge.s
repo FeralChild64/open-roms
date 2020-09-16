@@ -25,7 +25,7 @@ m65dos_init:
 
 	jsr map_DOS_1
 	jsr (VDOS_INIT)
-	jmp_8 !+
+	bra m65dos_end_1
 
 m65dos_chkunit:                        ; XXX expose to BASIC
 
@@ -35,7 +35,7 @@ m65dos_chkunit:                        ; XXX expose to BASIC
 
 	jsr map_DOS_1
 	jsr (VDOS_CHKUNIT)
-	jmp_8 !+
+	bra m65dos_end_1
 
 m65dos_setunit:                        ; XXX expose to BASIC
 
@@ -45,54 +45,62 @@ m65dos_setunit:                        ; XXX expose to BASIC
 
 	jsr map_DOS_1
 	jsr (VDOS_SETUNIT)
-	jmp_8 !+
+	bra m65dos_end_1
 
 m65dos_acptr:
 
 	jsr map_DOS_1
 	jsr (VDOS_ACPTR)
-!:
+
+	; FALLTROUGH
+
+m65dos_end_1:
+
 	jmp map_NORMAL_from_DOS_1          ; ACPTR is slightly faster
 
 m65dos_ciout:
 
 	jsr map_DOS_1
 	jsr (VDOS_CIOUT)
-!:
+
+	; FALLTROUGH
+
+m65dos_end_2:
+
 	jmp map_NORMAL_from_DOS_1          ; CIOUT is slightly faster
 
 m65dos_listen:
 
 	jsr map_DOS_1
 	jsr (VDOS_LISTEN)
-	jmp_8 !-
+	bra m65dos_end_2
 
 m65dos_second:
 
 	jsr map_DOS_1
 	jsr (VDOS_SECOND)
-	jmp_8 !-
+	bra m65dos_end_2
 
 m65dos_talk:
 
 	jsr map_DOS_1
 	jsr (VDOS_TALK)
-	jmp_8 !-
+	bra m65dos_end_2
 
 m65dos_tksa:
 
 	jsr map_DOS_1
 	jsr (VDOS_TKSA)
-	jmp_8 !-
+	bra m65dos_end_2
 
 m65dos_untlk:
 
 	jsr map_DOS_1
 	jsr (VDOS_UNTLK)
-	jmp_8 !-
+	bra m65dos_end_2
 
 m65dos_unlsn:
 
 	jsr map_DOS_1
 	jsr (VDOS_UNLSN)
-	jmp_8 !-
+	bra m65dos_end_2

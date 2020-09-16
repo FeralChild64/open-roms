@@ -6,8 +6,8 @@
 ;
 
 	; Temporary variables for various routines
-	.label __tokenise_work1 = $07 ; CHARAC
-	.label __tokenise_work2 = $08 ; ENDCHR
-	.label __tokenise_work3 = $0B ; COUNT
-	.label __tokenise_work4 = $0F ; GARBFL
-	.label __tokenise_work5 = $0C ; DIMFLG
+	!addr __tokenise_work1 = $07 ; CHARAC
+	!addr __tokenise_work2 = $08 ; ENDCHR
+	!addr __tokenise_work3 = $0B ; COUNT
+	!addr __tokenise_work4 = $0F ; GARBFL
+	!addr __tokenise_work5 = $0C ; DIMFLG

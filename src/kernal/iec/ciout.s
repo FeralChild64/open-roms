@@ -37,7 +37,7 @@ ciout_send_byte:
 
 !ifdef CONFIG_MB_M65 {
 	jsr m65dos_check
-	bcc_16 m65dos_ciout                ; branch if device is handeld by internal DOS
+	+bcc m65dos_ciout                  ; branch if device is handeld by internal DOS
 }
 
 	clc                                ; send without EOI

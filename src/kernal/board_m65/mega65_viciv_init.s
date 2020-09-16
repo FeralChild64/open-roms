@@ -30,7 +30,11 @@ viciv_hotregs_off:
 
 	lda VIC_SRH
 	and #$7F
-!:
+
+	; FALLTROUGH
+
+viciv_hotregs_common:
+
 	sta VIC_SRH
 	
 	rts
@@ -39,4 +43,4 @@ viciv_hotregs_on:
 
 	lda VIC_SRH
 	ora #$80
-	bra !-
+	bra viciv_hotregs_common

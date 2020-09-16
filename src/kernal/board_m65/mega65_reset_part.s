@@ -10,7 +10,7 @@ m65_reset_part:
 	jsr viciv_shutdown       ; by default we do not want the VIC-IV
 
 	jsr M65_MODEGET
-	bcs !+
+	bcs m65_clr_end
 
 	; Clear MEAGA65 native mode mark, it might cause confusion
 	
@@ -22,5 +22,7 @@ m65_clr_magictstr: ; entry point for mode switching routine
 	sta M65_MAGICSTR+2
 
 	; FALLTROUGH
-!:
+
+m65_clr_end:
+
 	rts

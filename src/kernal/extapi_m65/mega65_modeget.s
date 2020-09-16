@@ -16,14 +16,14 @@ M65_MODEGET:
 	bne !+
 	lda M65_MAGICSTR+2
 	cmp #$35 ; '5'
-	bne !+
+	bne @1
 
 	; M65 native mode
 
 	clc
 	pla
 	rts
-!:
+@1:
 	; C64 compatibility mode
 
 	sec

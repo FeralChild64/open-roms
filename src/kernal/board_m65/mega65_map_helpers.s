@@ -64,7 +64,7 @@ map_KERNAL_1:
 
 	ldx #$42                 ; $4000 <- map 8KB from $20000
 
-	jmp_8 map_end
+	bra map_end
 
 map_DOS_1:
 
@@ -85,7 +85,7 @@ map_DOS_1:
 	ldx #$C1                 ; $4000 <- map 16KB ROM from $20000
 
 	map
-	jmp_8 map_end_no_eom     ; no EOM, we do not want interrupts within DOS!
+	bra map_end_no_eom      ; no EOM, we do not want interrupts within DOS!
 
 map_NORMAL_from_DOS_1:
 
@@ -98,4 +98,4 @@ map_NORMAL_from_DOS_1:
 	lda #$00
 	tab
 
-	jmp_8 map_NORMAL_common
+	bra map_NORMAL_common

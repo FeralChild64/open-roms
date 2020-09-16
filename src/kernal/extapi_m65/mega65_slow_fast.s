@@ -5,7 +5,7 @@
 M65_SLOW: ; set CPU speed to 1 MHz
 
 	lda #$40
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 

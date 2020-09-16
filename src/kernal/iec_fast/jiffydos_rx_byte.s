@@ -43,8 +43,8 @@ jiffydos_rx_byte:
 	tax
 
 	; Delay, JiffyDOS needs some time, 4 cycles
-	nop
-	nop
+	+nop
+	+nop
 
 	; Get bits, cycles: 4 + 2 + 2 = 8
 	lda CIA2_PRA                       ; bits 0 and 1 on CLK/DATA
@@ -52,7 +52,7 @@ jiffydos_rx_byte:
 	lsr
 
 	; Wait for the drive, cycles: 2
-	nop
+	+nop
 
 	; Get bits, cycles: 4 + 2 + 2 = 8
 	ora CIA2_PRA                       ; bits 2 and 3 on CLK/DATA

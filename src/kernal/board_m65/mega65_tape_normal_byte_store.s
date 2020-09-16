@@ -6,7 +6,7 @@
 ;
 
 
-#if CONFIG_TAPE_NORMAL
+!ifdef CONFIG_TAPE_NORMAL {
 
 
 tape_normal_byte_store:
@@ -14,6 +14,4 @@ tape_normal_byte_store:
 	jsr map_NORMAL
 	sta (MEMUSS), y
 	jmp map_KERNAL_1
-
-
-#endif
+}

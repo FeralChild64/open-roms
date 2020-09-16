@@ -5,7 +5,7 @@
 ; Automatic switching to legacy C64 mode if loading anything below $0800
 ;
 
-#if CONFIG_TAPE_NORMAL || CONFIG_TAPE_TURBO
+!ifdef HAS_TAPE {
 
 
 m65_load_autoswitch_tape:
@@ -14,8 +14,8 @@ m65_load_autoswitch_tape:
 	bne m65_load_autoswitch_done       ; no autoswitch for VERIFY
 
 	lda STAL+1
+}
 
-#endif
 
 m65_load_autoswitch:
 

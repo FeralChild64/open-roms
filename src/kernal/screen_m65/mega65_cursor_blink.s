@@ -59,18 +59,18 @@ m65_cursor_blink_draw:
 	sta BLNON
 
 	; Cursor draw - color
-	lda_lp (M65_LPNT_IRQ),z
+	lda [M65_LPNT_IRQ],z
 	sta GDCOL
 	lda COLOR
 	and #$0F                           ; take current colour, but not extended attributes
-	sta_lp (M65_LPNT_IRQ),z
+	sta [M65_LPNT_IRQ],z
 
 	; Cursor draw - character
 	jsr m65_cursor_blink_irqpnt_to_screen
-	lda_lp (M65_LPNT_IRQ),z
+	lda [M65_LPNT_IRQ],z
 	sta GDBLN
 	eor #$80
-	sta_lp (M65_LPNT_IRQ),z
+	sta [M65_LPNT_IRQ],z
 
 m65_cursor_blink_timer_reset:
 
@@ -89,15 +89,15 @@ m65_cursor_blink_undraw:
 
 	; Cursor undraw - color
 	lda GDCOL
-	sta_lp (M65_LPNT_IRQ),z
+	sta [M65_LPNT_IRQ],z
 
 	; Cursor undraw - character
 	jsr m65_cursor_blink_irqpnt_to_screen
 	lda GDBLN
-	sta_lp (M65_LPNT_IRQ),z
+	sta [M65_LPNT_IRQ],z
 
 	; Mark cursor as not drawn
 	lda #0
 	sta BLNON
 
-	jmp_8 m65_cursor_blink_timer_reset
+	bra m65_cursor_blink_timer_reset
