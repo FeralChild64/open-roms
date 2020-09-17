@@ -42,12 +42,12 @@ mov_FAC1_MEM:
 	; Copy the sign       XXX try to optimize this part
 
 	lda FAC1_sign
-	bne !+
+	bne @1
 
 	lda FAC2_mantissa+3
 	and #$7F
 	sta (INDEX), y
-!:
+@1:
 	; Copy remaining parts of mantissa
 
 	iny

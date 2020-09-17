@@ -7,7 +7,7 @@
 ; Print configured features and current video system on startup banner
 ;
 
-#if CONFIG_SHOW_FEATURES
+!ifdef CONFIG_SHOW_FEATURES {
 
 print_features:
 
@@ -20,9 +20,9 @@ print_pal_ntsc:
 
 	ldx #IDX__STR_NTSC
 	lda TVSFLG
-	beq !+
+	beq @1
 	ldx #IDX__STR_PAL
-!:
+@1:
 	jmp print_packed_misc_str
 
-#endif ; CONFIG_SHOW_FEATURES
+} ; CONFIG_SHOW_FEATURES

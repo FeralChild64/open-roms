@@ -13,13 +13,13 @@
 
 LINKPRG:
 
-#if (ROM_LAYOUT_M65 && SEGMENT_BASIC_0)
+!ifdef SEGMENT_M65_BASIC_0 {
 
-	jsr     map_BASIC_1
-	jsr_ind VB1__LINKPRG
-	jmp     map_NORMAL
+	jsr map_BASIC_1
+	jsr (VB1__LINKPRG)
+	jmp map_NORMAL
 
-#else
+} else {
 
 	; Start by getting pointer to the first line
 	jsr init_oldtxt
@@ -28,43 +28,43 @@ linkprg_loop:
 	; Is the pointer to the end of the program
 	ldy #1
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr peek_via_OLDTXT
-#elif CONFIG_MEMORY_MODEL_60K
+} else ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT+0
 	jsr peek_under_roms
 	cmp #$00
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_OLDTXT
 	cmp #$00
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
-	bne !+
+	bne @1
 
 	; End of program
 	rts
-!:
+@1:
 	; Now search forward to find the end of the line
 	; Skip forward pointer and line number
 	ldy #4
 
 linkprg_end_of_line_search:
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr peek_via_OLDTXT
-#elif CONFIG_MEMORY_MODEL_60K
+} else ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT+0
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_OLDTXT
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
 	cmp #$00
-	beq !+
+	beq @2
 
 	; Not yet end of line
 	iny
@@ -73,7 +73,7 @@ linkprg_end_of_line_search:
 	; line too long
 	jmp do_STRING_TOO_LONG_error
 
-!:
+@2:
 	; Found end of line, so update pointer
 
 	; First, skip over the $00 char
@@ -88,27 +88,27 @@ linkprg_end_of_line_search:
 	php
 	ldy #0
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr poke_via_OLDTXT
-#elif CONFIG_MEMORY_MODEL_60K
+} else ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT+0
 	jsr poke_under_roms
-#else
+} else {
 	sta (OLDTXT),y
-#endif
+}
 
 	plp
 	lda OLDTXT+1
 	adc #0
 	ldy #1
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr poke_via_OLDTXT
-#elif CONFIG_MEMORY_MODEL_60K
+} else ifdef CONFIG_MEMORY_MODEL_60K {
 	jsr poke_under_roms
-#else
+} else {
 	sta (OLDTXT),y
-#endif
+}
 
 	sta OLDTXT+1
 	pla
@@ -117,4 +117,4 @@ linkprg_end_of_line_search:
 	jmp linkprg_loop
 
 
-#endif ; ROM layout
+} ; ROM layout

@@ -57,10 +57,10 @@ mov_MEM_FAC2:
 	; Copy the sign
 
 	lda (INDEX), y
-	bpl !+                             ; assumption: non-negative numbers are more frequent
+	bpl @1                             ; assumption: non-negative numbers are more frequent
 	lda #$FF
-	skip_2_bytes_trash_nvz
-!:
+	+skip_2_bytes_trash_nvz
+@1:
 	lda #$00
 
 	sta FAC2_sign

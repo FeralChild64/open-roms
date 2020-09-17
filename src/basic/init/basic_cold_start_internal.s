@@ -11,19 +11,19 @@ basic_cold_start_internal:
 
 	; Setup vectors at $300
 	ldy #$0B
-!:
+@1:
 	lda basic_vector_defaults_1, y
 	sta IERROR, y
 	dey
-	bpl !-
+	bpl @1
 
 	; Setup misc vectors
 	ldy #$04
-!:
+@2:
 	lda basic_vector_defaults_2, y
 	sta ADRAY1, y
 	dey
-	bpl !-
+	bpl @2
 
 	; Setup USRPOK
 	lda #$4C ; JMP opcode

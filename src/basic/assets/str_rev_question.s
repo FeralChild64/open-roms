@@ -6,4 +6,4 @@
 
 str_rev_question:
 
-	.byte $12, $3F, $92, $00
+	!byte $12, $3F, $92, $00

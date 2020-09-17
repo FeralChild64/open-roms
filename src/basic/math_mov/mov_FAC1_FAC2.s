@@ -26,7 +26,7 @@ mov_FAC1_FAC2:
 	; Copy the exponent
 	lda FAC1_exponent
 	sta FAC2_exponent
-	beq !+                             ; for 0 no need to copy mantissa and sign
+	beq @1                             ; for 0 no need to copy mantissa and sign
 
 	; Copy the mantissa
 	lda FAC1_mantissa+0
@@ -43,7 +43,7 @@ mov_FAC1_FAC2:
 	sta FAC2_sign
 
 	lda FAC1_exponent
-!:
+@1:
 	; Duplicate the original ROM behaviour
 	ldx #$00
 	stx FACOV

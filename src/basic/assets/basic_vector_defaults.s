@@ -11,14 +11,14 @@
 
 basic_vector_defaults_1:
 
-	.word ERROR            ; IERROR
-	.word MAIN             ; IMAIN
-	.word CHRNCH           ; ICHRNCH
-	.word QPLOP            ; IQPLOP
-	.word GONE             ; IGONE
-	.word EVAL             ; IEVAL
+	!word ERROR            ; IERROR
+	!word MAIN             ; IMAIN
+	!word CHRNCH           ; ICHRNCH
+	!word QPLOP            ; IQPLOP
+	!word GONE             ; IGONE
+	!word EVAL             ; IEVAL
 
 basic_vector_defaults_2:
 
-	.word basic_adray1     ; ADRAY1
-	.word basic_adray2     ; ADRAY2
+	!word basic_adray1     ; ADRAY1
+	!word basic_adray2     ; ADRAY2
