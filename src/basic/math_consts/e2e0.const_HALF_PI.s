@@ -9,4 +9,4 @@
 
 const_HALF_PI:
 
-	put_const_HALF_PI()
+	+PUT_CONST_HALF_PI

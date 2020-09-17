@@ -10,4 +10,4 @@
 
 const_LOG_2:
 
-	put_const_LOG_2()
+	+PUT_CONST_LOG_2

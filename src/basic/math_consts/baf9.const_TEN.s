@@ -11,4 +11,4 @@
 
 const_TEN:
 
-	put_const_TEN()
+	+PUT_CONST_TEN

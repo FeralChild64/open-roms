@@ -11,4 +11,4 @@
 
 const_HALF:
 
-	put_const_HALF()
+	+PUT_CONST_HALF

@@ -9,4 +9,4 @@
 
 const_QUARTER:
 
-	put_const_QUARTER()
+	+PUT_CONST_QUARTER

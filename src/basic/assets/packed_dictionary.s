@@ -4,10 +4,9 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 
-#if CONFIG_COMPRESSION_LVL_2
+!if CONFIG_COMPRESSION_LVL_2 {
 
 packed_dictionary:
 
-	put_packed_freq_DICTIONARY()
-
-#endif
+	+PUT_PACKED_FREQ_dictionary
+}

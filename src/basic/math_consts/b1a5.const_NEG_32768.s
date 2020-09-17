@@ -11,4 +11,4 @@
 
 CONST_NEG_32768:
 
-	put_const_NEG_32768()
+	+PUT_CONST_NEG_32768

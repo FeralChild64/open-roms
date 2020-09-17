@@ -15,17 +15,17 @@ STROUT:
 	sty FRESPC+1
 	sta FRESPC+0
 	
-	phx_trash_a
+	+phx_trash_a
 
 	; Get offset ready
 	ldy #$00
-!:
+@1:
 	; Save Y in X, since X is preserved by chrout, but Y is not
 	tya
 	tax
 
 	lda (FRESPC),y
-	beq !+
+	beq @2
 
 	jsr JCHROUT
 
@@ -33,8 +33,8 @@ STROUT:
 	tay
 
 	iny
-	bne !-
-!:
+	bne @1
+@2:
 	pla ; XXX can we use plx_trash_a here?
 	tax
 	rts

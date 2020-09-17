@@ -11,4 +11,4 @@
 
 const_PI:
 
-	put_const_PI()
+	+PUT_CONST_PI

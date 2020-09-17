@@ -4,16 +4,16 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 
-#if CONFIG_COMPRESSION_LVL_2
+!ifdef CONFIG_COMPRESSION_LVL_2 {
 
 packed_dict_misc:
 
-	put_packed_dict_misc()
+	PUT_PACKED_DICT_misc()
 
-#else
+} else {
 
 packed_freq_misc:
 
-	put_packed_freq_misc()
+	PUT_PACKED_FREQ_misc()
 
-#endif
+}

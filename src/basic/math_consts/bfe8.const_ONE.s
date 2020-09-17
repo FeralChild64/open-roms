@@ -8,4 +8,4 @@
 ; - https://www.c64-wiki.com/wiki/BASIC-ROM
 ;
 
-	put_const_ONE()                    ; duplicated constant - no label
+	+PUT_CONST_ONE                     ; duplicated constant - no label

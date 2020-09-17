@@ -6,4 +6,4 @@
 
 packed_freq_keywords_V2:
 
-	put_packed_freq_keywords_V2()
+	+PUT_PACKED_FREQ_keywords_V2

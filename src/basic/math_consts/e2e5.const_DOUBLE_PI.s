@@ -9,4 +9,4 @@
 
 const_DOUBLE_PI:
 
-	put_const_DOUBLE_PI()
+	+PUT_CONST_DOUBLE_PI

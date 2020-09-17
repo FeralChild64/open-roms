@@ -7,4 +7,4 @@
 ; - https://sourceforge.net/p/acme-crossass/code-0/38/tree/trunk/ACME_Lib/cbm/c64/float.a?force=True
 ;
 
-	put_const_DOUBLE_PI()              ; duplicated constant - no label
+	+PUT_CONST_DOUBLE_PI               ; duplicated constant - no label

@@ -10,4 +10,4 @@
 
 const_NEG_HALF:
 
-	put_const_NEG_HALF()
+	+PUT_CONST_NEG_HALF

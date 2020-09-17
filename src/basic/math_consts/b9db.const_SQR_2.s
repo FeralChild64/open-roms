@@ -10,4 +10,4 @@
 
 const_SQR_2:
 
-	put_const_SQR_2()
+	+PUT_CONST_SQR_2
