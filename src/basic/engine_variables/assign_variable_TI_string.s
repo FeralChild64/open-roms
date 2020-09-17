@@ -10,11 +10,11 @@ assign_variable_TI_string:
 	jsr FRMEVL
 
 	lda VALTYP
-	bpl_16 do_TYPE_MISMATCH_error      ; branch if not string
+	+bpl do_TYPE_MISMATCH_error      ; branch if not string
 	
 	lda __FAC1+0
 	cmp #$06
-	bne_16 do_ILLEGAL_QUANTITY_error   ; we need exactly 6-character string
+	+bne do_ILLEGAL_QUANTITY_error   ; we need exactly 6-character string
 
 	; Initialize new time counter, process all the digits
 
@@ -30,17 +30,17 @@ assign_variable_TI_string_loop:
 
 	; First fetch the digit
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<(__FAC1 + 1)
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR__50K {
 	jsr peek_under_roms_via_FAC1_PLUS_1
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (__FAC1 + 1), y
-#endif
+}
 
 	jsr convert_PETSCII_to_digit
-	bcs_16 do_ILLEGAL_QUANTITY_error
+	+bcs do_ILLEGAL_QUANTITY_error
 
 	tax                      ; move decoded digit to .X
 

@@ -27,12 +27,12 @@ div_FAC2_FAC1:
 	; 'Pamiętaj, cholero - nie dziel przez zero!' - ancient polish proverb
 
 	lda FAC1_exponent
-	beq_16 do_DIVISION_BY_ZERO_error
+	+beq do_DIVISION_BY_ZERO_error
 
 	; Handle special case - dividing 0 by non-zero value
 
 	lda FAC2_exponent
-	beq_16 set_FAC1_zero
+	+beq set_FAC1_zero
 
 	; Multiply signs
 
@@ -54,12 +54,12 @@ div_FAC2_FAC1:
     sec
     sbc FAC1_exponent
     sta RESHO+0
-    bcs !+
+    bcs @1
     dec RESHO+1
- !:
+@1:
 
     lda RESHO+1
-    bmi_16 set_FAC1_zero                ; result too low, set 0 and quit
+    +bmi set_FAC1_zero                ; result too low, set 0 and quit
 
 	lda RESHO+0
 	sta FAC1_exponent

@@ -18,4 +18,4 @@
 ; XXX provide implementation
 
 sgn_FAC1:
-	STUB_IMPLEMENTATION()
+	+STUB_IMPLEMENTATION

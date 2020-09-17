@@ -30,7 +30,7 @@ add_FAC2_FAC1:
 	; If FAC1 is 0, if so just copy FAC2 to FAC1
 
 	lda FAC1_exponent
-	beq_16 mov_FAC2_FAC1
+	+beq mov_FAC2_FAC1
 
 	; Make sure the exponents are aligned
 
@@ -41,7 +41,7 @@ add_FAC2_FAC1:
 	lda FAC1_sign
 	eor FAC2_sign
 
-	bmi_16 add_FAC2_FAC1_sub           ; branch if signs are opposite
+	+bmi add_FAC2_FAC1_sub           ; branch if signs are opposite
 
 	; Perform the addition
 	
@@ -62,7 +62,7 @@ add_FAC2_FAC1:
 	adc FAC1_mantissa+0
 	sta FAC1_mantissa+0	
 	
-	bcc_16 normal_FAC1                 ; end if no need to adapt the exponent
+	+bcc normal_FAC1                 ; end if no need to adapt the exponent
 
 	inc FAC1_exponent
 	bne add_FAC2_FAC1_adapt_mantissa   ; end if no overflow

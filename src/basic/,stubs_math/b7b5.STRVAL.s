@@ -17,4 +17,4 @@
 ; XXX provide implementation
 
 STRVAL:
-	STUB_IMPLEMENTATION()
+	+STUB_IMPLEMENTATION

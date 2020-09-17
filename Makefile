@@ -70,7 +70,7 @@ HDR_ACME    = $(filter-out $(OUT_ACME),$(wildcard assembler/acme/src/*.h))
 
 # Generated files
 
-GEN_BASIC   = build/,generated/float_constants.s
+GEN_BASIC   = build/,generated/,float_constants.s
 GEN_KERNAL  =
 
 # List of build directories
@@ -312,9 +312,9 @@ $(GEN_STR_X16): $(TOOL_GENERATE_STRINGS) $(CFG_X16)
 	@mkdir -p $(DIR_X16)/,generated
 	$(TOOL_GENERATE_STRINGS) -o $@ -c $(CFG_X16)
 
-build/,generated/float_constants.s: $(TOOL_GENERATE_CONSTANTS)
+build/,generated/,float_constants.s: $(TOOL_GENERATE_CONSTANTS)
 	@mkdir -p build/,generated
-	$(TOOL_GENERATE_CONSTANTS) -o build/,generated/float_constants.s
+	$(TOOL_GENERATE_CONSTANTS) -o build/,generated/,float_constants.s
 
 GEN_STR_custom     = $(GEN_STR_CUS)
 GEN_STR_generic    = $(GEN_STR_GEN)

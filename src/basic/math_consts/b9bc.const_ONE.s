@@ -11,4 +11,4 @@
 
 const_ONE:
 
-	put_const_ONE()
+	+PUT_CONST_ONE

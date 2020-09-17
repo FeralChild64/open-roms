@@ -18,9 +18,9 @@
 sgn_FAC1_A:
 
 	lda FAC1_exponent
-	beq !+
+	beq @1
 	lda FAC1_sign
-	bne !+
+	bne @1
 	lda #$01
-!:
+@1:
 	rts

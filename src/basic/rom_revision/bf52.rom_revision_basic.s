@@ -23,7 +23,7 @@ rom_revision_basic_string:
 
 	; $BF55
 
-!ifndef !CONFIG_BRAND_CUSTOM_BUILD {
+!ifndef CONFIG_BRAND_CUSTOM_BUILD {
 	!pet "(DEVEL SNAPSHOT)"   ; ROM revision string; up to 16 characters, string format will change in the future
 } else {
 	!pet "(CUSTOM BUILD)"

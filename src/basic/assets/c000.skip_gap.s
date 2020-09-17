@@ -6,4 +6,4 @@
 
 ; Skip the gap between $C000-$DFFF
 
-	.fill $2000, $00
+	!fill $2000, $00

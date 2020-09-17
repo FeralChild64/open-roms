@@ -3,7 +3,6 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 
-; XXX does not fully work
 
 fetch_variable_TI_string:
 
@@ -23,23 +22,27 @@ fetch_variable_TI_string:
 
 	; Now calculate the digits, starting from the most important one
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<DSCPNT+1
-#endif
+}
 
 	ldy #$00
 
 	; FALLTROUGH
 
-fetch_variable_TI_string_loop:
+fetch_variable_TI_string_loop_1:
 
 	; Set the initial digit value ('0')
 
 	lda #$30
 	sta INDEX+3
 
+	; FALLTROUGH
+
+fetch_variable_TI_string_loop_2:
+
 	; Compare the counter with value from table
-!:
+
 	lda INDEX+2
 	cmp table_TI_hi, y
 	bcc fetch_variable_TI_string_got_digit
@@ -69,7 +72,7 @@ fetch_variable_TI_string_inc_digit:
 	sbc table_TI_hi, y
 	sta INDEX+2
 
-	bcs !-                   ; branch always
+	bcs fetch_variable_TI_string_loop_2          ; branch always
 
 fetch_variable_TI_string_got_digit:
 
@@ -77,17 +80,17 @@ fetch_variable_TI_string_got_digit:
 
 	lda INDEX+3
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	jsr poke_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_50K || CONFIG_MEMORY_MODEL_60K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_50K || CONFIG_MEMORY_MODEL_60K
 	sta (DSCPNT+1), y
-#endif
+}
 
 	; Next iteration
 
 	iny
 	cpy #$06
-	bne fetch_variable_TI_string_loop
+	bne fetch_variable_TI_string_loop_1
 
 	; Return success
 

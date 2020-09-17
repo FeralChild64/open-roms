@@ -17,29 +17,29 @@ add_FAC2_FAC1_sub:
 	lda FAC1_mantissa+0
 	cmp FAC2_mantissa+0
 	bcc add_FAC2_FAC1_sub_rev          ; if FAC1 < FAC2, branch
-	bne !+                             ; if FAC1 > FAC2, branch
+	bne @1                             ; if FAC1 > FAC2, branch
 
 	lda FAC1_mantissa+1
 	cmp FAC2_mantissa+1
 	bcc add_FAC2_FAC1_sub_rev          ; if FAC1 < FAC2, branch
-	bne !+                             ; if FAC1 > FAC2, branch
+	bne @1                             ; if FAC1 > FAC2, branch
 
 	lda FAC1_mantissa+2
 	cmp FAC2_mantissa+2
 	bcc add_FAC2_FAC1_sub_rev          ; if FAC1 < FAC2, branch
-	bne !+                             ; if FAC1 > FAC2, branch
+	bne @1                             ; if FAC1 > FAC2, branch
 
 	lda FAC1_mantissa+3
 	cmp FAC2_mantissa+3
 	bcc add_FAC2_FAC1_sub_rev          ; if FAC1 < FAC2, branch
-	bne !+                             ; if FAC1 > FAC2, branch
+	bne @1                             ; if FAC1 > FAC2, branch
 
 	; If we are here, than FAC1 is equal to FAC2 - so just set FAC1 to 0
 	
 	lda #$00
 	sta FAC1_exponent
 	rts
-!:
+@1:
 	; Perform the subtration, FAC1 = FAC1 - FAC2
 
 	sec

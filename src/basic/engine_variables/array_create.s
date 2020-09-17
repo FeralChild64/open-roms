@@ -8,12 +8,12 @@ array_create:
 	; First retrieve array name
 
 	jsr fetch_variable_name
-	bcs_16 do_SYNTAX_error
+	+bcs do_SYNTAX_error
 
 	; Make sure the array does not exist
 
 	jsr find_array
-	bcc_16 do_REDIMD_ARRAY_error
+	+bcc do_REDIMD_ARRAY_error
 
 	; Push variable name and FOUR6 on the stack - fetching dimensions might cause
 	; the to be overwritten by the expression parser
@@ -52,16 +52,16 @@ array_create_fetch_dims_loop:
 
 	jsr helper_fetch_arr_coord
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	inc LINNUM+0
-	bne !+
+	bne @1
 	inc LINNUM+1
-!:
-#else
+@1:
+} else {
 	inw LINNUM
-#endif
+}
 
-	beq_16 do_OUT_OF_MEMORY_error
+	+beq do_OUT_OF_MEMORY_error
 
 	lda LINNUM+0
 	pha
@@ -80,7 +80,7 @@ array_create_store_dims:
 	; We got the dimensions, time to alocate memory. Arrays are not declared too often,
 	; it will be easier if we perform the garbage collection now
 
-	phx_trash_a
+	+phx_trash_a
 	jsr varstr_garbage_collect
 
 	; __FAC1+1/+2 will be used to calculate number of elements
@@ -106,7 +106,7 @@ array_create_store_dims:
 
 	ldy #$04
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	
 	stx INDEX+2
 
@@ -115,11 +115,10 @@ array_create_store_dims:
 
 	ldx INDEX+2
 
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 
 	sta (STREND), y
-
-#endif
+}
 
 	iny                                          ; .Y - index to store dimension sizes
 	tax                                          ; .X - dimensions not stored yet
@@ -128,7 +127,7 @@ array_create_store_dims:
 
 array_create_store_loop:
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	
 	stx INDEX+2
 	ldx #<STREND
@@ -144,7 +143,7 @@ array_create_store_loop:
 
 	ldx INDEX+2
 
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 
 	pla
 	sta (STREND), y
@@ -154,8 +153,7 @@ array_create_store_loop:
 	sta (STREND), y
 	sta __FAC1+3
 	iny
-
-#endif
+}
 
 	jsr helper_array_create_mul
 
@@ -187,7 +185,7 @@ array_create_store_dims_done:
 
 	ldy #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	
 	ldx #<STREND
 
@@ -197,15 +195,14 @@ array_create_store_dims_done:
 	pla
 	jsr poke_under_roms
 
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 
 	pla
 	sta (STREND), y
 	iny
 	pla
 	sta (STREND), y
-
-#endif
+}
 
 	; Calculate and store offset to the next array
 
@@ -216,7 +213,7 @@ array_create_store_dims_done:
 	asl
 	jsr helper_INDEX_up_A
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 	; .X already contains STREND
 	
@@ -227,7 +224,7 @@ array_create_store_dims_done:
 	lda INDEX+1
 	jsr poke_under_roms
 
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 
 	ldy #$02
 	lda INDEX+0
@@ -235,8 +232,7 @@ array_create_store_dims_done:
 	iny
 	lda INDEX+1
 	sta (STREND), y
-
-#endif
+}
 
 	; First increase STREND past the header
 
@@ -244,15 +240,15 @@ array_create_store_dims_done:
 	lda __FAC1+5
 	adc STREND+0
 	sta STREND+0
-	bcc !+
+	bcc @2
 	inc STREND+1
-!:
+@2:
 	; Clear the newly alocated area
 
 	ldy #$00
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<STREND
-#endif
+}
 
 	; FALLTROUGH
 
@@ -260,39 +256,38 @@ array_create_clear_loop:
 
 	lda #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	jsr poke_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	sta (STREND), y
-#endif
+}
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 
 	; Increment STREND+0/+1
 
 	inc STREND+0
-	bne !+
+	bne @3
 	inc STREND+1
-!: 
+@3:
 	; Decrement __FAC1+1/+2
 
 	sec
 	lda __FAC1+1
 	sbc #$01
 	sta __FAC1+1
-	bcs !+
+	bcs @4
 	dec __FAC1+2
-!:
+@4:
 	; Check if __FAC1+1/+2 is NULL
 
 	ora __FAC1+2
 
-#else
+} else {
 
 	inw STREND
 	dew __FAC1+1
-
-#endif
+}
 
 	bne array_create_clear_loop
 

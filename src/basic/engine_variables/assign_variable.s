@@ -8,7 +8,7 @@ assign_variable:
 	; Fetch variable/array name
 
 	jsr fetch_variable_name
-	bcs_16 do_SYNTAX_error
+	+bcs do_SYNTAX_error
 
 	; Check for array
 
@@ -30,7 +30,7 @@ assign_variable:
 	; Retrieve all the coordinates
 
 	ldx #$00
-!:
+@1:
 	inx
 	jsr helper_fetch_arr_coord
 
@@ -42,18 +42,18 @@ assign_variable:
 	; Check if more dimensions are given
 
 	cpy #$00
-	beq !-
+	beq @1
 
 	; Store number of dimensions on the stack
 
-	phx_trash_a
+	+phx_trash_a
 
 	; Fetch assignment operator and continue
 
 	jsr injest_assign
 
 	lda #$FF                           ; force DIMFLG to be array
-	jmp_8 assign_variable_common_1
+	+bra assign_variable_common_1
 
 assign_variable_not_array_1:
 
@@ -64,13 +64,13 @@ assign_variable_not_array_1:
 	; Check for special variables
 
 	jsr is_var_TI_string
-	beq_16 assign_variable_TI_string
+	+beq assign_variable_TI_string
 
 	jsr is_var_TI
-	beq_16 do_SYNTAX_error
+	+beq do_SYNTAX_error
 
 	jsr is_var_ST
-	beq_16 do_SYNTAX_error
+	+beq do_SYNTAX_error
 
 	; Push the DIMFLG and VARNAM to the stack - it might get overridden
 
@@ -107,23 +107,23 @@ assign_variable_common_1:
 	; XXX adapt this for floats!
 
 	ldx #$04
-!:
+@2:
 	lda __FAC1,x
 	sta __FAC2,x
 	dex
-	bpl !-
+	bpl @2
 
 	; Get array address
 
 	jsr find_array
-	bcc !+
+	bcc @3
 
 	; Array does not exist - we will have to create one with default parameters
 
 	; XXX implement this
 
 	jmp do_NOT_IMPLEMENTED_error
-!:
+@3:
 	; Fetch the number of dimensions
 
 	pla
@@ -140,11 +140,11 @@ assign_variable_arr_ret:
 	; XXX adapt this for floats!
 
 	ldx #$04
-!:
+@4:
 	lda __FAC2,x
 	sta __FAC1,x
 	dex
-	bpl !-
+	bpl @4
 	bmi assign_variable_common_2                 ; branch always
 
 assign_variable_not_array_2:
@@ -162,13 +162,13 @@ assign_variable_common_2:
 	lda #$00
 	clc
 	bit VARNAM+0
-	bpl !+
+	bpl @5
 	adc #$01
-!:
+@5:
 	bit VARNAM+1
-	bpl !+
+	bpl @6
 	adc #$80
-!:
+@6:
 	; Determine what to assign
 
 	bmi assign_string
@@ -181,56 +181,53 @@ assign_variable_common_2:
 assign_integer:
 
 	lda VALTYP
-	bmi_16 do_TYPE_MISMATCH_error
+	+bmi do_TYPE_MISMATCH_error
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	
 	; XXX
 	; XXX: implement this
 	; XXX
 
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	; XXX consider optimized version without multiple JSRs
 
 	; XXX
 	; XXX: implement this
 	; XXX
 
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 
 	; XXX
 	; XXX: implement this
 	; XXX
-
-#endif
-
+}
 	jmp do_NOT_IMPLEMENTED_error
 
 assign_float:
 
 	lda VALTYP
-	bmi_16 do_TYPE_MISMATCH_error
+	+bmi do_TYPE_MISMATCH_error
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	
 	; XXX
 	; XXX: implement this
 	; XXX
 
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	; XXX consider optimized version without multiple JSRs
 
 	; XXX
 	; XXX: implement this
 	; XXX
 
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 
 	; XXX
 	; XXX: implement this
 	; XXX
-
-#endif
+}
 
 	jmp do_NOT_IMPLEMENTED_error
 
@@ -239,7 +236,7 @@ assign_string:
 	; Check if value type matches
 	
 	lda VALTYP
-	bpl_16 do_TYPE_MISMATCH_error
+	+bpl do_TYPE_MISMATCH_error
 
 	; Copy the string descriptor to DSCPNT
 
@@ -259,12 +256,12 @@ assign_string:
 	ldy #$00
 	lda #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<VARPNT
 	jsr poke_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	sta (VARPNT), y
-#endif
+}
 
 	rts
 
@@ -291,22 +288,22 @@ assign_string_not_same:
 	lda VARTAB+1
 	cmp __FAC1+2
 	bcc assign_string_not_text_area
-	bne !+
+	bne @7
 	lda VARTAB+0
 	cmp __FAC1+1
 	bcc assign_string_not_text_area	
-!:
+@7:
 	lda __FAC1+2
 	cmp TXTTAB+1
 	bcc assign_string_not_text_area
-	bne !+
+	bne @8
 	lda __FAC1+1
 	cmp TXTTAB+0
 	bcc assign_string_not_text_area
-!:
+@8:
 	; String is located within text area - great, just copy the descriptor
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	
 	; .X already contains #<VARPNT
 
@@ -320,7 +317,7 @@ assign_string_not_same:
 	lda __FAC1+2
 	jsr poke_under_roms
 
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 
 	ldy #$00
 	lda __FAC1+0
@@ -331,8 +328,7 @@ assign_string_not_same:
 	iny
 	lda __FAC1+2
 	sta (VARPNT), y
-
-#endif
+}
 
 	rts
 
@@ -342,11 +338,11 @@ assign_string_not_text_area:
 
 	jsr helper_cmp_fretop
 
-#if HAS_SMALL_BASIC
+!ifdef HAS_SMALL_BASIC {
 	bcc assign_string_no_optimizations
-#else
+} else {
 	bcc assign_string_try_takeover
-#endif
+}
 
 	; FALLTROUGH
 
@@ -357,11 +353,11 @@ assign_string_try_reuse:
 	lda DSCPNT+0
 	cmp __FAC1+0
 
-#if HAS_SMALL_BASIC
+!ifdef HAS_SMALL_BASIC {
 
 	; If size of both string equals - simply reuse it
 
-	beq_16 helper_strvarcpy
+	+beq helper_strvarcpy
 
 	; No special case optimization is possible - but first get rid of the old string
 
@@ -369,14 +365,13 @@ assign_string_try_reuse:
 
 	; FALLTROUGH
 
-#else
+} else {
 
 	; If size of both string equals - simply reuse it
 
 	bne assign_string_try_takeover_free
 	jmp helper_strvarcpy
-
-#endif
+}
 
 assign_string_no_optimizations:
 
@@ -385,16 +380,15 @@ assign_string_no_optimizations:
 	lda __FAC1+0
 	ldy #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 	ldx #<VARPNT
 	jsr poke_under_roms
 
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	
 	sta (VARPNT), y
-
-#endif
+}
 
 	jsr varstr_alloc
 
@@ -403,7 +397,7 @@ assign_string_no_optimizations:
 	jmp helper_strvarcpy
 
 
-#if !HAS_SMALL_BASIC
+!ifndef HAS_SMALL_BASIC {
 
 assign_string_try_takeover_free:
 
@@ -437,32 +431,32 @@ assign_string_tmp_check_loop:
 
 	; This is a temporary string - takeover the content
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 	ldy #$00
-	phx_trash_a
+	+phx_trash_a
 	lda $00, x
 	ldx #<VARPNT
 	jsr poke_under_roms
-	plx_trash_a
+	+plx_trash_a
 
 	iny
-	phx_trash_a
+	+phx_trash_a
 	lda $01, x
 	sta INDEX+0
 	ldx #<VARPNT
 	jsr poke_under_roms
-	plx_trash_a
+	+plx_trash_a
 	
 	iny
-	phx_trash_a
+	+phx_trash_a
 	lda $02, x
 	sta INDEX+1
 	ldx #<VARPNT
 	jsr poke_under_roms
-	plx_trash_a
+	+plx_trash_a
 
-#else
+} else {
 
 	ldy #$00
 	lda $00, x
@@ -477,8 +471,7 @@ assign_string_tmp_check_loop:
 	lda $02, x
 	sta INDEX+1
 	sta (VARPNT), y
-
-#endif
+}
 
 	; Mark the temporary string as free
 
@@ -490,7 +483,7 @@ assign_string_tmp_check_loop:
 	lda __FAC1+0
 	jsr helper_INDEX_up_A
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 	ldx #<INDEX
 
@@ -502,7 +495,7 @@ assign_string_tmp_check_loop:
 	lda VARPNT+1
 	jsr poke_under_roms
 
-#else
+} else {
 
 	ldy #$00
 	lda VARPNT+0
@@ -511,8 +504,7 @@ assign_string_tmp_check_loop:
 	iny
 	lda VARPNT+1
 	sta (INDEX), y
-
-#endif
+}
 
 	rts
 
@@ -522,5 +514,4 @@ assign_string_tmp_check_next:
 	inx
 	inx
 	bne assign_string_tmp_check_loop           ; branch always
-
-#endif
+}
