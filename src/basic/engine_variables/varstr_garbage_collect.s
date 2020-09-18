@@ -77,44 +77,43 @@ varstr_garbage_collect_check_bptr:
 
 	; Decrement TXTPTR by 2, so that it points to the back-pointer
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	lda #$02
 	jsr helper_TXTPTR_down_A
-#else ; HAS_OPCODES_65CE02
+} else { ; HAS_OPCODES_65CE02
 	dew TXTPTR
 	dew TXTPTR
-#endif
+}
 
 	; Copy the back-pointer to OLDTXT, check if it is NULL
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 	jsr helper_gc_fetch_backpointer
 
-#else 
+} else {
 
 	ldy #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<TXTPTR
 	jsr peek_under_roms
 	sta OLDTXT+0
 	iny
 	jsr peek_under_roms
 	sta OLDTXT+1
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (TXTPTR),y
 	sta OLDTXT+0
 	iny
 	lda (TXTPTR),y
 	sta OLDTXT+1
-#endif
+}
 
 	ora OLDTXT+0
+}
 
-#endif
-
-	beq_16 varstr_garbage_collect_unused 
+	+beq varstr_garbage_collect_unused 
 	
 	; The back-pointer is not NULL - string is used
 
@@ -122,14 +121,14 @@ varstr_garbage_collect_check_bptr:
 
 	ldy #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
 	jsr peek_under_roms_via_OLDTXT
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
 	sta memmove__size+0
 	lda #$00
@@ -137,38 +136,38 @@ varstr_garbage_collect_check_bptr:
 
 	; The 'memmove__size' contains string length - add back-pointer size
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	clc
 	lda memmove__size+0
 	adc #$02
 	sta memmove__size+0
-	bcc !+
+	bcc @1
 	inc memmove__size+1
-!:
-#else ; HAS_OPCODES_65CE02
+@1:
+} else { ; HAS_OPCODES_65CE02
 	inw memmove__size
 	inw memmove__size
-#endif
+}
 
 	; Setup 'memmove__src' - last byte of source
 
 	iny
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	jsr peek_under_roms
 	sta memmove__src+0
 	iny
 	jsr peek_under_roms
 	sta memmove__src+1
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
 	jsr helper_gc_set_memmove_src
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
 	sta memmove__src+0
 	iny
 	lda (OLDTXT),y
 	sta memmove__src+1
-#endif
+}
 
 	; The 'memmove__src' contains the first byte of source - add 'memmove__size' to it
 
@@ -182,17 +181,17 @@ varstr_garbage_collect_check_bptr:
 
 	; Shift 'memmove__src' to point last byte of source
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	sec
 	lda memmove__src+0
 	sbc #$01
 	sta memmove__src+0
-	bcs !+
+	bcs @2
 	dec memmove__src+1
-!:
-#else ; HAS_OPCODES_65CE02
+@2:
+} else { ; HAS_OPCODES_65CE02
 	dew memmove__src
-#endif
+}
 
 	; Setup 'memmove__dst' - last byte of destination
 
@@ -208,7 +207,7 @@ varstr_garbage_collect_check_bptr:
 
 	ldy #$01
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 	ldx #<OLDTXT
 	jsr peek_under_roms
@@ -223,11 +222,11 @@ varstr_garbage_collect_check_bptr:
 	adc INDEX+1
 	jsr poke_under_roms
 
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
 	
 	jsr helper_gc_increase_oldtxt
 
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 
 	lda (OLDTXT),y
 	clc
@@ -237,8 +236,7 @@ varstr_garbage_collect_check_bptr:
 	lda (OLDTXT),y
 	adc INDEX+1
 	sta (OLDTXT),y
-
-#endif
+}
 
 	; Move string memory up
 
@@ -248,14 +246,14 @@ varstr_garbage_collect_check_bptr:
 
 	ldy #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
 	jsr peek_under_roms_via_OLDTXT
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
 	jsr helper_TXTPTR_down_A
 
@@ -267,7 +265,7 @@ varstr_garbage_collect_check_bptr:
 	bne !+
 	lda __FAC1+1
 	cmp TXTPTR+0
-	bne !+
+	bne @3
 
 	clc
 	adc INDEX+0
@@ -275,15 +273,15 @@ varstr_garbage_collect_check_bptr:
 	lda __FAC1+2
 	adc INDEX+1
 	sta __FAC1+2
-!:
+@3:
 	; Same for __FAC2
 
 	lda __FAC2+2
 	cmp TXTPTR+1
-	bne !+
+	bne @4
 	lda __FAC2+1
 	cmp TXTPTR+0
-	bne !+
+	bne @4
 
 	clc
 	adc INDEX+0
@@ -291,7 +289,7 @@ varstr_garbage_collect_check_bptr:
 	lda __FAC2+2
 	adc INDEX+1
 	sta __FAC2+2
-!:
+@4:
 	; Next iteration
 
 	jmp varstr_garbage_collect_loop
@@ -301,23 +299,23 @@ varstr_garbage_collect_unused:
 	; The back-pointer is NULL - string is a garbage to collect
 	; Fetch the string length
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	lda #$01
 	jsr helper_TXTPTR_down_A
-#else ; HAS_OPCODES_65CE02
+} else { ; HAS_OPCODES_65CE02
 	dew TXTPTR
-#endif
+}
 
 	ldy #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<TXTPTR
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
 	jsr peek_under_roms_via_TXTPTR
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (TXTPTR),y
-#endif
+}
 
 	tax
 

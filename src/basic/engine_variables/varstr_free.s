@@ -16,9 +16,9 @@ varstr_free:
 	; Check the string size - do not do anything if 0
 
 	lda DSCPNT+0
-	bne !+
+	bne @1
 	rts
-!:
+@1:
 	; Check if string is above FRETOP (in string area)
 
 	jsr helper_cmp_fretop
@@ -39,20 +39,19 @@ varstr_free_no_checks: ; entry point to be used when it is clear that string is 
 
 	jsr helper_FRETOP_up                         ; free the string data
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 
 	lda #$02                                     ; free the back-pointer
 	sta DSCPNT+0
 	jmp helper_FRETOP_up
 
-#else ; HAS_OPCODES_65CE02
+} else { ; HAS_OPCODES_65CE02
 
 	inw FRETOP                                   ; free the back-pointer
 	inw FRETOP
 
 	rts
-
-#endif
+}
 
 varstr_free_inside:
 
@@ -67,37 +66,37 @@ varstr_free_inside:
 	lda DSCPNT+1
 	adc DSCPNT+0
 	sta DSCPNT+1
-	bcc !+
+	bcc @2
 	inc DSCPNT+2
-!:
+@2:
 	; Put the size-1, garbage collector will make use of this value
 
 	lda DSCPNT+0
 	ldy #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<DSCPNT+1
 	jsr poke_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	sta (DSCPNT+1), y
-#endif
+}
 
 	; Now fill-in the back-pointer with 0's
 
 	tya
 	iny
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	jsr poke_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	sta (DSCPNT+1), y
-#endif
+}
 
 	iny
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	jmp poke_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	sta (DSCPNT+1), y
 	rts
-#endif
+}

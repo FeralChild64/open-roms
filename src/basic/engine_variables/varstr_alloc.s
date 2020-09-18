@@ -45,19 +45,18 @@ varstr_alloc_retry:
 
 	; Lower FRETOP to make space for the back-pointer
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 
 	lda #$02
 	jsr helper_FRETOP_down_A
 
-#else ; HAS_OPCODES_65CE02 - this time code is slightly longer, but faster
+} else { ; HAS_OPCODES_65CE02 - this time code is slightly longer, but faster
 
 	dew FRETOP
 	dew FRETOP
 
 	jsr helper_FRETOP_check
-
-#endif
+}
 
 	bcs varstr_alloc_fail
 
@@ -66,34 +65,34 @@ varstr_alloc_retry:
 	ldy #$00
 	lda VARPNT+0
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<FRETOP
 	jsr poke_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	sta (FRETOP), y
-#endif
+}
 
 	iny
 	lda VARPNT+1
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	jsr poke_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	sta (FRETOP), y
-#endif
+}
 
 	; Now lower FRETOP again to make space for the string content
 
 	ldy #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<VARPNT
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_VARPNT
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (VARPNT),y
-#endif
+}
 
 	jsr helper_FRETOP_down_A
 	bcs varstr_alloc_fail
@@ -102,20 +101,20 @@ varstr_alloc_retry:
 
 	ldy #$01
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<VARPNT
 	lda FRETOP+0
 	jsr poke_under_roms
 	iny
 	lda FRETOP+1
 	jsr poke_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	lda FRETOP+0
 	sta (VARPNT), y
 	iny
 	lda FRETOP+1
 	sta (VARPNT), y
-#endif
+}
 
 	; The end
 
@@ -133,9 +132,9 @@ varstr_alloc_fail:
 	; Check if it is worth to perform garbage collection and retry
 
 	bit GARBFL
-	bpl_16 do_OUT_OF_MEMORY_error
+	+bpl do_OUT_OF_MEMORY_error
 
 	dec GARBFL                                   ; $00 -> $FF
 	jsr varstr_garbage_collect
 
-	jmp_8 varstr_alloc_retry
+	+bra varstr_alloc_retry

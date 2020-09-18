@@ -3,7 +3,7 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 
-#if CONFIG_TAPE_WEDGE
+!ifdef CONFIG_TAPE_WEDGE {
 
 
 wedge_tape:
@@ -22,16 +22,15 @@ wedge_tape:
 	cmp #$4D                           ; 'M'
 	beq wedge_arrow_M
 
-#if CONFIG_TAPE_HEAD_ALIGN
+!ifdef CONFIG_TAPE_HEAD_ALIGN {
 
 	cmp #$48                           ; 'H'
 	beq wedge_arrow_H
-
-#endif
+}
 
 	jmp do_SYNTAX_error
 
-#if CONFIG_TAPE_HEAD_ALIGN
+!ifdef CONFIG_TAPE_HEAD_ALIGN {
 
 wedge_arrow_H:
 
@@ -40,14 +39,13 @@ wedge_arrow_H:
 	jsr fetch_character_skip_spaces
 
 	cmp #$00
-	bne_16 do_SYNTAX_error
+	+bne do_SYNTAX_error
 
 	jsr tape_head_align
 
 	jsr print_return
 	jmp do_BREAK_error
-
-#endif
+}
 
 wedge_arrow_L:
 
@@ -67,5 +65,4 @@ wedge_arrow_M:
 
 	jmp cmd_merge_got_params
 
-
-#endif ; CONFIG_TAPE_WEDGE
+} ; CONFIG_TAPE_WEDGE

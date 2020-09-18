@@ -4,20 +4,20 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 
-#if CONFIG_DOS_WEDGE
+!ifdef CONFIG_DOS_WEDGE {
 
 
 ; .X has to contain size of the buffer
 
 wedge_dos:
 
-#if (ROM_LAYOUT_M65 && SEGMENT_BASIC_0)
+!ifdef SEGMENT_M65_BASIC_0 {
 
-	jsr     map_BASIC_1
-	jsr_ind VB1__wedge_dos
-	jmp     map_NORMAL
+	jsr map_BASIC_1
+	jsr (VB1__wedge_dos)
+	jmp map_NORMAL
 
-#else
+} else {
 
 	; Prepare buffer - finish it with '0'
 
@@ -44,12 +44,12 @@ wedge_dos:
 
 	ldy #$00
 	lda (TXTPTR), y
-	beq_16 wedge_dos_status
+	+beq wedge_dos_status
 
 	; Check if asked for a directory
 
 	cmp #$24
-	beq_16 wedge_dos_directory
+	+beq wedge_dos_directory
 
 	; Check if asked to change drive number, or if it is a regular command
 	
@@ -60,7 +60,7 @@ wedge_dos:
 
 wedge_dos_command:
 
-#if !HAS_SMALL_BASIC
+!ifndef HAS_SMALL_BASIC {
 
 	; Check if command needs confirmation
 
@@ -68,19 +68,19 @@ wedge_dos_command:
 	lda (TXTPTR), y
 
 	cmp #$52                                     ; 'R' - because 'RD' is a directory removal command
-	bne !+
+	bne @1
 
 	iny
 	lda (TXTPTR), y
 	cmp #$44                                     ; 'D'
 	bne wedge_dos_command_confirmed
 	beq wedge_dos_command_ask
-!:
+@1:
 	cmp #$4E                                     ; 'N' - for the disk format
-	beq !+
+	beq @2
 	cmp #$53                                     ; 'S' - for the file scratch
 	bne wedge_dos_command_confirmed
-!:
+@2:
 	; This is probably a dangerous command - check further the syntax,
 	; if 'N:', 'S:', 'Nx:' or 'Sx:' (where 'x' is a digit) - ask for confirmation first
 
@@ -102,13 +102,13 @@ wedge_dos_command:
 wedge_dos_command_ask:
 
 	jsr helper_ask_if_sure
-	bcs_16 wedge_dos_clean_exit
+	+bcs wedge_dos_clean_exit
 	
 	; FALLTROUGH
 
 wedge_dos_command_confirmed:
 
-#endif ; !HAS_SMALL_BASIC
+} ; !HAS_SMALL_BASIC
 
 	; Provide command name
 
@@ -116,7 +116,7 @@ wedge_dos_command_confirmed:
 	
 	jsr JSETNAM
 	jsr JOPEN
-	bcs_16 wedge_dos_basic_error
+	+bcs wedge_dos_basic_error
 
 	; Retrieve status, print it if not OK
 
@@ -142,13 +142,13 @@ wedge_dos_change_drive:
 	pha
 	jsr fetch_character_skip_spaces
 	cmp #$00
-	bne_16 do_SYNTAX_error
+	+bne do_SYNTAX_error
 	pla
 
 	; Check if device number is valid for IEC drive
 
 	cmp #$08
-	bcc_16 do_ILLEGAL_DEVICE_NUMBER_error
+	+bcc do_ILLEGAL_DEVICE_NUMBER_error
 
 	; Store new device number and return to shell
 
@@ -173,13 +173,13 @@ wedge_dos_status_get_no_new_line:
 	lda #$00  ; empty file name
 	jsr JSETNAM
 	jsr JOPEN
-	bcs_16 wedge_dos_basic_error
+	+bcs wedge_dos_basic_error
 
 	; Set channel for input
 
 	ldx #$0F
 	jsr JCHKIN
-	bcs_16 wedge_dos_basic_error
+	+bcs wedge_dos_basic_error
 
 	; Fetch the drive status
 
@@ -192,7 +192,7 @@ wedge_dos_status_get_loop:
 	; Check for buffer overflow
 
 	cpy #$50
-	beq_16 do_OVERFLOW_error
+	+beq do_OVERFLOW_error
 
 	; Check for EOF
 
@@ -203,7 +203,7 @@ wedge_dos_status_get_loop:
 	; Retrieve a byte and put it into the buffer
 
 	jsr JCHRIN
-	bcs_16 wedge_dos_basic_error
+	+bcs wedge_dos_basic_error
 
 	sta BUF, y
 	iny
@@ -220,7 +220,7 @@ wedge_dos_status_get_done:
 wedge_dos_status:
 
 	jsr wedge_dos_status_get
-	jmp_8 wedge_dos_status_print_no_new_line
+	+bra wedge_dos_status_print_no_new_line
 
 wedge_dos_status_print:
 
@@ -233,17 +233,17 @@ wedge_dos_status_print_no_new_line:
 	; Print buffered status
 
 	ldx #$00
-!:
+@3:
 	dey
-	bmi !+
+	bmi @4
 	lda BUF, x
 	jsr JCHROUT
 	inx
-	bne !-
-!:
+	bne @3
+@4:
 	; Clean-up and exit
 
-	jmp_8 wedge_dos_clean_exit
+	+bra wedge_dos_clean_exit
 
 wedge_dos_directory:
 
@@ -281,24 +281,24 @@ wedge_dos_directory_line:
 	; Load a single line, reuse BASIC input buffer
 
 	ldy #$FF
-!:
+@5:
 	iny
 	jsr JCHRIN
 	bcs wedge_dos_basic_error
 	sta BUF, y
 	cpy #$50
-	beq_16 do_OVERFLOW_error                     ; branch if line too long
+	+beq do_OVERFLOW_error                     ; branch if line too long
 	jsr JREADST
-	bne !+ ; end of file
+	bne @6 ; end of file
 	cpy #$04 ; 2 bytes (pointer to next line) + 2 bytes (line number) 
-	bcc !-
+	bcc @5
 	lda BUF, y
-	bne !-
+	bne @5
 
 	; End of line, but not end of file
 
 	beq wedge_dos_directory_display
-!:
+@6:
 	lda #K_STS_END_OF_FILE
 	sta IOSTATUS ; make sure end of file is marked
 
@@ -345,10 +345,10 @@ wedge_dos_setnam:
 	; Now determine the length of the 'file' name
 
 	ldy #$FF
-!:
+@7:
 	iny
 	lda (TXTPTR), y
-	bne !-
+	bne @7
 	
 	; Set the name to open
 
@@ -359,6 +359,6 @@ wedge_dos_setnam:
 	jmp JSETNAM
 
 
-#endif ; ROM layout
+} ; ROM layout
 
-#endif ; CONFIG_DOS_WEDGE
+} ; CONFIG_DOS_WEDGE

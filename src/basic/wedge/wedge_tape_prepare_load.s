@@ -3,7 +3,7 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 
-#if CONFIG_TAPE_WEDGE
+!ifdef CONFIG_TAPE_WEDGE {
 
 ;
 ; Common part for LOAD and MERGE operations via tape wedge
@@ -18,7 +18,7 @@ wedge_tape_prepare_load:
 	cmp #$00
 	beq wedge_tape_prepare_load_no_filename      ; branch if no file name given
 	cmp #$22
-	bne_16 do_SYNTAX_error                       ; branch if no opening quote
+	+bne do_SYNTAX_error                       ; branch if no opening quote
 
 	; Fetch the file name
 
@@ -28,17 +28,17 @@ wedge_tape_prepare_load:
 	sta FNADDR+1
 
 	ldx #$00
-!:
+@1:
 	jsr fetch_character
 
 	cmp #$00
-	beq !+
+	beq @2
 	cmp #$22
-	beq !+
+	beq @2
 
 	inx
-	bne !-
-!:
+	bne @1
+@2:
 	stx FNLEN
 
 	lda #$00
@@ -55,13 +55,12 @@ wedge_tape_prepare_load_got_filename:            ; .A has to be 0
 	sta VERCKB                                   ; operation is LOAD, not VERIFY
 
 	ldy #$01
-#if CONFIG_TAPE_TURBO
+!ifdef CONFIG_TAPE_TURBO {
 	ldx #$07                                     ; turbo tape device
-#else
+} else {
 	ldx #$01                                     ; normal tape device
-#endif
+}
 
 	jmp JSETFLS
 
-
-#endif ; CONFIG_TAPE_WEDGE
+} ; CONFIG_TAPE_WEDGE
