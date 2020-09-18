@@ -34,13 +34,13 @@ tk_cut_away_1: ; for single-byte tokenized keywords
 	clc
 	adc tk__offset
 	tax
-!:
+@1:
 	lda BUF, x
 	sta BUF, y
-	beq !+
+	beq @2
 
 	inx
 	iny
-	bne !-	
-!:
+	bne @1
+@2:
 	rts

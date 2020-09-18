@@ -30,7 +30,7 @@ shift_mem_down:
 
 	jsr shift_mem_adapt_pointers
 
-#if CONFIG_MEMORY_MODEL_38K
+!ifdef CONFIG_MEMORY_MODEL_38K {
 
 shift_mem_down_internal:
 
@@ -40,20 +40,19 @@ shift_mem_down_internal:
 	; This routine assumes the pointers are already pointed to the end of the areas, and that .Y is correctly initialized
 
 	php
-!:
+@1:
 	lda (memmove__src),y
 	sta (memmove__dst),y
 	iny
-	bne !-
+	bne @1
 	inc memmove__src+1
 	inc memmove__dst+1
 	dec memmove__size+1
-	bne !-
+	bne @1
 	plp
 	rts
 
-#else
+} else {
 
 	jmp shift_mem_down_internal
-
-#endif
+}

@@ -13,17 +13,17 @@ print_packed_search:
 
 	; Now find the address of the string to print out
 	; The implementation assumes no packed string is longer than 255 bytes, including trailing zero
-!:
+@1:
 	cpx #$00
 	beq print_packed_done              ; branch if no need to advance anymore
 	dex
 
 	ldy #$00
-!:
+@2:
 	lda (FRESPC), y
 	iny
 	cmp #$00
-	bne !-                             ; branch if not the end of packed string
+	bne @2                             ; branch if not the end of packed string
 
 	clc                                ; advance FREESPC pointer
 	tya
@@ -33,7 +33,7 @@ print_packed_search:
 	adc FRESPC+1
 	sta FRESPC+1
 
-	jmp !--
+	+bra @1
 
 print_packed_done:
 

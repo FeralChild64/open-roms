@@ -3,7 +3,7 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 ; IMPORTANT:
 ; These routines lengths cannot be changed without changing
@@ -13,11 +13,11 @@
 install_ram_routines:
 	; Copy routines into place
 	ldx #__ram_routines_end-__ram_routines_start-1
-!:
+@1:
 	lda __ram_routines_start,x
 	sta tiny_nmi_handler,x
 	dex
-	bpl !-
+	bpl @1
 
 	; Point NMI handler to tiny_nmi_handler
 	lda #<tiny_nmi_handler
@@ -78,15 +78,15 @@ shift_mem_up_routine:
 
 	php
 	jsr memmap_allram
-!:	
+@2:	
 	lda (memmove__src),y
 	sta (memmove__dst),y
 	dey
-	bne !-
+	bne @2
 	dec memmove__src+1
 	dec memmove__dst+1
 	dec memmove__size+1
-	bne !-
+	bne @2
 	plp
 	jmp memmap_normal
 
@@ -99,18 +99,18 @@ shift_mem_down_routine:
 	
 	php
 	jsr memmap_allram
-!:
+@3:
 	lda (memmove__src),y
 	sta (memmove__dst),y
 	iny
-	bne !-
+	bne @3
 	inc memmove__src+1
 	inc memmove__dst+1
 	dec memmove__size+1
-	bne !-
+	bne @3
 	plp
 	jmp memmap_normal
 
 __ram_routines_end:
 
-#endif
+}

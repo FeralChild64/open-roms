@@ -65,10 +65,10 @@ tk_search_not_matching:
 
 	cmp #$00
 	beq tk_search_next
-!:
+@1:
 	iny
 	lda (FRESPC), y
-	bne !-
+	bne @1
 
 	; FALLTROUGH
 

@@ -93,12 +93,12 @@ CFG_X16 = src/,,config_cx16.s
 
 # List of files with generated strings
 
-GEN_STR_CUS = $(DIR_CUS)/,generated/packed_strings.s
-GEN_STR_GEN = $(DIR_GEN)/,generated/packed_strings.s
-GEN_STR_TST = $(DIR_TST)/,generated/packed_strings.s
-GEN_STR_M65 = $(DIR_M65)/,generated/packed_strings.s
-GEN_STR_U64 = $(DIR_U64)/,generated/packed_strings.s
-GEN_STR_X16 = $(DIR_X16)/,generated/packed_strings.s
+GEN_STR_CUS = $(DIR_CUS)/,generated/,packed_strings.s
+GEN_STR_GEN = $(DIR_GEN)/,generated/,packed_strings.s
+GEN_STR_TST = $(DIR_TST)/,generated/,packed_strings.s
+GEN_STR_M65 = $(DIR_M65)/,generated/,packed_strings.s
+GEN_STR_U64 = $(DIR_U64)/,generated/,packed_strings.s
+GEN_STR_X16 = $(DIR_X16)/,generated/,packed_strings.s
 
 # Dependencies - helper variables
 

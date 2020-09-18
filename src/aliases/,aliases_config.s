@@ -324,6 +324,9 @@
 !ifdef CONFIG_TAPE_TURBO  { !set HAS_TAPE_OR_IEC = 1 }
 !ifdef CONFIG_IEC         { !set HAS_TAPE_OR_IEC = 1 }
 
+!ifdef CONFIG_DOS_WEDGE   { !set HAS_WEDGE = 1 }
+!ifdef CONFIG_TAPE_WEDGE  { !set HAS_WEDGE = 1 }
+
 
 
 ; Handle RS-232 configuration

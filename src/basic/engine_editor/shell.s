@@ -30,9 +30,9 @@ shell_read_next_line:
 
 	; Read a line of input
 	ldx #$00
-!:
+@1:
 	jsr JCHRIN
-	bcs !-
+	bcs @1
 	
 	; Check for RETURN key
 	cmp #$0D
@@ -40,11 +40,11 @@ shell_read_next_line:
 
 	; Not carriage return, so try to append to line so far
 	cpx #80
-	bcs_16 do_STRING_TOO_LONG_error              ; see Computes Mapping the 64 p93
+	+bcs do_STRING_TOO_LONG_error              ; see Computes Mapping the 64 p93
 
 	sta BUF,x
 	inx
-	jmp !-
+	jmp @1
 
 shell_got_line:
 
@@ -66,12 +66,12 @@ shell_strip_leading_spaces:
 
 	; We have a leading space - strip it away
 	ldx #$01
-!:
+@2:
 	lda BUF,x
 	sta BUF-1,x
 	inx
 	cpx __tokenise_work1
-	bne !-
+	bne @2
 
 	; Reduce length of input by one
 	dec __tokenise_work1
@@ -92,30 +92,27 @@ shell_process_line:
 
 	; Check if a wedge should take over
 
-#if CONFIG_DOS_WEDGE
+!ifdef CONFIG_DOS_WEDGE {
 
 	ldx __tokenise_work1                         ; size of the input, DOS wedges needs this  XXX this should not be needed
-
-#endif
-#if CONFIG_DOS_WEDGE || CONFIG_TAPE_WEDGE
+}
+!if HAS_WEDGE {
 	
 	; Check if DOS wedge should take over
 	lda BUF
 
-#if CONFIG_DOS_WEDGE
+!ifdef CONFIG_DOS_WEDGE {
 
 	cmp #$40 ; '@'
-	beq_16 wedge_dos
-
-#endif
-#if CONFIG_TAPE_WEDGE
+	+beq wedge_dos
+}
+!ifdef CONFIG_TAPE_WEDGE {
 
 	cmp #$5F ; left arrow
-	beq_16 wedge_tape
+	+beq wedge_tape
+}
 
-#endif
-
-#endif
+}
 
 	; Tokenise the line
 	jsr tokenise_line
@@ -152,13 +149,13 @@ shell_process_line:
 
 	; Skip any spaces after the line number
 	ldx __tokenise_work1
-!:
+@3:
 	lda BUF,x
 	cmp #$20
-	bne !+
+	bne @4
 	inx
-	bne !-
-!:	
+	bne @3
+@4:
 	stx __tokenise_work1
 
 	; FALLTROUGH
@@ -170,19 +167,19 @@ shell_add_delete_line:
 
 	; Check if line already present
 	jsr find_line_from_start
-	bcs !+
+	bcs @5
 
 	; Line already present - delete it
 	jsr delete_line
 	jsr find_line_from_start                     ; refresh OLDTXT
-!:
+@5:
 	; Insert new line if non-zero length, i.e., that
 	; we are not just deleting the line.
 	lda __tokenise_work1
 	cmp __tokenise_work2
-	beq !+
+	beq @6
 	jsr insert_line
-!:
+@6:
 	; No READY message after entering or deleting a line of BASIC
 	jmp shell_read_next_line
 	
@@ -191,4 +188,3 @@ shell_execute_line:
 
 	jsr prepare_direct_execution
 	jmp execute_statements
-

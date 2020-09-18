@@ -4,7 +4,7 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 
-#if CONFIG_COMPRESSION_LVL_2
+!ifdef CONFIG_COMPRESSION_LVL_2 {
 
 print_packed_error:                    ; .X - error string index
 
@@ -26,7 +26,7 @@ print_dict_packed_string:
 	jsr print_packed_search
 
 	ldy #$00
-!:
+@1:
 	; At this point FRESPC contains a pointer to the string to display
 	; Fetch a byte-code
 
@@ -37,7 +37,7 @@ print_dict_packed_string:
 
 	; Call 'print_freq_packed_string' - but preserve all the data needed to progress further
 
-	phy_trash_a
+	+phy_trash_a
 	lda FRESPC+0
 	pha
 	lda FRESPC+1
@@ -52,16 +52,14 @@ print_dict_packed_string:
 	sta FRESPC+1
 	pla
 	sta FRESPC+0
-	ply_trash_a 
+	+ply_trash_a 
 
 	; Next iteration
 
 	iny
-	bne !-                             ; branch always
+	bne @1                             ; branch always
 
 print_dict_packed_string_end:
 
 	rts
-
-
-#endif
+}

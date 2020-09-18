@@ -10,7 +10,7 @@ oper_add:
 
 	pla
 	eor VALTYP
-	bmi_16 do_TYPE_MISMATCH_error
+	+bmi do_TYPE_MISMATCH_error
 
 	lda VALTYP
 	bmi oper_add_strings
@@ -44,7 +44,7 @@ oper_add_strings:
 	; If string 1 is empty, just copy the metadata
 
 	lda __FAC1+0
-	bne !+
+	bne @1
 
 	jsr tmpstr_free_FAC1
 
@@ -56,12 +56,12 @@ oper_add_strings:
 	sta __FAC1+2
 
 	jmp FRMEVL_continue
-!:
+@1:
 	; Allocate memory for the concatenated string
 
 	clc
 	adc __FAC2+0
-	bcs_16 do_STRING_TOO_LONG_error
+	+bcs do_STRING_TOO_LONG_error
 
 	jsr tmpstr_alloc
 
@@ -76,19 +76,19 @@ oper_add_strings:
 
 	; Perform the concatenation
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	
 	; Copy data from the first string
 
 	ldy #$00
-!:
+@2:
 	ldx #<(__FAC2+1)
 	jsr peek_under_roms
 	ldx #<INDEX
 	jsr poke_under_roms
 	iny
 	cpy __FAC2+0
-	bne !-
+	bne @2
 
 	; Increase INDEX pointer by the size of the 1st string
 
@@ -98,30 +98,30 @@ oper_add_strings:
 	; Copy data from the second string
 
 	ldy #$00
-!:
+@3:
 	ldx #<(__FAC1+1)
 	jsr peek_under_roms
 	ldx #<INDEX
 	jsr poke_under_roms
 	iny
 	cpy __FAC1+0
-	bne !-
+	bne @3
 
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 	jsr helper_strconcat
 
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 
 	; Copy data from the first string
 
 	ldy #$00
-!:
+@4:
 	lda (__FAC2+1),y
 	sta (INDEX),y
 	iny
 	cpy __FAC2+0
-	bne !-
+	bne @4
 
 	; Increase INDEX pointer by the size of the 1st string
 
@@ -131,14 +131,13 @@ oper_add_strings:
 	; Copy data from the second string
 
 	ldy #$00
-!:
+@5:
 	lda (__FAC1+1),y
 	sta (INDEX),y
 	iny
 	cpy __FAC1+0
-	bne !-
-
-#endif
+	bne @5
+}
 
 	; Free old FAC1 string - if it was temporary
 
@@ -147,11 +146,11 @@ oper_add_strings:
 	; Copy the descriptor to __FAC1
 
 	ldy #$02
-!:
+@6:
 	lda (VARPNT), y
 	sta __FAC1, y
 	dey
-	bpl !-
+	bpl @6
 
 	; FALLTROUGH
 

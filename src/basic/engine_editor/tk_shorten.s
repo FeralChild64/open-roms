@@ -91,7 +91,7 @@ tk_shorten_3n_byte_nibble:             ; tk__nibble_flag = $00, both nibbles fre
 	; Reuse 'tk_shorten_1n_hi'
 
 	sty tk__byte_offset
-	jmp_8 tk_shorten_1n_hi
+	+bra tk_shorten_1n_hi
 
 tk_shorten_3n_2bytes:                  ; tk__nibble_flag = $FF, only the high nibble is free
 

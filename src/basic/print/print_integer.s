@@ -28,21 +28,21 @@ print_integer_not_0:
 	; Try to find the index of the first digit
 
 	ldy #$04
-!:
+@1:
 	jsr print_integer_compare
 	bcs print_integer_digit
 
 	dey
-	bpl !-                             ; branch always
+	bpl @1                             ; branch always
 
 print_integer_digit:
 
 	; Determine digit to print
 
 	ldx #$00
-!:
+@2:
 	jsr print_integer_compare
-	bcc !+
+	bcc @3
 
 	; Raise digit, lower the integer
 
@@ -56,8 +56,8 @@ print_integer_digit:
 	sbc print_integer_tab_hi, y
 	sta FAC1_exponent+1
 	
-	bcs !-                             ; branch always
-!:
+	bcs @2                             ; branch always
+@3:
 	; Convert digit in .X to PETSCII in .A and print it out
 
 	txa

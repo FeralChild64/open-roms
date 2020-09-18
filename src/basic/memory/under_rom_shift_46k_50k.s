@@ -5,7 +5,7 @@
 ; This has to go $E000 or above - as the routines below bank out the main BASIC ROM!
 
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 
 shift_mem_up_internal:
@@ -23,17 +23,17 @@ shift_mem_up_internal:
 	sta CPU_R6510
 
 	; Perform the copying
-!:	
+@1:	
 	lda (memmove__src),y
 	sta (memmove__dst),y
 	dey
-	bne !-
+	bne @1
 	dec memmove__src+1
 	dec memmove__dst+1
 	dec memmove__size+1
-	bne !-
+	bne @1
 
-	jmp_8 shift_mem_internal_finalize
+	+bra shift_mem_internal_finalize
 
 
 shift_mem_down_internal:
@@ -51,15 +51,15 @@ shift_mem_down_internal:
 	sta CPU_R6510
 
 	; Perform the copying
-!:
+@2:
 	lda (memmove__src),y
 	sta (memmove__dst),y
 	iny
-	bne !-
+	bne @2
 	inc memmove__src+1
 	inc memmove__dst+1
 	dec memmove__size+1
-	bne !-
+	bne @2
 
 	; FALLTROUGH
 
@@ -73,6 +73,4 @@ shift_mem_internal_finalize:
 	plp
 
 	rts
-
-
-#endif
+}

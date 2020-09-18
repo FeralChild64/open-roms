@@ -12,7 +12,7 @@ update_VARTAB_do_clr:
 	sta OLDTXT+0
 	lda TXTTAB+1
 	sta OLDTXT+1
-!:
+@1:
 	lda OLDTXT+0
 	sta VARTAB+0
 	lda OLDTXT+1
@@ -22,25 +22,25 @@ update_VARTAB_do_clr:
 
 	lda OLDTXT+0
 	ora OLDTXT+1
-	bne !-                                       ; branch if pointer not NULL
+	bne @1                                       ; branch if pointer not NULL
 
 	; Correct VARTAB by 2 bytes NULL pointer
 
-#if HAS_OPCODES_65CE02
+!ifdef HAS_OPCODES_65CE02 {
 
 	inw VARTAB
 	inw VARTAB
 
-#else
+} else {
 
 	clc
 	lda VARTAB+0
 	adc #$02
 	sta VARTAB+0
-	bcc !+
+	bcc @2
 	inc VARTAB+1
-!:
-#endif
+@2:
+}
 
 	; Call CLR to set-up remaining variables
 

@@ -19,7 +19,7 @@ tmpstr_free_all_loop:
 	beq tmpstr_free_all_reset
 
 	lda $00, x
-	beq !+
+	beq @1
 
 	sta DSCPNT+0
 	lda $01, x	
@@ -27,10 +27,10 @@ tmpstr_free_all_loop:
 	lda $02, x	
 	sta DSCPNT+2
 
-	phx_trash_a
+	+phx_trash_a
 	jsr varstr_free_no_checks
-	plx_trash_a
-!:
+	+plx_trash_a
+@1:
 	inx
 	inx
 	inx

@@ -17,18 +17,18 @@ shift_mem_adapt_pointers:
 	lda memmove__src+0
 	sbc memmove__tmp
 	sta memmove__src+0
-	bcs !+
+	bcs @1
 	dec memmove__src+1
-!:
+@1:
 	; Adapt destination pointer
 
 	sec
 	lda memmove__dst+0
 	sbc memmove__tmp
 	sta memmove__dst+0
-	bcs !+
+	bcs @2
 	dec memmove__dst+1
-!:
+@2:
 	; Adapt data size
 
 	inc memmove__size+1

@@ -28,21 +28,21 @@ tk_pack:
 
 	; Reuse the CPU stack - address $100 is used by 'tokenise_line.s'
 
-	.label tk__len_unpacked = $101 ; length of unpacked data; it could replace 'tk__nibble_flag', but at the cost of code size/performance
-	.label tk__shorten_bits = $102 ; 2 bytes for quick shortening of packed candidate
-	.label tk__nibble_flag  = $104 ; $00 = start from new byte, $FF = start from high nibble
-	.label tk__byte_offset  = $105 ; offset of the current byte (to place new data) in tk__packed
+	!addr tk__len_unpacked = $101 ; length of unpacked data; it could replace 'tk__nibble_flag', but at the cost of code size/performance
+	!addr tk__shorten_bits = $102 ; 2 bytes for quick shortening of packed candidate
+	!addr tk__nibble_flag  = $104 ; $00 = start from new byte, $FF = start from high nibble
+	!addr tk__byte_offset  = $105 ; offset of the current byte (to place new data) in tk__packed
 
-	.label tk__packed       = $106 ; packed candidate, 25 bytes is enough for worst case - a 16 byte keyword
+	!addr tk__packed       = $106 ; packed candidate, 25 bytes is enough for worst case - a 16 byte keyword
 
 	; Initialize variables
 
 	lda #$00
 	ldy #($04 + 25)                    ; initialize 5 bytes of data + 25 bytes of space for packing
-!:
+@1:
 	sta tk__len_unpacked, y
 	dey
-	bpl !-
+	bpl @1
 
 	; FALLTROUGH
 
@@ -62,29 +62,29 @@ tk_pack_loop:
 	; Keywords should not contain digits, colons, or semicolons
 
 	cmp #$30
-	bcc !+                             ; branch if below '0'
+	bcc @2                             ; branch if below '0'
 	cmp #$3C
 	bcc tk_pack_done                   ; branch if below '<'
-!:
+@2:
 	; Try to find a nibble to encode the character
 
 	ldy #$0E
-!:
+@3:
 	cmp packed_as_1n-1, y 
 	beq tk_pack_1n
 
 	dey
-	bne !-
+	bne @3
 
 	; Try to find a 3-nibble sequence to encode the character (1st nibble is always 0xF in this case)
 
 	ldy #TK__PACKED_AS_3N
-!:
+@4:
 	cmp packed_as_3n-1, y 
 	beq tk_pack_3n
 
 	dey
-	bne !-
+	bne @4
 
 	; If it is not on the list, it cannot be a part of token - quit
 
@@ -142,14 +142,14 @@ tk_pack_loop_next:
 
 	lda tk__len_unpacked
 	cmp #TK__MAX_KEYWORD_LEN
-	beq !+                             ; if max length reached - quit
+	beq @5                             ; if max length reached - quit
 
 	; Check for characters that can only end the keyword
 
 	lda BUF-1, x
 	cmp #$41
 	bcs tk_pack_loop
-!:
+@5:
 	rts
 
 tk_pack_1n_new_byte:
@@ -174,7 +174,7 @@ tk_pack_3n:
 
 	; Store 1st nibble (alwys 0xF) in the high nibble of the current byte
 
-	phy_trash_a
+	+phy_trash_a
 
 	lda #$F0
 	ldy tk__byte_offset

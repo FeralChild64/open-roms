@@ -7,23 +7,23 @@
 ; The general idea is to save space in the ROM.
 
 
-#if (ROM_LAYOUT_M65 && SEGMENT_BASIC_0)
+!ifdef SEGMENT_M65_BASIC_0 {
 
 print_packed_error:
 
-	jsr     map_BASIC_1
-	jsr_ind VB1__print_packed_error
-	jmp     map_NORMAL
+	jsr map_BASIC_1
+	jsr (VB1__print_packed_error)
+	jmp map_NORMAL
 
 print_packed_misc_str:
 
-	jsr     map_BASIC_1
-	jsr_ind VB1__print_packed_misc_str
-	jmp     map_NORMAL
+	jsr map_BASIC_1
+	jsr (VB1__print_packed_misc_str)
+	jmp map_NORMAL
 
-#else
+} else {
 
-#if !CONFIG_COMPRESSION_LVL_2
+!ifndef CONFIG_COMPRESSION_LVL_2 {
 
 print_packed_error:                    ; .X - error string index
 
@@ -36,8 +36,7 @@ print_packed_misc_str:                 ; .X - misc string index
 	lda #<packed_freq_misc
 	ldy #>packed_freq_misc
 	bne print_freq_packed_string       ; branch always
-
-#endif
+}
 
 print_packed_keyword_01:               ; .X - token number
 
@@ -45,25 +44,23 @@ print_packed_keyword_01:               ; .X - token number
 	ldy #>packed_freq_keywords_01
 	bne print_freq_packed_string       ; branch always
 
-#if !HAS_SMALL_BASIC
+!ifndef HAS_SMALL_BASIC {
 
 print_packed_keyword_02:               ; .X - token number
 
 	lda #<packed_freq_keywords_02
 	ldy #>packed_freq_keywords_02
 	bne print_freq_packed_string       ; branch always
+}
 
-#endif
-
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 print_packed_keyword_03:               ; .X - token number
 
 	lda #<packed_freq_keywords_03
 	ldy #>packed_freq_keywords_03
 	bne print_freq_packed_string       ; branch always
-
-#endif
+}
 
 print_packed_keyword_V2:               ; .X - token number
 
@@ -128,7 +125,7 @@ print_freq_packed_string_nibble_hi:
 
 	tax
 	lda packed_as_1n-1, x
-	jmp_8 !+
+	+bra print_freq_packed_string_3n_single_cont
 
 print_freq_packed_string_3n_single:
 
@@ -138,7 +135,11 @@ print_freq_packed_string_3n_single:
 	lda (FRESPC), y
 	tax
 	lda packed_as_3n-1, x
-!:
+
+	; FALLTROUGH
+
+print_freq_packed_string_3n_single_cont:
+
 	jsr JCHROUT                        ; preserves .Y
 
 	; Advance to next nibble
@@ -176,4 +177,4 @@ print_freq_packed_string_end:
 	rts
 
 
-#endif ; ROM layout
+} ; ROM layout

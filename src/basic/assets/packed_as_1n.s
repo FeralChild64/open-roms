@@ -6,4 +6,4 @@
 
 packed_as_1n:
 
-	put_packed_as_1n()
+	+PUT_PACKED_AS_1N

@@ -12,7 +12,7 @@ shift_txt_up:
 	
 	; Last byte of source is VARTAB-1
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 
 	sec
 	lda VARTAB+0
@@ -22,15 +22,14 @@ shift_txt_up:
 	sbc #$00
 	sta memmove__src+1	
 
-#else ; HAS_OPCODES_65CE02
+} else { ; HAS_OPCODES_65CE02
 
 	lda VARTAB+0
 	sta memmove__src+0
 	lda VARTAB+1
 	sta memmove__src+1
 	dew memmove__src
-
-#endif
+}
 
 	; Last byte of destination is memmove__src + .X
 

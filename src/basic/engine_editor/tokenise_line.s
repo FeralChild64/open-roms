@@ -13,18 +13,18 @@
 
 tokenise_line:
 
-#if (ROM_LAYOUT_M65 && SEGMENT_BASIC_0)
+!ifdef SEGMENT_M65_BASIC_0 {
 
-	jsr     map_BASIC_1
-	jsr_ind VB1__tokenise_line
-	jmp     map_NORMAL
+	jsr map_BASIC_1
+	jsr (VB1__tokenise_line)
+	jmp map_NORMAL
 
-#else
+} else {
 
 	; Reuse the CPU stack - addresses above $100 are used by 'tk_pack.s'
 
-	.label tk__offset       = $100               ; offset into string
-	.label tk__length       = __tokenise_work1   ; length of the raw string
+	!addr tk__offset       = $100               ; offset into string
+	!addr tk__length       = __tokenise_work1   ; length of the raw string
 
 	; Initialize variables
 
@@ -64,7 +64,7 @@ tokenise_line_loop:
 	; Try to tokenise
 
 	jsr tk_pack
-!:
+@1:
 	lda tk__len_unpacked
 	beq tokenise_line_char                       ; branch if attempt to tokenise failed
 
@@ -88,7 +88,7 @@ tokenise_line_loop:
 	jsr tk_search
 	bcc tokenise_line_keyword_01                 ; branch if keyword identified
 
-#if !HAS_SMALL_BASIC
+!ifndef HAS_SMALL_BASIC {
 
 	lda #<packed_freq_keywords_02
 	sta FRESPC+0
@@ -97,10 +97,9 @@ tokenise_line_loop:
 
 	jsr tk_search
 	bcc tokenise_line_keyword_02                 ; branch if keyword identified
+}
 
-#endif
-
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	lda #<packed_freq_keywords_03
 	sta FRESPC+0
@@ -109,14 +108,13 @@ tokenise_line_loop:
 
 	jsr tk_search
 	bcc tokenise_line_keyword_03                 ; branch if keyword identified
-
-#endif
+}
 
 	; Shorten packed keyword candidate and try again
 
 	jsr tk_shorten
 
-	jmp_8 !-
+	+bra @1
 
 tokenise_line_keyword_V2:
 
@@ -166,7 +164,7 @@ tokenise_line_quote:
 tokenise_line_pi:
 
 	lda #$FF                                     ; token for PI
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 
@@ -185,31 +183,29 @@ tokenise_line_char:
 
 ; Support for extended keyword lists
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 tokenise_line_keyword_03:
 
 	; Store the token list index
 
 	lda #$03
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
+}
 
-#endif
-
-#if !HAS_SMALL_BASIC
+!ifndef HAS_SMALL_BASIC {
 
 tokenise_line_keyword_02:
 
 	; Store the token list index
 
 	lda #$02
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
-
-#endif
+}
 
 tokenise_line_keyword_01:
 
@@ -233,4 +229,4 @@ tokenise_line_keyword_01:
 	jsr tk_cut_away_2
 	jmp tokenise_line_loop
 
-#endif ; ROM layout
+} ; ROM layout

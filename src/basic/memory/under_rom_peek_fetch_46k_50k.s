@@ -5,7 +5,7 @@
 ; This has to go $E000 or above - as the routines below bank out the main BASIC ROM!
 
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 
 peek_under_roms_via_TXTPTR:
@@ -44,7 +44,7 @@ peek_under_roms_via_OLDTXT:
 	; Retrieve value from under ROMs
 
 	lda (OLDTXT), y
-	jmp_8 remap_BASIC_preserve_A
+	+bra remap_BASIC_preserve_A
 
 peek_under_roms_via_VARPNT:
 
@@ -56,7 +56,7 @@ peek_under_roms_via_VARPNT:
 	; Retrieve value from under ROMs
 
 	lda (VARPNT), y
-	jmp_8 remap_BASIC_preserve_A
+	+bra remap_BASIC_preserve_A
 
 peek_under_roms_via_FAC1_PLUS_1:
 
@@ -68,10 +68,9 @@ peek_under_roms_via_FAC1_PLUS_1:
 	; Retrieve value from under ROMs
 
 	lda (__FAC1+1), y
-	jmp_8 remap_BASIC_preserve_A
+	+bra remap_BASIC_preserve_A
 
-#if ROM_LAYOUT_M65
-
+!ifdef CONFIG_MB_M65 {
 
 fetch_character:
 
@@ -89,7 +88,7 @@ fetch_character:
 
 	; Restore memory mapping
 
-	jmp_8 remap_BASIC_preserve_A
+	+bra remap_BASIC_preserve_A
 
 
 fetch_character_skip_spaces:
@@ -102,20 +101,16 @@ fetch_character_skip_spaces:
 	sta CPU_R6510
 
 	; Retrieve value from under ROMs, advance text pointer
-!:
+@1:
 	lda (TXTPTR), y
 	inw TXTPTR
 
 	; Skip space characters
 
 	cmp #$20
-	beq !-
+	beq @1
 
 	; Restore memory mapping
 
-	jmp_8 remap_BASIC_preserve_A
-
-
-#endif
-
-#endif
+	+bra remap_BASIC_preserve_A
+} }
