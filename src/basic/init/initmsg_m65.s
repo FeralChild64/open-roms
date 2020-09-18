@@ -14,7 +14,7 @@ INITMSG:
 	; Display additional information, depending on the mode
 
 	jsr M65_MODEGET
-	bcc !+
+	bcc @1
 
 	; Legacy C64 compatibility mode
 
@@ -24,7 +24,7 @@ INITMSG:
 	jsr print_packed_misc_str
 
 	bra INITMSG_end
-!:
+@1:
 	; Native mode	
 
 	ldx #48

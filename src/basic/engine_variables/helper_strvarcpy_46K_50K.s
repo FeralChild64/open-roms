@@ -9,7 +9,7 @@
 ;
 
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 helper_strvarcpy:
 
@@ -29,12 +29,12 @@ helper_strvarcpy:
 	dey
 
 	; Copy the string content
-!:
+@1:
 	lda (__FAC1+1),y
 	sta (DSCPNT+1),y
 	iny
 	cpy __FAC1+0
-	bne !-
+	bne @1
 
 	; Restore default memory mapping
 
@@ -42,5 +42,4 @@ helper_strvarcpy:
 	sta CPU_R6510
 
 	rts
-
-#endif
+}

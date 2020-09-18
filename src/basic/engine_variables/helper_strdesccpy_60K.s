@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 helper_strdesccpy:
 
@@ -24,5 +24,4 @@ helper_strdesccpy:
 	sta DSCPNT+2
 
 	rts
-
-#endif
+}

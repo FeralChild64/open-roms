@@ -9,9 +9,9 @@ is_var_ST:
 
 	lda VARNAM+1
 	cmp #$54       ; 'T'
-	bne !+
+	bne @1
 
 	lda VARNAM+0
 	cmp #$53       ; 'S'
-!:
+@1:
 	rts

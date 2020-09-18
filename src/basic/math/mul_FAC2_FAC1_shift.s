@@ -13,9 +13,9 @@ mul_FAC2_FAC1_shift:
 	php
 	clc
 	lda RESHO+4
-	bpl !+
+	bpl @1
 	sec
-!:
+@1:
 	; Copy bytes
 
 	lda RESHO+3
@@ -28,7 +28,7 @@ mul_FAC2_FAC1_shift:
 	sta RESHO+1
 	lda #$00
 	sta RESHO+0
-	bcc !+
+	bcc @2
 
 	; Perform rounding
 
@@ -41,6 +41,6 @@ mul_FAC2_FAC1_shift:
 	inc RESHO+1
 	bne !+
 	inc RESHO+0
-!:
+@2:
 	plp
 	rts

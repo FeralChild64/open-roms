@@ -251,7 +251,7 @@ execute_line:
 	ldx #<OLDTXT
 	jsr peek_under_roms
 } else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
-	jsr peek_under_roms_via_OLDTXT ; XXX speed-optimize - combine whole flow into one routine
+	jsr peek_under_roms_via_OLDTXT ; XXX! speed-optimize - combine whole flow into one routine
 } else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
 }

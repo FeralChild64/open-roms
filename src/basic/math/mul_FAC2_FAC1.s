@@ -34,10 +34,10 @@ mul_FAC2_FAC1:
 	beq mul_FAC2_FAC1_done
 	
 	lda FAC2_exponent
-	bne !+
+	bne @1
 	sta FAC1_exponent
 	beq mul_FAC2_FAC1_done
-!:
+@1:
 	; Multiply signs
 	
 	lda FAC1_sign
@@ -57,14 +57,14 @@ mul_FAC2_FAC1:
 	lda RESHO+0
 	sbc #$80                           ; we need to correct double BIAS
 	sta RESHO+0
-	bcs !+
+	bcs @2
 	lda RESHO+1
 	sbc #$00
 	bcc set_FAC1_zero
 	sta RESHO+1
-!:
+@2:
 	lda RESHO+1
-	bne_16 set_FAC1_max                ; overflow
+	+bne set_FAC1_max                ; overflow
 
 	lda RESHO+0
 	sta FAC1_exponent
@@ -79,33 +79,33 @@ mul_FAC2_FAC1:
 	lda FACOV
 	jsr mul_FAC2_FAC1_by_A
 	jsr mul_FAC2_FAC1_shift
-	bcc !+
+	bcc @3
 	inc RESHO+0
-!:
+@3:
 	lda FAC1_mantissa+3
 	jsr mul_FAC2_FAC1_by_A
 	jsr mul_FAC2_FAC1_shift
-	bcc !+
+	bcc @4
 	inc RESHO+0
-!:
+@4:
 	lda FAC1_mantissa+2
 	jsr mul_FAC2_FAC1_by_A
 	jsr mul_FAC2_FAC1_shift
-	bcc !+
+	bcc @5
 	inc RESHO+0
-!:
+@5:
 	lda FAC1_mantissa+1
 	jsr mul_FAC2_FAC1_by_A
 	jsr mul_FAC2_FAC1_shift
-	bcc !+
+	bcc @6
 	inc RESHO+0
-!:
+@6:
 	lda FAC1_mantissa+0
 	jsr mul_FAC2_FAC1_by_A
 	jsr mul_FAC2_FAC1_shift
-	bcc !+
+	bcc @7
 	inc RESHO+0
-!:
+@7:
 	; Copy RESHO to FAC1 mantissa
 
 	lda RESHO+4
@@ -124,7 +124,7 @@ mul_FAC2_FAC1:
 	lda FAC1_exponent
 	clc
 	adc #$08
-	bcs_16 set_FAC1_max                ; branch if overflow
+	+bcs set_FAC1_max                ; branch if overflow
 	sta FAC1_exponent
 	jmp normal_FAC1
 
@@ -143,13 +143,13 @@ mul_FAC2_FAC1_by_A:
 	txa
 	adc RESHO+3
 	sta RESHO+3
-	bcc !+
+	bcc @8
 	inc RESHO+2
-	bne !+
+	bne @8
 	inc RESHO+1
-	bne !+
+	bne @8
 	inc RESHO+0
-!:
+@8:
 	; Multiply FAC2_mantissa+2
 
 	lda FAC2_mantissa+2
@@ -160,11 +160,11 @@ mul_FAC2_FAC1_by_A:
 	txa
 	adc RESHO+2
 	sta RESHO+2
-	bcc !+
+	bcc @9
 	inc RESHO+1
-	bne !+
+	bne @9
 	inc RESHO+0
-!:
+@9:
 	; Multiply FAC2_mantissa+1
 
 	lda FAC2_mantissa+1
@@ -175,9 +175,9 @@ mul_FAC2_FAC1_by_A:
 	txa
 	adc RESHO+1
 	sta RESHO+1
-	bcc !+
+	bcc @10
 	inc RESHO+0
-!:
+@10:
 	; Multiply FAC2_mantissa+0
 
 	lda FAC2_mantissa+0

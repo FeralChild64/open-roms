@@ -21,6 +21,7 @@ fetch_variable:
 	+bmi fetch_variable_arr
 
 	; Handle special variables - TI$, TI, ST
+	; XXX! checks below can probably be combined - speed optimized
 
 	jsr is_var_TI_string
 	+beq fetch_variable_TI_string

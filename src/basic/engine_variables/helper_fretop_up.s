@@ -13,7 +13,7 @@ helper_FRETOP_up:                    ; DSCPNT+0 - bytes to increment FRETO
 	lda FRETOP+0
 	adc DSCPNT+0
 	sta FRETOP+0
-	bcc !+
+	bcc @1
 	inc FRETOP+1
-!:
+@1:
 	rts

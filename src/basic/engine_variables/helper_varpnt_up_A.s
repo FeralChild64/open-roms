@@ -12,7 +12,7 @@ helper_VARPNT_up_A:                  ; .A - bytes to increment VARPNT
 	clc
 	adc VARPNT+0
 	sta VARPNT+0
-	bcc !+
+	bcc @1
 	inc VARPNT+1
-!:
+@1:
 	rts

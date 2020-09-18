@@ -4,7 +4,7 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 
-!if CONFIG_COMPRESSION_LVL_2 {
+!ifdef CONFIG_COMPRESSION_LVL_2 {
 
 packed_dictionary:
 

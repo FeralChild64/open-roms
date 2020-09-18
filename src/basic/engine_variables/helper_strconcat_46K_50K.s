@@ -9,7 +9,7 @@
 ;
 
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 helper_strconcat:
 
@@ -21,12 +21,12 @@ helper_strconcat:
 	; Copy data from the first string
 
 	ldy #$00
-!:
+@1:
 	lda (__FAC2+1),y
 	sta (INDEX),y
 	iny
 	cpy __FAC2+0
-	bne !-
+	bne @1
 
 	; Increase INDEX pointer by the size of the 1st string
 
@@ -36,12 +36,12 @@ helper_strconcat:
 	; Copy data from the second string
 
 	ldy #$00
-!:
+@2:
 	lda (__FAC1+1),y
 	sta (INDEX),y
 	iny
 	cpy __FAC1+0
-	bne !-
+	bne @2
 
 	; Restore default memory mapping
 
@@ -49,5 +49,4 @@ helper_strconcat:
 	sta CPU_R6510
 
 	rts
-
-#endif
+}

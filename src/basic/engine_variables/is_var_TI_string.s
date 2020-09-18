@@ -9,9 +9,9 @@ is_var_TI_string:
 
 	lda VARNAM+1
 	cmp #$C9       ; 'I...$'
-	bne !+
+	bne @1
 
 	lda VARNAM+0
 	cmp #$54       ; 'T'
-!:
+@1:
 	rts

@@ -12,13 +12,13 @@ initmsg_real:
 	lda #147
 	jsr JCHROUT
 
-#if CONFIG_BANNER_SIMPLE
+!ifdef CONFIG_BANNER_SIMPLE {
 
 	lda #<startup_banner
 	ldy #>startup_banner
 	jsr STROUT
 
-#if !CONFIG_BRAND_CUSTOM_BUILD
+!ifndef CONFIG_BRAND_CUSTOM_BUILD {
 
 	ldx #$01
 	ldy #$04
@@ -28,32 +28,32 @@ initmsg_real:
 	ldy #>rom_revision_basic_string
 	jsr STROUT
 
-#endif ; no CONFIG_BRAND_CUSTOM_BUILD
+} ; no CONFIG_BRAND_CUSTOM_BUILD
 
-#if !CONFIG_BRAND_CUSTOM_BUILD
+!ifndef CONFIG_BRAND_CUSTOM_BUILD {
 	ldx #$03
-#else
+} else {
 	ldx #$02
-#endif
+}
 	ldy #$04
 	jsr plot_set
 
 	jsr initmsg_bytes_free
 
-#if !CONFIG_BRAND_CUSTOM_BUILD
+!ifndef CONFIG_BRAND_CUSTOM_BUILD {
 	ldx #$06
-#else
+} else {
 	ldx #$05
-#endif
+}
 	ldy #$00
-#if CONFIG_SHOW_FEATURES
+!ifdef CONFIG_SHOW_FEATURES {
 	jsr plot_set
 	jmp print_features
-#else
+} else {
 	jmp plot_set
-#endif
+}
 
-#elif CONFIG_BANNER_FANCY
+} else if CONFIG_BANNER_FANCY {
 	
 	lda #<rainbow_logo
 	ldy #>rainbow_logo
@@ -67,7 +67,7 @@ initmsg_real:
 	ldy #>startup_banner
 	jsr STROUT
 
-#if !CONFIG_BRAND_CUSTOM_BUILD
+!ifndef CONFIG_BRAND_CUSTOM_BUILD {
 
 	ldx #$01
 	ldy #$0A
@@ -80,29 +80,29 @@ initmsg_real:
 	ldy #>rom_revision_basic_string
 	jsr STROUT
 
-#endif ; no CONFIG_BRAND_CUSTOM_BUILD
+} ; no CONFIG_BRAND_CUSTOM_BUILD
 
-#if !CONFIG_BRAND_CUSTOM_BUILD
+!ifndef CONFIG_BRAND_CUSTOM_BUILD {
 	ldx #$03
-#else
+} else {
 	ldx #$02
-#endif
+}
 	ldy #$0A
 	jsr plot_set
 
 	jsr initmsg_bytes_free
 
-#if !CONFIG_BRAND_CUSTOM_BUILD
+!ifndef CONFIG_BRAND_CUSTOM_BUILD {
 	ldx #$06
-#else
+} else {
 	ldx #$05
-#endif
+}
 	ldy #$00
-#if CONFIG_SHOW_FEATURES
+!ifdef CONFIG_SHOW_FEATURES {
 	jsr plot_set
 	jmp print_features
-#else
+} else {
 	jmp plot_set
-#endif
+}
 
-#endif
+}

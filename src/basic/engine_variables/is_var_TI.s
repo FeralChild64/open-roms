@@ -9,9 +9,9 @@ is_var_TI:
 
 	lda VARNAM+1
 	cmp #$49       ; 'I'
-	bne !+
+	bne @1
 
 	lda VARNAM+0
 	cmp #$54       ; 'T'
-!:
+@1:
 	rts

@@ -24,7 +24,7 @@ muldiv_RESHO_01_add_A:
 	clc
 	adc RESHO+0
 	sta RESHO+0
-	bcc !+
+	bcc @1
 	inc RESHO+1
-!:
+@1:
 	rts

@@ -9,7 +9,7 @@
 ;
 
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 helper_strdesccpy:
 
@@ -36,5 +36,4 @@ helper_strdesccpy:
 	sta CPU_R6510
 
 	rts
-
-#endif
+}

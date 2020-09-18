@@ -4,7 +4,7 @@
 
 ; This has to go $E000 or above - routines below bank out the main BASIC ROM!
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 helper_gc_set_memmove_src:
 
@@ -23,7 +23,7 @@ helper_gc_set_memmove_src:
 
 	; Restore default memory mapping
 
-	jmp_8 helper_gc_misc_end
+	+bra helper_gc_misc_end
 
 helper_gc_increase_oldtxt:
 
@@ -50,5 +50,4 @@ helper_gc_misc_end:
 	; Restore default memory mapping
 
 	jmp remap_BASIC
-
-#endif
+}

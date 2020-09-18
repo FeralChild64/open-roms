@@ -6,7 +6,7 @@ follow_link_to_next_line:
 
 	ldy #0
 
-	; XXX for models 46K/50K provide optimized version
+	; XXX! for models 46K/50K provide optimized version
 	
 !ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT+0

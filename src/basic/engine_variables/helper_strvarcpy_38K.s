@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_MEMORY_MODEL_38K
+!ifdef CONFIG_MEMORY_MODEL_38K {
 
 helper_strvarcpy:
 
@@ -22,13 +22,12 @@ helper_strvarcpy:
 	dey
 
 	; .Y is now 0 - copy the content
-!:
+@1:
 	lda (__FAC1+1),y
 	sta (DSCPNT+1),y
 	iny
 	cpy __FAC1+0
-	bne !-
+	bne @1
 
 	rts
-
-#endif
+}

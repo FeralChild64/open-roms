@@ -7,7 +7,7 @@
 
 !macro panic @code {
 	; If case no panic screen is used, we can skip providing error codes within Kernal
-	!ifdef CONFIG_PANIC_SCREEN { lda @code }
+	!ifdef CONFIG_PANIC_SCREEN { lda #@code }
 	jmp ($E4B7)
 }
 

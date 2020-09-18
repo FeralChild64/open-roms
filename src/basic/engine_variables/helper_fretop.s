@@ -14,18 +14,18 @@ helper_FRETOP_down_A:                  ; .A - bytes to lower FRETOP, uses DSCPNT
 	lda FRETOP+0
 	sbc DSCPNT+0 
 	sta FRETOP+0
-	bcs !+
+	bcs @1
 	dec FRETOP+1
-!:
+@1:
 	; FALLTROUGH
 
 helper_FRETOP_check:                   ; check if FRETOP > STREND, Carry set if not
 
 	lda STREND+1
 	cmp FRETOP+1
-	beq !+
+	beq @2
 	rts
-!:
+@2:
 	lda STREND+0
 	cmp FRETOP+0
 	rts

@@ -7,7 +7,7 @@
 ;
 
 
-#if CONFIG_MEMORY_MODEL_38K
+!ifdef CONFIG_MEMORY_MODEL_38K {
 
 helper_strdesccpy:
 
@@ -22,5 +22,4 @@ helper_strdesccpy:
 	sta DSCPNT+2
 
 	rts
-
-#endif
+}

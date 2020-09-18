@@ -13,8 +13,8 @@ helper_load_fetch_devnum:
 	; Fetch the device number
 
 	jsr fetch_coma_uint8
-	bcs !+
+	bcs @1
 
 	sta FA
-!:
+@1:
 	rts

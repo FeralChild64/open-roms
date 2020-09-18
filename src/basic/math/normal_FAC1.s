@@ -60,9 +60,9 @@ normal_FAC1_by_byte:
 	lda FAC1_exponent
 	sec
 	sbc #$08
-	bcs !+
+	bcs @1
 	lda #$00
-!:
+@1:
 	sta FAC1_exponent
 	beq normal_FAC1_end                      ; branch if our float reached 0
 

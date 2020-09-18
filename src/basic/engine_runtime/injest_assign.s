@@ -11,6 +11,6 @@ injest_assign:
 
 	jsr fetch_character_skip_spaces
 	cmp #$B2                           ; assign operator character
-	bne_16 do_SYNTAX_error
+	+bne do_SYNTAX_error
 
 	rts

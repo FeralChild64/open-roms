@@ -9,13 +9,13 @@
 
 prepare_direct_execution:
 
-#if (ROM_LAYOUT_M65 && SEGMENT_BASIC_0)
+!ifdef SEGMENT_M65_BASIC_0 {
 
-	jsr     map_BASIC_1
-	jsr_ind VB1__prepare_direct_execution
-	jmp     map_NORMAL
+	jsr map_BASIC_1
+	jsr (VB1__prepare_direct_execution)
+	jmp map_NORMAL
 
-#else
+} else {
 
 	; Setup pointer to the statement
 	lda #<BUF
@@ -35,4 +35,4 @@ prepare_direct_execution:
 
 	rts
 
-#endif ; ROM layout
+} ; ROM layout

@@ -7,14 +7,13 @@
 ; Helper table for 'MEM' command - list of strings to print
 ;
 
-#if !HAS_SMALL_BASIC
+!ifndef HAS_SMALL_BASIC {
 
 helper_mem_tab_str:
 
-	.byte IDX__STR_MEM_FREE
-	.byte IDX__STR_MEM_STRS
-	.byte IDX__STR_MEM_ARRS
-	.byte IDX__STR_MEM_VARS
-	.byte IDX__STR_MEM_TEXT
-
-#endif
+	!byte IDX__STR_MEM_FREE
+	!byte IDX__STR_MEM_STRS
+	!byte IDX__STR_MEM_ARRS
+	!byte IDX__STR_MEM_VARS
+	!byte IDX__STR_MEM_TEXT
+}

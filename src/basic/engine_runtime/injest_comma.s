@@ -15,11 +15,11 @@ injest_comma:
 	
 	; Not found
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 
 	sec
 	rts

@@ -7,7 +7,7 @@
 ; Return pointer in BASIC memory space status in Z flag
 
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 is_line_pointer_null:
 
@@ -32,5 +32,4 @@ remap_BASIC_preserve_P:
 	plp
 
 	rts
-
-#endif
+}

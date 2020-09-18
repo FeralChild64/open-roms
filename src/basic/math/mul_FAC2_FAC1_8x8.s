@@ -24,7 +24,7 @@ mul_FAC2_FAC1_8x8:
 
 	; Multiply INDEX+2 * INDEX+3
 
-#if !HAS_SMALL_BASIC
+!ifndef HAS_SMALL_BASIC {
 
 	; Fast multiplication routine
 
@@ -32,44 +32,44 @@ mul_FAC2_FAC1_8x8:
 
 	dec INDEX+3	; decrement because we will be adding with carry set for speed (an extra one)
 	ror INDEX+2
-	bcc !+
+	bcc @1
 	adc INDEX+3
-!:
+@1:
 	ror
 	ror INDEX+2
-	bcc !+
+	bcc @2
 	adc INDEX+3
-!:
+@2:
 	ror
 	ror INDEX+2
-	bcc !+
+	bcc @3
 	adc INDEX+3
-!:
+@3:
 	ror
 	ror INDEX+2
-	bcc !+
+	bcc @4
 	adc INDEX+3
-!:
+@4:
 	ror
 	ror INDEX+2
-	bcc !+
+	bcc @5
 	adc INDEX+3
-!:
+@5:
 	ror
 	ror INDEX+2
-	bcc !+
+	bcc @6
 	adc INDEX+3
-!:
+@6:
 	ror
 	ror INDEX+2
-	bcc !+
+	bcc @7
 	adc INDEX+3
-!:
+@7:
 	ror
 	ror INDEX+2
-	bcc !+
+	bcc @8
 	adc INDEX+3
-!:
+@8:
 	ror
 	ror INDEX+2
 	inc INDEX+3
@@ -77,22 +77,22 @@ mul_FAC2_FAC1_8x8:
 	tax
 	lda INDEX+2
 
-#else
+} else {
 
 	; Small multiplication routine
 
 	lda #$00
 	ldx #$08
 	clc
-!:
-	bcc !+
+@9:
+	bcc @10
 	clc
 	adc INDEX+3
-!:
+@10:
 	ror
 	ror INDEX+2
 	dex
-	bpl !--
+	bpl @9
  	ldx INDEX+2
 
  	; Reverse return byte order, to match fast version
@@ -101,8 +101,7 @@ mul_FAC2_FAC1_8x8:
  	stx INDEX+2
  	tax
  	lda INDEX+2 
-
-#endif
+}
 
 	clc
 	rts

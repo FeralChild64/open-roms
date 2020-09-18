@@ -29,30 +29,30 @@ initmsg_bytes_free:
 	sec			; Read, not write value
 	jsr JMEMTOP
 	cpx #$80
-	beq !+
-#if CONFIG_MEMORY_MODEL_60K
+	beq @1
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	lda #>$F7FF
-#elif CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_50K {
 	lda #>$D000	
-#elif CONFIG_MEMORY_MODEL_46K
+} else ifdef CONFIG_MEMORY_MODEL_46K {
 	lda #>$C000
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda #>$A000
-#endif
-	skip_2_bytes_trash_nvz
-!:	
+}
+	+skip_2_bytes_trash_nvz
+@1:
 	lda #>$8000
 	sta MEMSIZ+1
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	cpx #$80
-	beq !+
+	beq @2
 	lda #$FF
-	skip_2_bytes_trash_nvz
-!:
+	+skip_2_bytes_trash_nvz
+@2:
 	lda #<$00
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	lda #<$00
-#endif
+}
 	sta MEMSIZ+0
 
 	; Print number of bytes free

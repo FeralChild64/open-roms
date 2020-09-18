@@ -12,14 +12,14 @@ helper_load_fetch_filename:
 	; Check if end of statement
 
 	jsr is_end_of_statement
-	bcs !+
+	bcs @1
 
 	; Call the expression parser, make sure it returned a string
 
 	jsr FRMEVL
 
 	lda VALTYP
-	bpl_16 do_SYNTAX_error
+	+bpl do_SYNTAX_error
 
 	; Set the filename address and pointer
 
@@ -37,5 +37,5 @@ helper_load_fetch_filename:
 
 	; FALLTROUGH
 
-!:
+@1:
 	rts

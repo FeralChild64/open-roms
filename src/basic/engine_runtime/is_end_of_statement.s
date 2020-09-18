@@ -12,28 +12,28 @@ is_end_of_statement:
 	jsr fetch_character_skip_spaces
 
 	cmp #$00
-	beq !+
+	beq @1
 	cmp #$3A
-	beq !+
+	beq @1
 
 	; Not end of statement
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 
 	clc
 	rts
-!:
+@1:
 	; End of statement
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 
 	sec
 	rts

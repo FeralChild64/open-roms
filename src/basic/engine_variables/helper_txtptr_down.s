@@ -15,7 +15,7 @@ helper_TXTPTR_down_A:                  ; .A - bytes to decrease TXTPTR, uses DSC
 	lda TXTPTR+0
 	sbc DSCPNT+0 
 	sta TXTPTR+0
-	bcs !+
+	bcs @1
 	dec TXTPTR+1
-!:
+@1:
 	rts

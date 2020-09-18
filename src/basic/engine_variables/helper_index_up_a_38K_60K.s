@@ -6,7 +6,7 @@
 ; Helper routine, used in several places
 ;
 
-#if CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_60K
+!ifndef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 helper_INDEX_up_A:                     ; .A - bytes to increase INDEX, uses DSCPNT+0
 
@@ -16,9 +16,8 @@ helper_INDEX_up_A:                     ; .A - bytes to increase INDEX, uses DSCP
 	lda INDEX+0
 	adc DSCPNT+0 
 	sta INDEX+0
-	bcc !+
+	bcc @1
 	dec INDEX+1
-!:
+@1:
 	rts
-
-#endif
+}

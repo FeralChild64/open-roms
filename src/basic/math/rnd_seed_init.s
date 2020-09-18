@@ -23,9 +23,9 @@ rnd_seed_init:
 
 	lda TIME+2                         ; byte from jiffy counter might be useful too
 	eor SID_RANDOM                     ; not sure if SID set correctly, but it will not hurt
-#if CONFIG_MB_M65
+!ifdef CONFIG_MB_M65 {
 	eor VIC_XPOS                       ; not sure if VIC-IV visible, but it will not hurt
-#endif
+}
 	sta RNDX+2
 
 	; RNDX+0 will be overwritten by generator

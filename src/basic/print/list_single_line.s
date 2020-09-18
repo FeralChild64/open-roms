@@ -6,40 +6,40 @@
 
 list_single_line:
 
-#if (ROM_LAYOUT_M65 && SEGMENT_BASIC_0)
+!ifdef SEGMENT_M65_BASIC_0 {
 
-	jsr     map_BASIC_1
-	jsr_ind VB1__list_single_line
-	jmp     map_NORMAL
+	jsr map_BASIC_1
+	jsr (VB1__list_single_line)
+	jmp map_NORMAL
 
-#else
+} else {
 
 	; Print line number - in a new line
 	jsr print_return
 	ldy #3
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr peek_via_OLDTXT
-#elif CONFIG_MEMORY_MODEL_60K
+} else ifdef CONFIG_MEMORY_MODEL_60K {
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_OLDTXT
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
 	pha
 	dey
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr peek_via_OLDTXT
-#elif CONFIG_MEMORY_MODEL_60K
+} else ifdef CONFIG_MEMORY_MODEL_60K {
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_OLDTXT
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
 	tax
 	pla
@@ -55,22 +55,22 @@ list_single_line:
 
 list_print_loop:
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr peek_via_OLDTXT
-#elif CONFIG_MEMORY_MODEL_60K
+} else ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT
 	jsr peek_under_roms
 	cmp #$00
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_OLDTXT
 	cmp #$00
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
-	bne !+
+	bne @1
 	rts                                          ; end of line
-!:
+@1:
 	cmp #$22
 	bne list_not_quote
 	lda QTSW
@@ -91,14 +91,14 @@ list_not_quote:
 	; Check for extended BASIC tokens
 	cmp #$01
 	beq list_display_token_01
-#if !HAS_SMALL_BASIC
+!ifndef HAS_SMALL_BASIC {
 	cmp #$02
 	beq list_display_token_02
-#endif
-#if ROM_LAYOUT_M65
+}
+!ifdef CONFIG_MB_M65 {
 	cmp #$03
 	beq list_display_token_03
-#endif
+}
 
 	; Check for literals
 	cmp #$7F
@@ -111,7 +111,7 @@ list_display_token_V2:
 	; Save registers
 	tax
 	pha
-	phy_trash_a
+	+phy_trash_a
 
 	; Subtract $80 from token to get offset in token list
 	txa
@@ -130,7 +130,7 @@ list_display_token_V2:
 list_token_displayed:
 
 	; Restore registers
-	ply_trash_a
+	+ply_trash_a
 	pla
 
 	cmp #$8F
@@ -168,21 +168,25 @@ list_is_literal:
 
 list_is_unknown:
 
-	phy_trash_a
+	+phy_trash_a
 	lda #<str_rev_question
 	ldy #>str_rev_question
 	jsr STROUT
-	ply_trash_a
+	+ply_trash_a
 
-	jmp_8 !+
+	+bra list_is_literal_known_cont
 
 list_is_literal_known:
 
 	pla
 	jsr JCHROUT
-!:
+
+	; FALLTROUGH
+
+list_is_literal_known_cont:
+
 	iny
-	bne_16 list_print_loop
+	+bne list_print_loop
 	
 	rts                                          ; end of line
 
@@ -191,7 +195,7 @@ list_display_unknown_token:
 	pla
 	pla
 
-	jmp_8 list_is_unknown
+	+bra list_is_unknown
 
 list_display_token_01:
 
@@ -203,19 +207,19 @@ list_display_token_01:
 	bcs list_is_unknown
 
 	; Now ask for it to be printed
-	phy_trash_a
+	+phy_trash_a
 	jsr print_packed_keyword_01
 
 	; FALLTROUGH
 
 list_display_token_ext_done:
 
-	ply_trash_a
+	+ply_trash_a
 
 	; Next iteration
-	jmp_8 list_not_rem
+	+bra list_not_rem
 
-#if !HAS_SMALL_BASIC
+!ifndef HAS_SMALL_BASIC {
 
 list_display_token_02:
 
@@ -227,13 +231,12 @@ list_display_token_02:
 	bcs list_is_unknown
 
 	; Now ask for it to be printed
-	phy_trash_a
+	+phy_trash_a
 	jsr print_packed_keyword_02
-	jmp_8 list_display_token_ext_done
+	+bra list_display_token_ext_done
+}
 
-#endif
-
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 list_display_token_03:
 
@@ -245,29 +248,28 @@ list_display_token_03:
 	bcs list_is_unknown
 
 	; Now ask for it to be printed
-	phy_trash_a
+	+phy_trash_a
 	jsr print_packed_keyword_03
-	jmp_8 list_display_token_ext_done
-
-#endif
+	+bra list_display_token_ext_done
+}
 
 list_fetch_subtoken:
 
 	; Fetch the sub-token
 
 	iny
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 	jsr peek_via_OLDTXT
-#elif CONFIG_MEMORY_MODEL_60K
+} else ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT
 	jsr peek_under_roms
 	cmp #$00
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_OLDTXT
 	cmp #$00
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 	
 	; Subtract $1 from token to get offset in token list
 	tax
@@ -281,5 +283,4 @@ list_fetch_subtoken_fail:
 	dey
 	jmp list_display_unknown_token
 
-
-#endif ; ROM layout
+} ; ROM layout
