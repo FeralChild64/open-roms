@@ -12,15 +12,15 @@ helper_bload_fetch_filename:
 	; Fetch the file name
 
 	jsr helper_load_fetch_filename
-	bcc !+
+	bcc @1
 
 	; No filename supplied - this should only be allowed for tape (device number below 8)
 
 	lda FA
 	and #%11111000
-	bne_16 do_MISSING_FILENAME_error
+	+bne do_MISSING_FILENAME_error
 
 	lda #$00
 	sta FNLEN
-!:
+@1:
 	rts

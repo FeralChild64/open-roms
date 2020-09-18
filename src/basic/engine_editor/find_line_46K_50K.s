@@ -7,7 +7,7 @@
 ; Find the BASIC line with number in LINNUM
 
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 find_line_from_start:
 
@@ -34,10 +34,10 @@ find_line_from_current:
 	lda (OLDTXT),y
 
 	cmp LINNUM+1
-	beq !+
+	beq @1
 	bcs remap_BASIC_sec_rts            ; search failed if line number too high
 	bne find_line_next
-!:
+@1:
 	; Fetch the low byte of line number and compare
 
 	dey
@@ -66,7 +66,7 @@ find_line_next:
 	pla
 	sta OLDTXT+0
 
-	jmp_8 find_line_from_current
+	+bra find_line_from_current
 
 line_pointer_null_check:               ; reused by 'is_line_pointer_null'
 
@@ -74,12 +74,12 @@ line_pointer_null_check:               ; reused by 'is_line_pointer_null'
 
 	ldy #$01                           ; for non-NULL pointer, high byte is almost certainly not NULL
 	lda (OLDTXT),y
-	bne !+
+	bne @2
 	
 	dey
 	lda (OLDTXT),y
-	bne !+
-!:
+	bne @2
+@2:
 	rts
 
 remap_BASIC_clc_rts:
@@ -97,5 +97,5 @@ remap_BASIC_sec_rts:
 
 	sec
 	rts
+}
 
-#endif

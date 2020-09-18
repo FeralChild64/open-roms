@@ -6,50 +6,48 @@
 ; Jumptable for BASIC commands with tokens prefixed by $01
 ;
 
+!ifdef CONFIG_MB_M65 {
 
-.const command_01_list = List().add(
+!set ITEM_00 = M65_SLOW
+!set ITEM_01 = M65_FAST
 
-#if CONFIG_MB_M65
-	M65_SLOW,
-	M65_FAST,
-#else
-	cmd_slow,
-	cmd_fast,
-#endif
+} else {
 
-	cmd_old,
+!set ITEM_00 = cmd_slow
+!set ITEM_01 = cmd_fast
+
+}
+
+!set ITEM_02 = cmd_old
 
 	; NOTE! These commands are temporarily placed here, they should be a part of list 02!
 
-	cmd_merge,
+!set ITEM_03 = cmd_merge
 
-	cmd_bload,
-	cmd_bsave,
-	cmd_bverify,
+!set ITEM_04 = cmd_bload
+!set ITEM_05 = cmd_bsave
+!set ITEM_06 = cmd_bverify
 
-	cmd_clear,
-	varstr_garbage_collect            ; cmd_dispose
-)
+!set ITEM_07 = cmd_clear
+!set ITEM_08 = varstr_garbage_collect            ; cmd_dispose
 
 
-#if !HAS_OPCODES_65C02
-
+!ifndef HAS_OPCODES_65C02 {
 
 command_01_jumptable_lo:
 
-	put_jumptable_lo(command_01_list)
+	!byte <ITEM_00, <ITEM_01, <ITEM_02, <ITEM_03, <ITEM_04, <ITEM_05, <ITEM_06, <ITEM_07, <ITEM_08
 
 
 command_01_jumptable_hi:
 
-	put_jumptable_hi(command_01_list)
+	!byte >ITEM_00, >ITEM_01, >ITEM_02, >ITEM_03, >ITEM_04, >ITEM_05, >ITEM_06, >ITEM_07, >ITEM_08
 
-
-#else ; HAS_OPCODES_65C02
+} else { ; HAS_OPCODES_65C02
 
 command_01_jumptable:
 
 	; Note: 65C02 has the page boundary vector bug fixed!
-	put_jumptable(command_01_list)
 
-#endif
+	!word ITEM_00, ITEM_01, ITEM_02, ITEM_03, ITEM_04, ITEM_05, ITEM_06, ITEM_07, ITEM_08
+}

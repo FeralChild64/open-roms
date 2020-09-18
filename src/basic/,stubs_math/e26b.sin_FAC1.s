@@ -21,9 +21,9 @@ poly_sin:
 
 	!byte $05                          ; series length - 1
 
-	+put_const_POLY_SIN_1
-	+put_const_POLY_SIN_2
-	+put_const_POLY_SIN_3
-	+put_const_POLY_SIN_4
-	+put_const_POLY_SIN_5
-	+put_const_POLY_SIN_6
+	+PUT_CONST_POLY_SIN_1
+	+PUT_CONST_POLY_SIN_2
+	+PUT_CONST_POLY_SIN_3
+	+PUT_CONST_POLY_SIN_4
+	+PUT_CONST_POLY_SIN_5
+	+PUT_CONST_POLY_SIN_6

@@ -5,12 +5,11 @@
 
 cmd_if:
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	jsr helper_if_mega65
 	bcc cmd_if_true
-
-#endif
+}
 
 	; Calculate expression
 
@@ -19,7 +18,7 @@ cmd_if:
 	; Check the result - either string size or floating point 0 vs non-0
 
 	lda FAC1_exponent
-	beq_16 cmd_rem
+	+beq cmd_rem
 
 	; FALLTROUGH
 
@@ -29,10 +28,10 @@ cmd_if_true:
 
 	jsr fetch_character_skip_spaces
 	cmp #$89                           ; 'GOTO'
-	beq_16 cmd_goto
+	+beq cmd_goto
 
 	cmp #$A7                           ; 'THEN'
-	bne_16 do_SYNTAX_error
+	+bne do_SYNTAX_error
 
 	pla
 	pla

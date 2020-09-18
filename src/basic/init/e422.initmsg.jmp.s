@@ -12,21 +12,24 @@
 
 INITMSG:
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	jsr map_BASIC_1
-	jsr_ind VB1__INITMSG
-!:
+	jsr (VB1__INITMSG)
+
+	; FALLTROUGH
+
+INITMSG_end:
+	
 	jmp map_NORMAL
 
 INITMSG_autoswitch:
 
 	jsr map_BASIC_1
-	jsr_ind VB1__INITMSG_autoswitch
-	bra !-
+	jsr (VB1__INITMSG_autoswitch)
+	bra INITMSG_end
 
-#else
+} else {
 
 	jmp initmsg_real
-
-#endif
+}

@@ -3,40 +3,39 @@
 ;; #LAYOUT# *   *       #IGNORE
 
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 cmd_gosys:
 	
-	; NSYS requires an argument
+	; GO SYS requires an argument
 
 	jsr is_end_of_statement
-	bcs_16 do_SYNTAX_error
-	bra cmd_sys_nsys_common
-
-#endif
+	+bcs do_SYNTAX_error
+	+bra cmd_sys_nsys_common
+}
 
 cmd_sys:
 	
 	; SYS requires an argument
 
 	jsr is_end_of_statement
-	bcs_16 do_SYNTAX_error
+	+bcs do_SYNTAX_error
 
-#if ROM_LAYOUT_M65
+!ifdef CONFIG_MB_M65 {
 
 	; Make sure we are in C64 compatibility mode
 
 	jsr M65_MODEGET
-	bcs cmd_sys_nsys_common
+	bcs cmd_sys_common
 	sec
 	jsr M65_MODESET                    ; set legacy C64 compatibility mode
 	jsr INITMSG_autoswitch
 
 	; FALLTROUGH
 
-cmd_sys_nsys_common:
+cmd_sys_common:
 
-#endif
+}
 
 	;
 	; XXX Temporary ugly hack to support 'SYS PI*656'
@@ -69,7 +68,7 @@ cmd_sys_hack_not_needed:
 
 	lda #IDX__EV2_0B ; 'SYNTAX ERROR'
 	jsr fetch_uint16
-	bcs_16 do_SYNTAX_error
+	+bcs do_SYNTAX_error
 
 cmd_sys_setup_call:
 	lda #$4C ; JMP opcode
@@ -95,4 +94,5 @@ cmd_sys_setup_call:
 	;
 
 cmd_sys_hack_str:
-	.byte $FF, $AC, $36, $35, $36, $00
+
+	!byte $FF, $AC, $36, $35, $36, $00

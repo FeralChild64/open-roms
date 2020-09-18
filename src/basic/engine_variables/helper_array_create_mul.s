@@ -8,7 +8,7 @@
 
 helper_array_create_mul: ; preserves .X and .Y
 
-	phx_trash_a
+	+phx_trash_a
 
 	; We will reuse 8x8 multiplication routine used by floating point operations
 
@@ -58,7 +58,7 @@ helper_array_create_mul_success:
 	lda INDEX+1
 	sta __FAC1+2
 
-	plx_trash_a
+	+plx_trash_a
 	rts
 
 helper_array_create_mul_8x8_add:

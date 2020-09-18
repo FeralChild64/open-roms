@@ -44,110 +44,110 @@ do_kernal_error:                       ; .A = KERNAL error code, also almost mat
 	beq do_BREAK_error                 ; XXX is 0 really a proper error code?
 
 	dex
-#if (ROM_LAYOUT_M65 && SEGMENT_BASIC_1)
+!ifdef SEGMENT_M65_BASIC_1 {
 	jmp do_basic_error
-#else
+} else {
 	bpl do_basic_error                 ; branch always
-#endif
+}
 
 	; Error messages specific to Open ROMs BASIC dialect
 
 do_MEMORY_CORRUPT_error:
-	.byte $E6
+	!byte $E6
 
 	; Error messages compatible with CBM BASIC V7 dialect
 
 do_FILE_READ_error:
-	.byte $E6
+	!byte $E6
 do_NOT_IMPLEMENTED_error:
-	.byte $E6
+	!byte $E6
 do_UNRESOLVED_REFERENCE_error:
-	.byte $E6
+	!byte $E6
 do_LINE_NUMBER_TOO_LARGE_error:
-	.byte $E6
+	!byte $E6
 do_BEND_NOT_FOUND_error:
-	.byte $E6
+	!byte $E6
 do_BAD_DISK_error:
-	.byte $E6
+	!byte $E6
 do_NO_GRAPHICS_AREA_error:
-	.byte $E6
+	!byte $E6
 do_DIRECT_MODE_ONLY_error:
-	.byte $E6
+	!byte $E6
 do_LOOP_WITHOUT_DO_error:
-	.byte $E6
+	!byte $E6
 do_LOOP_NOT_FOUND_error:
-	.byte $E6
+	!byte $E6
 do_CANT_RESUME_error:
-	.byte $E6
+	!byte $E6
 
 	; Error messages compatible with CBM BASIC V2 dialect
 
 do_BREAK_error:
-	.byte $E6
+	!byte $E6
 do_LOAD_error:
-	.byte $E6
+	!byte $E6
 do_VERIFY_error:
-	.byte $E6
+	!byte $E6
 do_UNDEFD_FUNCTION_error:
-	.byte $E6
+	!byte $E6
 do_CANT_CONTINUE_error:
-	.byte $E6
+	!byte $E6
 do_FORMULA_TOO_COMPLEX_error:
-	.byte $E6
+	!byte $E6
 do_FILE_DATA_error:
-	.byte $E6
+	!byte $E6
 do_STRING_TOO_LONG_error:
-	.byte $E6
+	!byte $E6
 do_TYPE_MISMATCH_error:
-	.byte $E6
+	!byte $E6
 do_ILLEGAL_DIRECT_error:
-	.byte $E6
+	!byte $E6
 do_DIVISION_BY_ZERO_error:
-	.byte $E6
+	!byte $E6
 do_REDIMD_ARRAY_error:
-	.byte $E6
+	!byte $E6
 do_BAD_SUBSCRIPT_error:
-	.byte $E6
+	!byte $E6
 do_UNDEFD_STATEMENT_error:
-	.byte $E6
+	!byte $E6
 do_OUT_OF_MEMORY_error:
-	.byte $E6
+	!byte $E6
 do_OVERFLOW_error:
-	.byte $E6
+	!byte $E6
 do_ILLEGAL_QUANTITY_error:
-	.byte $E6
+	!byte $E6
 do_OUT_OF_DATA_error:
-	.byte $E6
+	!byte $E6
 do_RETURN_WITHOUT_GOSUB_error:
-	.byte $E6
+	!byte $E6
 do_SYNTAX_error:
-	.byte $E6
+	!byte $E6
 do_NEXT_WITHOUT_FOR_error:
-	.byte $E6
+	!byte $E6
 do_ILLEGAL_DEVICE_NUMBER_error:
-	.byte $E6	
+	!byte $E6	
 do_MISSING_FILENAME_error:
-	.byte $E6
+	!byte $E6
 do_NOT_OUTPUT_FILE_error:
-	.byte $E6
+	!byte $E6
 do_NOT_INPUT_FILE_error:
-	.byte $E6
+	!byte $E6
 do_DEVICE_NOT_PRESENT_error:
-	.byte $E6
+	!byte $E6
 do_FILE_NOT_FOUND_error:
-	.byte $E6
+	!byte $E6
 do_FILE_NOT_OPEN_error:
-	.byte $E6
+	!byte $E6
 do_FILE_OPEN_error:
-	.byte $E6
+	!byte $E6
 do_TO_MANY_FILES_error:
-	.byte $EA
+	!byte $EA
 
-#if (ROM_LAYOUT_M65 && SEGMENT_BASIC_1)
+!ifdef SEGMENT_M65_BASIC_1 {
 
 	jmp do_error_fetch
 
-#else
+} else {
 
 	; FALLTROUGH
 
@@ -177,18 +177,18 @@ do_error_fetch:
 
 do_basic_error:                        ; error code in .X
 
-#if ROM_LAYOUT_M65
+!ifdef ROM_LAYOUT_M65 {
 	; Make sure we are back with normal memory map
 	jsr map_NORMAL
-#endif
+}
 
 	; Clear all temporary variables, print "?"
 	
-	phx_trash_a
+	+phx_trash_a
 	jsr tmpstr_free_all
 	ldx #IDX__STR_RET_QM
 	jsr print_packed_misc_str
-	plx_trash_a
+	+plx_trash_a
 
 	; Error message text + " ERROR"
 
@@ -201,7 +201,7 @@ do_basic_error:                        ; error code in .X
 
 	lda CURLIN+1
 	cmp #$FF
-	beq !+
+	beq @1
 
 	; We were in a program, so show IN <line>
 
@@ -211,7 +211,7 @@ do_basic_error:                        ; error code in .X
 	lda CURLIN+1
 	ldx CURLIN+0
 	jsr print_integer
-!:
+@1:
 	; Reset stack, and go back to main loop
 
 	ldx #$FE
@@ -219,4 +219,4 @@ do_basic_error:                        ; error code in .X
 
 	jmp shell_main_loop
 
-#endif ; ROM layout
+} ; ROM layout

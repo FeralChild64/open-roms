@@ -12,10 +12,10 @@ fetch_line_number:
 
 	lda #IDX__EV7_26 ; 'LINE NUMBER TOO LARGE'
 	jsr fetch_uint16
-	bcs_16 do_SYNTAX_error
+	+bcs do_SYNTAX_error
 
 	lda LINNUM+1
 	cmp #$FF
-	beq_16 do_LINE_NUMBER_TOO_LARGE_error
+	+beq do_LINE_NUMBER_TOO_LARGE_error
 
 	rts

@@ -403,5 +403,6 @@
 
 !ifdef CONFIG_MB_M65 {
 	!ifdef SEGMENT_BASIC_0  { !set SEGMENT_M65_BASIC_0  = 1 }
+	!ifdef SEGMENT_BASIC_1  { !set SEGMENT_M65_BASIC_1  = 1 }
 	!ifdef SEGMENT_KERNAL_0 { !set SEGMENT_M65_KERNAL_0 = 1 }
 }

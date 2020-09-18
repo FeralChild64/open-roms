@@ -19,7 +19,7 @@
 	; #P_ERR_ROM_MISMATCH - it should remain stable even between releases
 
 !ifdef CONFIG_PANIC_SCREEN {
-	.word panic
+	!word panic
 } else {
 	!word hw_entry_reset
 }
@@ -36,7 +36,7 @@ rom_revision_kernal_string:
 
 	; $E4BC
 
-!ifndef !CONFIG_BRAND_CUSTOM_BUILD {
+!ifndef CONFIG_BRAND_CUSTOM_BUILD {
 	!pet "(DEVEL SNAPSHOT)"   ; ROM revision string; up to 16 characters, string format will change in the future
 } else {
 	!pet "(CUSTOM BUILD)"

@@ -4,7 +4,7 @@
 
 ; This has to go $E000 or above - routine below banks out the main BASIC ROM!
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 helper_array_fetch_dimension:
 
@@ -28,5 +28,4 @@ helper_array_fetch_dimension:
 	sta CPU_R6510
 
 	rts
-
-#endif
+}

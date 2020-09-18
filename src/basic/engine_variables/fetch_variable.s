@@ -12,24 +12,24 @@ fetch_variable:
 	; Start by fetching variable name
 
 	jsr fetch_variable_name
-	bcc !+
+	bcc @1
 	rts
-!:
+@1:
 	; If this is array, redirect to appropriate routine
 
 	bit DIMFLG
-	bmi_16 fetch_variable_arr
+	+bmi fetch_variable_arr
 
 	; Handle special variables - TI$, TI, ST
 
 	jsr is_var_TI_string
-	beq_16 fetch_variable_TI_string
+	+beq fetch_variable_TI_string
 
 	jsr is_var_TI
-	beq_16 fetch_variable_TI
+	+beq fetch_variable_TI
 
 	jsr is_var_ST
-	beq_16 fetch_variable_ST
+	+beq fetch_variable_ST
 
 	; FALLTROUGH
 
@@ -51,11 +51,11 @@ fetch_variable_find_addr_loop:
 
 	lda VARPNT+1
 	cmp ARYTAB+1
-	bne !+
+	bne @2
 	lda VARPNT+0
 	cmp ARYTAB+0
 	beq fetch_variable_alocate
-!:
+@2:
 	; Compare current variable name with searched one
 
 	jsr helper_cmp_varnam
@@ -67,17 +67,16 @@ fetch_variable_adjust_VARPNT:
 
 	; Adjust VARPNT to point just after variable name and quit
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 
 	lda #$02
 	jsr helper_VARPNT_up_A
 
-#else ; HAS_OPCODES_65CE02
+} else { ; HAS_OPCODES_65CE02
 
 	inw VARPNT
 	inw VARPNT
-
-#endif
+}
 
 	clc
 	rts
@@ -90,7 +89,7 @@ fetch_variable_find_addr_next:
 	lda #$07
 	jsr helper_VARPNT_up_A
 
-	jmp_8 fetch_variable_find_addr_loop
+	+bra fetch_variable_find_addr_loop
 
 fetch_variable_alocate:
 	
@@ -102,14 +101,14 @@ fetch_variable_alocate:
 	pha
 	lda FRETOP+1
 	sbc STREND+1
-	bne !+                             ; branch if high byte of result > 0
+	bne @3                             ; branch if high byte of result > 0
 
 	pla
 	cmp #$07
 	bcs fetch_variable_alocate_space_OK
 
 	jmp do_OUT_OF_MEMORY_error
-!:
+@3:
 	pla
 
 	; FALLTROUGH
@@ -134,9 +133,9 @@ fetch_variable_alocate_space_OK:
 	; Indeed, there are arrays - adjust size, calculate the destination and perform copying
 
 	inc memmove__size+0
-	bne !+
+	bne @4
 	inc memmove__size+1
-!:
+@4:
 
 	clc
 	lda memmove__src+0
@@ -158,17 +157,17 @@ fetch_variable_alocate_adjust_vars:
 	lda STREND+0
 	adc #$07
 	sta STREND+0
-	bcc !+
+	bcc @5
 	inc STREND+1
-!:
+@5:
 
 	clc
 	lda ARYTAB+0
 	adc #$07
 	sta ARYTAB+0
-	bcc !+
+	bcc @6
 	inc ARYTAB+1
-!:
+@6:
 	; VARPNT already points to the start of the variable descriptor
 
 	; We need to recreate the back-pointers to string arrays
@@ -179,7 +178,7 @@ fetch_variable_alocate_adjust_vars:
 
 	ldy #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 	ldx #<VARPNT
 	lda VARNAM+0
@@ -193,7 +192,7 @@ fetch_variable_alocate_adjust_vars:
 	iny
 	jsr poke_under_roms
 
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
 	
 	lda VARNAM+0
 	sta (VARPNT),y
@@ -205,8 +204,7 @@ fetch_variable_alocate_adjust_vars:
 	sta (VARPNT),y
 	iny
 	sta (VARPNT),y
-
-#endif
+}
 
 	; Adjust variable pointer and quit
 

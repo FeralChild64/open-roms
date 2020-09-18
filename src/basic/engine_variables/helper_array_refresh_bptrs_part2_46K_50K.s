@@ -4,7 +4,7 @@
 
 ; This has to go $E000 or above - routine below banks out the main BASIC ROM!
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 helper_array_refresh_bptrs_part2:
 
@@ -17,7 +17,7 @@ helper_array_refresh_bptrs_part2:
 
 	ldy #$00
 	lda (INDEX+0), y
-	beq !+
+	beq @1
 
 	iny
 	clc
@@ -35,9 +35,9 @@ helper_array_refresh_bptrs_part2:
 	lda INDEX+1
 	sta (INDEX+4), y
 
-!:
+@1:
 	; Restore default memory mapping
 
 	jmp remap_BASIC
+}
 
-#endif

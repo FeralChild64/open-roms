@@ -18,25 +18,25 @@ delete_line:
 	; Get address of next line
 	ldy #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_OLDTXT
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
 	sta __tokenise_work3
 	iny
 
-#if CONFIG_MEMORY_MODEL_60K	
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	jsr peek_under_roms
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_OLDTXT
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
 	sta __tokenise_work4
 
@@ -58,13 +58,12 @@ delete_line:
 	lda __tokenise_work4
 	sbc #0
 	cmp #$00
-	beq !+
 
 	; Line length is <0 or >255 bytes.
 	; Either way, things are bad, so abort.
 
-	jmp do_MEMORY_CORRUPT_error
-!:
+	+bne do_MEMORY_CORRUPT_error
+
 	; Length can now be safely assumed to be in the low
 	; byte only, i.e., stored in __tokenise_work3
 

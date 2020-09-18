@@ -41,7 +41,7 @@ FRMEVL_loop:
 	; Check if end of statement, fetch the character
 
 	jsr is_end_of_statement
-	bcs_16 do_SYNTAX_error
+	+bcs do_SYNTAX_error
 	jsr fetch_character
 
 	; Check for a string or opening bracket
@@ -54,14 +54,14 @@ FRMEVL_loop:
 	; Check for unary operators
 
 	cmp #$AB                           ; check for unary minus
-	beq_16 FRMEVL_unary_minus
+	+beq FRMEVL_unary_minus
 	cmp #$A8                           ; check for NOT
-	beq_16 FRMEVL_unary_not
+	+beq FRMEVL_unary_not
 
 	; Check for the PI
 
 	cmp #$FF                           ; check for PI
-	beq_16 FRMEVL_fetch_PI
+	+beq FRMEVL_fetch_PI
 
 	; If not a PI and not an unary operator, than everything above
 	; $7F has to be a function
@@ -71,17 +71,17 @@ FRMEVL_loop:
 
 	; Check for a variable
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 	jsr fetch_variable
 	bcs FRMEVL_fetch_float
 
 	; Found the variable - copy descriptor to FAC1
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	
 	ldx #<VARPNT
 
@@ -95,11 +95,11 @@ FRMEVL_loop:
 	jsr peek_under_roms
 	sta __FAC1+2
 
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	
 	jsr helper_frmevl_strdesccpy
 
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 
 	ldy #$00
 	lda (VARPNT),y
@@ -110,10 +110,9 @@ FRMEVL_loop:
 	iny
 	lda (VARPNT),y
 	sta __FAC1+2
+}
 
-#endif
-
-	jmp_8 FRMEVL_got_value
+	+bra FRMEVL_got_value
 
 ;
 ; This subroutine handles the situation when we have to execute a BASIC function
@@ -134,7 +133,7 @@ FRMEVL_execute_function:
 FRMEVL_unary_not:
 
 	ldy #$0D                           ; our code for unary NOT
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 
@@ -167,7 +166,7 @@ FRMEVL_fetch_PI:
 	ldy #>const_PI
 	jsr mov_MEM_FAC1
 
-	jmp_8 FRMEVL_got_value_float
+	+bra FRMEVL_got_value_float
 
 ;
 ; This subroutine fetches the floating point value from the 'outside world'
@@ -207,27 +206,27 @@ FRMEVL_fetch_string:
 	stx __FAC1 + 1
 	ldx TXTPTR + 1
 	stx __FAC1 + 2
-!:
+@1:
 	; Search for closing quote
 
 	jsr fetch_character
 	cmp #$22
 	beq FRMEVL_got_value
 	cmp #$00
-	beq !+
+	beq @2
 
 	inc __FAC1 + 0
-	bne !-
+	bne @1
 
 	jmp do_STRING_TOO_LONG_error
-!:
+@2:
 	; No closing quote, but end of the data
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 
 	; FALLTROUGH
 
@@ -277,14 +276,18 @@ FRMEVL_fetch_operator:
 	sty OPPTR+1                        ; store .Y, we want to preserve it
 	lda #$FF                           ; mark that we want to return here
 	sta OPPTR+0
-!:
+
+	; FALLTROUGH
+
+FRMEVL_fetch_operator_end:
+	
 	jmp FRMEVL_compute_partial
 
 FRMEVL_compute_partial_return:
 
 	pla
 	pha
-	bne !-
+	bne FRMEVL_fetch_operator_end
 
 	ldy OPPTR+1
 

@@ -6,7 +6,7 @@
 ; Find the BASIC line with number in LINNUM
 
 
-#if CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_60K
+!ifndef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 find_line_from_start:
 
@@ -25,27 +25,27 @@ find_line_from_current:
 	; Fetch the high byte of line number and compare
 	ldy #$03
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT+0
 	jsr peek_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
 	cmp LINNUM+1
-	beq !+
+	beq @1
 	bcs find_line_fail                           ; branch if line number too high
 	bne find_line_next
-!:
+@1:
 
 	; Fetch the low byte of line number and compare
 	dey
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	jsr peek_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
 	cmp LINNUM+0
 	beq find_line_success
@@ -66,31 +66,30 @@ find_line_next:
 
 	ldy #$00
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT+0
 	jsr peek_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
 	pha
 	iny
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	jsr peek_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
-#endif
+}
 
 	sta OLDTXT+1
 	pla
 	sta OLDTXT+0
 
-	jmp_8 find_line_from_current
+	+bra find_line_from_current
 
 find_line_fail:
 
 	sec
 	rts
-
-#endif
+}

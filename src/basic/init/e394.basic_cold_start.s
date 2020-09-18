@@ -8,23 +8,22 @@
 
 basic_cold_start:
 
-#if ROM_LAYOUT_STD ; skip on non-sgtandard ROM layouts - they produce single image nevertheless
+!ifdef ROM_LAYOUT_STD { ; skip on non-sgtandard ROM layouts - they produce single image nevertheless
 
 	; Before doing anything, check if we have a compatible BASIC/KERNAL pair
 
 	ldy #(__rom_revision_basic_end - rom_revision_basic - 1)
-!:
+@1:
 	lda rom_revision_basic, y
 	cmp rom_revision_kernal, y
-	beq !+
+	beq @2
 
-	panic #P_ERR_ROM_MISMATCH
+	+panic P_ERR_ROM_MISMATCH
 
-!:
+@2:
 	dey
-	bpl !--
-
-#endif
+	bpl @1
+}
 
 	; Remaining part would not fit here
 

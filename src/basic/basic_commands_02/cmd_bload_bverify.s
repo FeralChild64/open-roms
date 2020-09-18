@@ -9,7 +9,7 @@ cmd_bverify:
 	; just different parameter passed to Kernal and different error message in case of failure
 
 	lda #$01                           ; mark operation as VERIFY
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 cmd_bload:
 
@@ -23,7 +23,7 @@ cmd_bload:
 	; Fetch device number
 
 	jsr fetch_coma_uint8
-	bcs_16 do_SYNTAX_error
+	+bcs do_SYNTAX_error
 
 	sta FA
 
@@ -35,7 +35,7 @@ cmd_bload:
 
 	lda VERCKB                         ; LOAD or VERIFY
 	jsr JLOAD
-	bcs_16 do_kernal_error
+	+bcs do_kernal_error
 
 	; Execute next statement
 

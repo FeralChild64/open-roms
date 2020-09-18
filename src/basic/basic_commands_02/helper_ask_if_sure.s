@@ -9,17 +9,17 @@
 ;
 
 
-#if !HAS_SMALL_BASIC
+!ifndef HAS_SMALL_BASIC {
 
 helper_ask_if_sure:
 
-#if (ROM_LAYOUT_M65 && SEGMENT_BASIC_0)
+!ifdef SEGMENT_M65_BASIC_0 {
 
-	jsr     map_BASIC_1
-	jsr_ind VB1__helper_ask_if_sure
-	jmp     map_NORMAL
+	jsr map_BASIC_1
+	jsr (VB1__helper_ask_if_sure)
+	jmp map_NORMAL
 
-#else
+} else {
 
 	; First check, if we are in direct mode,; if not, do not ask
 
@@ -41,22 +41,22 @@ helper_ask_if_sure:
 
 	lda #$00
 	sta BLNSW
-!:
+@1:
 	jsr JGETIN
 	cmp #$00
-	beq !-
+	beq @1
 
 	; Check if 'Y'
 
 	cmp #$59
-	beq !+
+	beq @2
 
 	lda #$4E                                     ; 'N'
 	jsr JCHROUT
 
 	sec
 	rts
-!:
+@2:
 	; Display 'Y' and wait a short moment for a better user experience
 
 	jsr JCHROUT
@@ -64,9 +64,9 @@ helper_ask_if_sure:
 	clc
 	lda TIME+2
 	adc #$0C
-!:
+@3:
 	cmp TIME+2
-	bne !-
+	bne @3
 
 	; FALLTROUGH
 
@@ -76,6 +76,6 @@ helper_ask_if_sure_ok:
 	rts
 
 
-#endif ; ROM layout
+} ; ROM layout
 
-#endif ; !HAS_SMALL_BASIC
+} ; !HAS_SMALL_BASIC

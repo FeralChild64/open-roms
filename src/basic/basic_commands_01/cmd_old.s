@@ -9,7 +9,7 @@ cmd_old:
 
 	ldx CURLIN+1
 	inx
-	bne_16 do_DIRECT_MODE_ONLY_error
+	+bne do_DIRECT_MODE_ONLY_error
 
 	; Now try to restore program linkage and VARTAB
 

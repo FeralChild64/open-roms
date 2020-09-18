@@ -18,11 +18,11 @@ cmd_print:
 
 cmd_print_loop:
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 
 	; FALLTROUGH
 
@@ -41,30 +41,29 @@ cmd_print_string:
 
 	; Print a string value
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 	jsr helper_print_string
-	jmp_8 cmd_print_next_arg
+	+bra cmd_print_next_arg
 
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_60K
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_60K
 
 	ldy #$00
-!:
+@1:
 	cpy __FAC1 + 0
 	beq cmd_print_next_arg
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K { 
 	ldx #<(__FAC1 + 1)
 	jsr peek_under_roms
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 	lda (__FAC1 + 1), y
-#endif
+}
 
 	jsr JCHROUT
 	iny
-	bpl !-
-
-#endif
+	bpl @1
+}
 
 cmd_print_float:
 

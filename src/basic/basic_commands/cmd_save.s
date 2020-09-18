@@ -12,14 +12,14 @@ cmd_save:
 	; Fetch the file name
 
 	jsr helper_load_fetch_filename
-	bcs_16 do_MISSING_FILENAME_error
+	+bcs do_MISSING_FILENAME_error
 
 	; Try to fetch device number and secondary address
 
 	jsr helper_load_fetch_devnum
-	bcs !+
+	bcs @1
 	jsr helper_load_fetch_secondary
-!:
+@1:
 	; Setup the start address
 
 	lda #TXTTAB
@@ -36,7 +36,7 @@ cmd_save_do: ; entry point for BSAVE
 	; Perform saving
 
 	jsr JSAVE
-	bcs_16 do_kernal_error
+	+bcs do_kernal_error
 
 	; Execute next statement
 

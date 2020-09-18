@@ -5,7 +5,7 @@
 ; This has to go $E000 or above - routines below banks out the main BASIC ROM!
 
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 find_array_next:
 
@@ -40,5 +40,4 @@ find_array_next:
 	; Next iteration
 
 	jmp find_array_loop
-
-#endif
+}

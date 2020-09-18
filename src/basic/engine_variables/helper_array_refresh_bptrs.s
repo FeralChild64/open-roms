@@ -23,15 +23,15 @@ helper_array_refresh_bptrs_loop_1:
 
 	lda INDEX+1
 	cmp STREND+1
-	bne !+
+	bne @1
 	lda INDEX+0
 	cmp STREND+0
-	bne !+
+	bne @1
 	rts
-!:
+@1:
 	; Calculate start address of the next array, store it in INDEX+2/+3
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 	ldx #<INDEX+0
 
@@ -68,12 +68,12 @@ helper_array_refresh_bptrs_loop_1:
 	adc #$05
 	jsr helper_INDEX_up_A
 
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 	jsr helper_array_refresh_bptrs_part1
 	bcs helper_array_refresh_bptrs_loop_next
 
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 
 	ldy #$02
 
@@ -103,8 +103,7 @@ helper_array_refresh_bptrs_loop_1:
 	clc
 	adc #$05
 	jsr helper_INDEX_up_A
-
-#endif
+}
 
 	; FALLTROUGH
 
@@ -112,13 +111,13 @@ helper_array_refresh_bptrs_loop_2:
 
 	; Recreate the back-pointer
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 
 	ldx #<INDEX+0
 
 	ldy #$00
 	jsr peek_under_roms
-	beq !+                                       ; skip empty strings
+	beq @2                                       ; skip empty strings
 
 	iny
 	sta INDEX+5
@@ -141,34 +140,34 @@ helper_array_refresh_bptrs_loop_2:
 	iny
 	lda INDEX+1
 	jsr poke_under_roms
-!:
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+@2:
+} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
 
 	jsr helper_array_refresh_bptrs_part2
 
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 
 	ldy #$00
-	lda (INDEX+0), y ; XXX
-	beq !+                                       ; skip empty strings
+	lda (INDEX+0), y
+	beq @3                                       ; skip empty strings
 
 	iny
 	clc
-	adc (INDEX+0), y ; XXX
+	adc (INDEX+0), y
 	sta INDEX+4
 	iny
 	lda #$00
-	adc (INDEX+0), y ; XXX
+	adc (INDEX+0), y
 	sta INDEX+5
 
 	ldy #$00
 	lda INDEX+0
-	sta (INDEX+4), y ; XXX
+	sta (INDEX+4), y
 	iny
 	lda INDEX+1
-	sta (INDEX+4), y ; XXX
-!:
-#endif
+	sta (INDEX+4), y
+@3:
+}
 
 	; FALLTROUGH
 
@@ -195,4 +194,4 @@ helper_array_refresh_bptrs_loop_next:
 	lda INDEX+2
 	sta INDEX+0
 
-	jmp_8 helper_array_refresh_bptrs_loop_1
+	+bra helper_array_refresh_bptrs_loop_1

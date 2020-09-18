@@ -22,23 +22,23 @@ find_array_loop:
 
 	lda VARPNT+1
 	cmp STREND+1
-	bne !+
+	bne @1
 	lda VARPNT+0
 	cmp STREND+0
-	bne !+
+	bne @1
 
 	; End of arrays
 
 	sec
 	rts
-!:
+@1:
 	jsr helper_cmp_varnam
 
-#if CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
-	bne_16 find_array_next
-#else ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
+	+bne find_array_next
+} else { ; CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_60K
 	bne find_array_next
-#endif
+}
 
 	; Array found
 
@@ -46,7 +46,7 @@ find_array_loop:
 	rts
 
 
-#if CONFIG_MEMORY_MODEL_38K || CONFIG_MEMORY_MODEL_60K
+!ifndef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 find_array_next:
 
@@ -54,7 +54,7 @@ find_array_next:
 
 	ldy #$03
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	
 	ldx #<VARPNT
 
@@ -63,14 +63,13 @@ find_array_next:
 	dey
 	jsr peek_under_roms
 
-#else ; CONFIG_MEMORY_MODEL_38K
+} else { ; CONFIG_MEMORY_MODEL_38K
 
 	lda (VARPNT),y
 	pha
 	dey
 	lda	(VARPNT),y
-
-#endif
+}
 
 	; Adjust VARPNT to point to the next array
 
@@ -85,5 +84,4 @@ find_array_next:
 	; Next iteration
 
 	bcc find_array_loop                ; branch always
-
-#endif
+}

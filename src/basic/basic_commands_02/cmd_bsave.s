@@ -12,19 +12,19 @@ cmd_bsave:
 	; Fetch the file name
 
 	jsr helper_load_fetch_filename
-	bcs_16 do_MISSING_FILENAME_error
+	+bcs do_MISSING_FILENAME_error
 
 	; Fetch device number
 
 	jsr helper_load_fetch_devnum
-	bcs_16 do_SYNTAX_error
+	+bcs do_SYNTAX_error
 
 	; Fetch memory area start address
 
 	jsr helper_bload_fetch_address
 
-	phx_trash_a
-	phy_trash_a
+	+phx_trash_a
+	+phy_trash_a
 
 	; Fetch memory area end address
 

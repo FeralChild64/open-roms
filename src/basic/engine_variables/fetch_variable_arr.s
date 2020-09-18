@@ -6,14 +6,14 @@
 fetch_variable_arr:
 
 	jsr find_array
-	bcc !+
+	bcc @1
 
 	; Array does not exist - we will have to create one with default parameters
 
 	; XXX implement this
 
 	jmp do_NOT_IMPLEMENTED_error
-!:
+@1:
 	; Fetch the 'coordinates'
 
 	lda FOUR6
@@ -51,7 +51,7 @@ fetch_variable_arr_check_dimensions:
 
 	; Check if the number of dimensions matches the stored ones
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	
 	phx_trash_a
 	ldx #<VARPNT
@@ -61,17 +61,16 @@ fetch_variable_arr_check_dimensions:
 	plx_trash_a
 	cpx INDEX+5
 
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 	jsr helper_array_check_no_dims
 
-#else ; CONFIG_MEMORY_MODEL_38
+} else { ; CONFIG_MEMORY_MODEL_38
 
 	ldy #$04
 	txa
 	cmp (VARPNT), y
-
-#endif
+}
 
 	bne fetch_variable_arr_bad_subscript
 
@@ -103,7 +102,7 @@ fetch_variable_arr_calc_pos_loop:
 	asl
 	tay
 
-#if CONFIG_MEMORY_MODEL_60K
+!ifdef CONFIG_MEMORY_MODEL_60K {
 	
 	ldx #<VARPNT
 
@@ -114,11 +113,11 @@ fetch_variable_arr_calc_pos_loop:
 	sta __FAC1+3
 	iny
 
-#elif CONFIG_MEMORY_MODEL_46K || CONFIG_MEMORY_MODEL_50K
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 	jsr helper_array_fetch_dimension
 
-#else ; CONFIG_MEMORY_MODEL_38
+} else { ; CONFIG_MEMORY_MODEL_38
 
 	lda (VARPNT), y
 	sta __FAC1+4
@@ -126,8 +125,7 @@ fetch_variable_arr_calc_pos_loop:
 	lda (VARPNT), y
 	sta __FAC1+3
 	iny
-
-#endif
+}
 
 	; Multiply offset by current dimension
 
@@ -149,13 +147,13 @@ fetch_variable_arr_calc_pos_loop:
 
 	lda INDEX+1
 	cmp __FAC1+4
-	bcc !+
+	bcc @2
 	bne fetch_variable_arr_bad_subscript
 
 	lda INDEX+0
 	cmp __FAC1+3
 	bcs fetch_variable_arr_bad_subscript
-!:
+@2:
 	; Check if there are more dimensions to handle
 
 	cpx __FAC1+0

@@ -18,9 +18,9 @@
 rnd_A:
 
 	cmp #$00
-	beq_16 rnd_seed_init
+	+beq rnd_seed_init
 
 	cmp #$80
-	bcc_16 rnd_generate
+	+bcc rnd_generate
 
 	jmp rnd_seed_from_FAC1

@@ -31,14 +31,14 @@ cmd_merge_got_params:
 	sbc #$02
 	sta VARTAB+0
 	tax
-	bcs !+
+	bcs @1
 	dec VARTAB+1
-!:
+@1:
 	ldy VARTAB+1
 
 	lda VERCKB    ; LOAD or VERIFY
 	jsr JLOAD
-	bcs_16 do_kernal_error
+	+bcs do_kernal_error
 
 cmd_merge_no_error:
 

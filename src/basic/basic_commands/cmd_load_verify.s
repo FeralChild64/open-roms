@@ -10,7 +10,7 @@ cmd_verify:
 	; just different parameter passed to Kernal and different error message in case of failure
 
 	lda #$01                           ; mark operation as VERIFY
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 cmd_load:
 
@@ -21,14 +21,14 @@ cmd_load:
 	; Fetch the file name
 
 	jsr helper_load_fetch_filename
-	bcs !+
+	bcs @1
 
 	; Try to fetch device number and secondary address
 
 	jsr helper_load_fetch_devnum
-	bcs !+
+	bcs @1
 	jsr helper_load_fetch_secondary
-!:
+@1:
 	; FALLTROUGH
 
 cmd_load_got_params:                   ; input for tape wedge
@@ -40,7 +40,7 @@ cmd_load_got_params:                   ; input for tape wedge
 
 	lda VERCKB    ; LOAD or VERIFY
 	jsr JLOAD
-	bcs_16 do_kernal_error
+	+bcs do_kernal_error
 	
 cmd_load_no_error:
 
@@ -52,7 +52,7 @@ cmd_load_no_error:
 	; For VERIFY - this is it
 
 	lda VERCKB
-	bne_16 end_of_statement
+	+bne end_of_statement
 
 	; C64 BASIC apparently does not clear variables after a LOAD in the
 	; middle of a program. For safety, we do.
@@ -75,7 +75,7 @@ cmd_load_no_error:
 	ldx CURLIN+1
 	inx
 
-	beq_16 end_of_program              ; branch if direct mode
+	+beq end_of_program                ; branch if direct mode
 	
 	pha
 	pha

@@ -80,15 +80,15 @@ fetch_uint16_loop:
 
 	; Next iteration
 
-	jmp_8 fetch_uint16_loop
+	+bra fetch_uint16_loop
 
 fetch_uint16_end:
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 	clc
 
 	; FALLTROUGH
@@ -120,5 +120,5 @@ fetch_uint16_1PLA_error:
 
 fetch_uint16_error:
 
-	plx_trash_a
+	+plx_trash_a
 	jmp do_basic_error

@@ -41,11 +41,11 @@ fetch_operator_success:
 
 fetch_operator_failed:
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 
 	sec
 	rts
@@ -57,18 +57,18 @@ fetch_operator_try_gteq:
 
 	jsr fetch_character
 	cmp #$B2                           ; '='
-	beq !+
+	beq @1
 
 	; This is a '>'
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 	lda #$07
 	bne fetch_operator_success         ; branch always
-!:
+@1:
 	; This is a '>='
 
 	lda #$0A
@@ -81,25 +81,25 @@ fetch_operator_try_lteq_neq:
 
 	jsr fetch_character
 	cmp #$B2                           ; '='
-	beq !+
+	beq @2
 	cmp #$B1                           ; '>'
-	beq !++
+	beq @3
 
 	; This is a '<'
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 	lda #$09
 	bne fetch_operator_success         ; branch always
-!:
+@2:
 	; This is a '<='
 
 	lda #$0B
 	bne fetch_operator_success         ; branch always
-!:
+@3:
 	; This is a '<>'
 
 	lda #$0C

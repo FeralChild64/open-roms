@@ -18,17 +18,17 @@ fetch_variable_name:
 
 	jsr fetch_character_skip_spaces
 	jsr is_AZ
-	bcc !+
+	bcc @1
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 
 	sec
 	rts
-!:
+@1:
 	sta VARNAM+0
 
 	; Fetch the (optional) second character
@@ -40,10 +40,10 @@ fetch_variable_name:
 	sta VARNAM+1
 
 	; Fetch the remaining variable characters - ignore them
-!:
+@2:
 	jsr fetch_character
 	jsr is_09_AZ
-	bcc !-
+	bcc @2
 
 	; FALLTROUGH
 
@@ -64,13 +64,13 @@ fetch_variable_type_float:
 	lda #$05
 	sta FOUR6
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 
-	jmp_8 fetch_variable_name_check_array
+	+bra fetch_variable_name_check_array
 
 fetch_variable_type_integer:
 
@@ -84,13 +84,17 @@ fetch_variable_type_integer:
 	sta VARNAM+0
 
 	lda #$00
-	beq !+                             ; branch always
+	beq fetch_variable_type_string_cont          ; branch always
 
 fetch_variable_type_string:
 
 	ldy #$03
 	lda #$FF
-!:
+	
+	; FALLTROUGH
+
+fetch_variable_type_string_cont:
+	
 	sta VALTYP
 	sty FOUR6
 
@@ -104,19 +108,19 @@ fetch_variable_name_check_array:
 
 	jsr fetch_character_skip_spaces
 	cmp #$28                          ; '('
-	beq !+
+	beq @3
 
 	; This is not an array
 
-#if !HAS_OPCODES_65CE02
+!ifndef HAS_OPCODES_65CE02 {
 	jsr unconsume_character
-#else
+} else {
 	dew TXTPTR
-#endif
+}
 
 	lda #$00
-	skip_2_bytes_trash_nvz
-!:
+	+skip_2_bytes_trash_nvz
+@3:
 	; This is an array
 
 	lda #$FF

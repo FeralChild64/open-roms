@@ -9,7 +9,7 @@ cmd_go:
 	cmp #$A4                           ; 'TO' keyword
 	beq cmd_goto
 
-#if !ROM_LAYOUT_M65
+!ifndef CONFIG_MB_M65 {
 
 	; FALLTROUGH
 
@@ -17,10 +17,10 @@ cmd_go_syntax_error:
 
 	jmp do_SYNTAX_error
 
-#else 
+} else {
 
 	cmp #$9E                           ; 'SYS' keyword, for 'GO SYS'
-	beq_16 cmd_gosys
+	+beq cmd_gosys
 
 	dew TXTPTR                         ; unconsume character
 
@@ -29,7 +29,7 @@ cmd_go_syntax_error:
 	jsr fetch_uint8
 
 	cmp #64
-	bne !+
+	bne @1
 
 	; If in native mode - switch to C64 compatibilty
 
@@ -37,13 +37,13 @@ cmd_go_syntax_error:
 	bcs cmd_go_rts
 
 	jsr helper_ask_if_sure
-	bcs_16 cmd_end
+	+bcs cmd_end
 	sec
 	jsr M65_MODESET                    ; Carry set = switch to C64 mode
-	jmp_8 cmd_go_switchmode_clr_banner
-!:
+	+bra cmd_go_switchmode_clr_banner
+@1:
 	cmp #65
-	bne_16 do_ILLEGAL_QUANTITY_error
+	+bne do_ILLEGAL_QUANTITY_error
 
 	; If in C64 compatibility mode - switch to native mode
 
@@ -62,7 +62,7 @@ cmd_go_switchmode_clr_banner:
 
 	ldx CURLIN+1
 	inx
-	beq_16 INITMSG
+	+beq INITMSG
 
 	lda #147
 	jmp JCHROUT
@@ -70,9 +70,7 @@ cmd_go_switchmode_clr_banner:
 cmd_go_rts:
 
 	rts
-
-
-#endif
+}
 
 cmd_run:
 
@@ -98,13 +96,12 @@ cmd_goto:
 	; GOTO requires line number
 	; XXX in case of no parameter, go to line 0 - checked with original ROMs
 
-
 	jsr fetch_line_number
-#if !ROM_LAYOUT_M65
+!ifndef CONFIG_MB_M65 {
 	bcs cmd_go_syntax_error
-#else
-	bcs_16 do_SYNTAX_error
-#endif
+} else {
+	+bcs do_SYNTAX_error
+}
 
 	; Check for direct mode
 
@@ -115,10 +112,10 @@ cmd_goto:
 
 	lda LINNUM+1
 	cmp CURLIN+1
-	bne !+
+	bne @2
 	lda LINNUM+0
 	cmp CURLIN+0
-!:
+@2:
 	; If desired line number is lower - search line number from start
 
 	bcc cmd_goto_from_start
@@ -126,7 +123,7 @@ cmd_goto:
 	; Else - search from the current line
 
 	jsr find_line_from_current
-	jmp_8 cmd_goto_check
+	+bra cmd_goto_check
 
 cmd_goto_direct:
 
@@ -147,7 +144,7 @@ cmd_goto_from_start:
 
 cmd_goto_check:
 
-	bcs_16 do_UNDEFD_STATEMENT_error
+	+bcs do_UNDEFD_STATEMENT_error
 
 	; FALLTROUGH
 

@@ -17,7 +17,7 @@ helper_fetch_arr_coord:
 	; Fetch the dimension
 
 	jsr fetch_uint16
-	bcs !+
+	bcs @1
 
 	jsr fetch_character_skip_spaces
 	cmp #$2C                                     ; ','
@@ -26,7 +26,7 @@ helper_fetch_arr_coord:
 	beq helper_fetch_arr_last
 
 	; FALLTROUGH
-!:
+@1:
 	jmp do_SYNTAX_error
 
 helper_fetch_arr_more:
