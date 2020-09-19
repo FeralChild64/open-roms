@@ -21,14 +21,14 @@ dos_SETUNIT:
 dos_SETUNIT_sdcard:
 
 	stx UNIT_SDCARD
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 
 dos_SETUNIT_floppy:
 
 	stx UNIT_FLOPPY
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 

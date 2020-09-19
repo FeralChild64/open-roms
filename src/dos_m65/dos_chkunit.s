@@ -12,12 +12,12 @@ dos_CHKUNIT:
 	phx
 
 	ldx #$04
-!:
+@1:
 	lda MAGICSTR, x
 	cmp dos_magicstr, x
 	bne dos_CHKUNIT_mem_fail
 	dex
-	bpl !-
+	bpl @1
 
 	plx
 	pla
@@ -37,14 +37,14 @@ dos_CHKUNIT:
 dos_CHKUNIT_sdcard:
 
 	lda #$00
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 
 dos_CHKUNIT_floppy:
 
 	lda #$01
-	skip_2_bytes_trash_nvz
+	+skip_2_bytes_trash_nvz
 
 	; FALLTROUGH
 

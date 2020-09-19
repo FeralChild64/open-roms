@@ -9,11 +9,11 @@ dos_INIT:
 
 	phx
 	ldx #$04
-!:
+@1:
 	lda dos_magicstr, x
 	sta MAGICSTR, x
 	dex
-	bpl !-
+	bpl @1
 
 	plx
 
@@ -32,4 +32,4 @@ dos_INIT:
 
 dos_magicstr: ; 'CBDOS'
 
-	.byte $43, $42, $44, $4F, $53
+	!byte $43, $42, $44, $4F, $53
