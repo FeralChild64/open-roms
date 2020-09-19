@@ -53,12 +53,12 @@ fetch_variable_arr_check_dimensions:
 
 !ifdef CONFIG_MEMORY_MODEL_60K {
 	
-	phx_trash_a
+	+phx_trash_a
 	ldx #<VARPNT
 	ldy #$04
 	jsr peek_under_roms
 	sta INDEX+5
-	plx_trash_a
+	+plx_trash_a
 	cpx INDEX+5
 
 } else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {

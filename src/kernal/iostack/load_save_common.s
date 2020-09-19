@@ -65,7 +65,7 @@ lvs_handle_byte_verify:
 	; Compare with stored byte
 	cmp TBTCNT
 
-} else if CONFIG_MEMORY_MODEL_46K_OR_50K {
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 	; Store byte for comparing
 	sta TBTCNT

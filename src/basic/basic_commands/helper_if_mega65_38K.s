@@ -1,30 +1,30 @@
 ;; #LAYOUT# M65 BASIC_0 #TAKE
 ;; #LAYOUT# *   *       #IGNORE
 
-#if CONFIG_MEMORY_MODEL_38K
+!ifndef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 helper_if_mega65:
 
 	; Injest all spaces
 
 	ldy #$00
-!:
+@1:
 	lda (TXTPTR), Y
 	cmp #$20
-	bne !+
+	bne @2
 	inw TXTPTR
-	bra !-
-!:
+	bra @1
+@2:
 
 	; Check for MEGA65 untokenized keyword
 
 	ldy #$05
-!:
+@3:
 	lda (TXTPTR), Y
 	cmp str_mega65, Y
-	bne_16 helper_if_mega65_fail
+	+bne helper_if_mega65_fail
 	dey
-	bpl !-
+	bpl @3
 
 	; Increment TXTPTR by 6
 
@@ -32,9 +32,9 @@ helper_if_mega65:
 	lda TXTPTR+0
 	adc #$06
 	sta TXTPTR+0
-	bcc !+
+	bcc @4
 	inc TXTPTR+1
-!:
+@4:
 	; Report successful check
 
 	clc
@@ -47,6 +47,5 @@ helper_if_mega65_fail:
 
 str_mega65:
 
-	.byte $4D, $45, $47, $41, $36, $35
-
-#endif
+	!byte $4D, $45, $47, $41, $36, $35
+}

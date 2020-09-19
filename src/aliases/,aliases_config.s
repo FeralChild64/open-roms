@@ -197,7 +197,7 @@
 	!if (CONFIG_SID_3RD_ADDRESS = $D400) { !error "CONFIG_SID_3RD_ADDRESS points to the 1st SID" }
 }
 !ifdef CONFIG_SID_2ND_ADDRESS { !ifdef CONFIG_SID_3RD_ADDRESS {
-	!if (CONFIG_SID_2ND_ADDRESS = CONFIG_SID_RD_ADDRESS) { !error "Configured SIDs have the same addresses" }
+	!if (CONFIG_SID_2ND_ADDRESS = CONFIG_SID_3RD_ADDRESS) { !error "Configured SIDs have the same addresses" }
 } }
 
 

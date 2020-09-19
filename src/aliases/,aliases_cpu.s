@@ -82,56 +82,56 @@
 ; Branches with far offsets, substitutes by Bxx + JMP for CPUs not supporting the instruction
 
 !macro bcs @dst { !ifdef HAS_OPCODES_65CE02 {
-		lbcs @st
+		lbcs @dst
 	} else {
 		bcc *+5
 		jmp @dst
 } }
 
 !macro bcc @dst { !ifdef HAS_OPCODES_65CE02 {
-		lbcc @st
+		lbcc @dst
 	} else {
 		bcs *+5
 		jmp @dst
 } }
 
 !macro beq @dst { !ifdef HAS_OPCODES_65CE02 {
-		lbeq @st
+		lbeq @dst
 	} else {
 		bne *+5
 		jmp @dst
 } }
 
 !macro bne @dst { !ifdef HAS_OPCODES_65CE02 {
-		lbne @st
+		lbne @dst
 	} else {
 		beq *+5
 		jmp @dst
 } }
 
 !macro bmi @dst { !ifdef HAS_OPCODES_65CE02 {
-		lbmi @st
+		lbmi @dst
 	} else {
 		bpl *+5
 		jmp @dst
 } }
 
 !macro bpl @dst { !ifdef HAS_OPCODES_65CE02 {
-		lbpl @st
+		lbpl @dst
 	} else {
 		bmi *+5
 		jmp @dst
 } }
 
 !macro bvc @dst { !ifdef HAS_OPCODES_65CE02 {
-		lbvc @st
+		lbvc @dst
 	} else {
 		bvs *+5
 		jmp @dst
 } }
 
 !macro bvs @dst { !ifdef HAS_OPCODES_65CE02 {
-		lbvs @st
+		lbvs @dst
 	} else {
 		bvc *+5
 		jmp @dst

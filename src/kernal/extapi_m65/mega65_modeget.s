@@ -10,10 +10,10 @@ M65_MODEGET:
 
 	lda M65_MAGICSTR+0
 	cmp #$4D ; 'M'
-	bne !+
+	bne @1
 	lda M65_MAGICSTR+1
 	cmp #$36 ; '6'
-	bne !+
+	bne @1
 	lda M65_MAGICSTR+2
 	cmp #$35 ; '5'
 	bne @1

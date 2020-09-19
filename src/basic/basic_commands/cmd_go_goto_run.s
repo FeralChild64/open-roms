@@ -51,7 +51,7 @@ cmd_go_syntax_error:
 	bcc cmd_go_rts
 
 	jsr helper_ask_if_sure
-	bcs_16 cmd_end
+	+bcs cmd_end
 	jsr M65_MODESET                    ; Carry clear = switch to M65 mode
 
 	; FALLTROUGH

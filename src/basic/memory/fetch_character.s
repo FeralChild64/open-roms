@@ -22,7 +22,7 @@ fetch_character:
 	ldx #<TXTPTR
 	jsr peek_under_roms
 
-} else if CONFIG_MEMORY_MODEL_46K_OR_50K {
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 	jsr peek_under_roms_via_TXTPTR
 

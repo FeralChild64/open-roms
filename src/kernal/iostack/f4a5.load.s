@@ -48,7 +48,7 @@ LOAD:
 
 !ifdef CONFIG_TAPE_NORMAL {
 	cmp #$01
-	beq_16 load_tape_normal
+	+beq load_tape_normal
 }
 !ifdef CONFIG_TAPE_TURBO {
 	cmp #$07

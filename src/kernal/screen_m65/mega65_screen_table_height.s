@@ -4,6 +4,6 @@
 
 m65_scrtab_txtheight:        ; height of the text screen
 
-	.byte 25
-	.byte 25
-	.byte 50
+	!byte 25
+	!byte 25
+	!byte 50

@@ -53,7 +53,7 @@ initmsg_real:
 	jmp plot_set
 }
 
-} else if CONFIG_BANNER_FANCY {
+} else ifdef CONFIG_BANNER_FANCY {
 	
 	lda #<rainbow_logo
 	ldy #>rainbow_logo
