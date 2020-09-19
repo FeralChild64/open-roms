@@ -177,15 +177,18 @@ GIT_COMMIT:= $(shell git log -1 --pretty='%h' | tr '[:lower:]' '[:upper:]')
 .PHONY: all fast clean updatebin
 
 all:
+	$(MAKE) $(DIR_ACME)
 	$(MAKE) $(TARGET_LIST) $(EXT_TARGET_LIST)
 
 fast:
+	$(MAKE) $(DIR_ACME)
 	$(MAKE) -j64 --output-sync=target $(TARGET_LIST) $(EXT_TARGET_LIST)
 
 clean:
 	@rm -rf build src/basic/combined.s src/kernal/combined.s
 
 updatebin:
+	$(MAKE) $(DIR_ACME)
 	$(MAKE) -j64 --output-sync=target $(TARGET_LIST) $(TOOL_RELEASE)
 	$(TOOL_RELEASE) -i ./build -o ./bin $(patsubst build/%,%,$(REL_TARGET_LIST))
 	cp build/chargen_openroms.rom bin/chargen_openroms.rom
