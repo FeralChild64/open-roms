@@ -26,15 +26,6 @@
 
 tk_pack:
 
-	; Reuse the CPU stack - address $100 is used by 'tokenise_line.s'
-
-	!addr tk__len_unpacked = $101 ; length of unpacked data; it could replace 'tk__nibble_flag', but at the cost of code size/performance
-	!addr tk__shorten_bits = $102 ; 2 bytes for quick shortening of packed candidate
-	!addr tk__nibble_flag  = $104 ; $00 = start from new byte, $FF = start from high nibble
-	!addr tk__byte_offset  = $105 ; offset of the current byte (to place new data) in tk__packed
-
-	!addr tk__packed       = $106 ; packed candidate, 25 bytes is enough for worst case - a 16 byte keyword
-
 	; Initialize variables
 
 	lda #$00

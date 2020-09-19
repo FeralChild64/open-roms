@@ -64,9 +64,10 @@ SRC_DOS_M65 = $(foreach dir,$(SRCDIR_DOS_M65),$(wildcard $(dir)/*.s))
 SRC_KERNAL  = $(foreach dir,$(SRCDIR_KERNAL),$(wildcard $(dir)/*.s))
 SRC_TOOLS   = $(wildcard tools/*.c,tools/*.cc)
 
-OUT_ACME    = $(wildcard assembler/acme/src/_*.c) $(wildcard assembler/acme/src/_*.h)
-SRC_ACME    = $(filter-out $(OUT_ACME),$(wildcard assembler/acme/src/*.c))
-HDR_ACME    = $(filter-out $(OUT_ACME),$(wildcard assembler/acme/src/*.h))
+DIR_ACME    = assembler/acme/src
+XCL_ACME    = $(wildcard $(DIR_ACME)/_*.c) $(wildcard $(DIR_ACME)/_*.h)
+SRC_ACME    = $(filter-out $(XCL_ACME),$(wildcard $(DIR_ACME)/*.c))
+HDR_ACME    = $(filter-out $(XCL_ACME),$(wildcard $(DIR_ACME)/*.h))
 
 # Generated files
 
@@ -191,7 +192,11 @@ updatebin:
 
 # Rules - tools
 
-$(TOOL_ASSEMBLER): $(SRC_ACME) $(HDR_ACME)
+$(DIR_ACME):
+	git submodule init
+	git submodule update
+
+$(TOOL_ASSEMBLER): $(DIR_ACME) $(SRC_ACME) $(HDR_ACME)
 	@mkdir -p build/tools
 	echo $(OUT_ACME)
 	$(CC) -o $(TOOL_ASSEMBLER) $(SRC_ACME) -lm -I./assembler/acme/src

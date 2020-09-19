@@ -21,11 +21,6 @@ tokenise_line:
 
 } else {
 
-	; Reuse the CPU stack - addresses above $100 are used by 'tk_pack.s'
-
-	!addr tk__offset       = $100               ; offset into string
-	!addr tk__length       = __tokenise_work1   ; length of the raw string
-
 	; Initialize variables
 
 	lda #$00
