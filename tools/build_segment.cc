@@ -88,15 +88,24 @@ public:
     SourceFile(const std::string &fileName, const std::string &dirName);
 
     void preprocess();
-    bool preprocessLine(const std::string &line);
+    void preprocessLine(const std::string &line, uint32_t lineNum);
+    void preprocessLine_Alias(const std::list<std::string> &tokens, std::list<std::string>::iterator &iter, uint32_t lineNum);
+    void preprocessLine_Import(const std::list<std::string> &tokens, std::list<std::string>::iterator &iter);
+    void preprocessLine_Layout(const std::list<std::string> &tokens, std::list<std::string>::iterator &iter);
+
     bool nameMatch(const std::string &token, const std::string &name);
 
     std::string fileName;
     std::string dirName;
 
+    bool layoutProcessingDone;
     bool ignore;
     bool floating;
     bool high;
+
+    std::map<std::string, std::list<std::pair<std::string, uint16_t>>> symbolImports;
+    std::map<uint32_t, std::pair<std::string, uint16_t>>               symbolAliases;
+
     std::vector<char> content;
 
     std::string label;
@@ -596,6 +605,7 @@ int main(int argc, char **argv)
 SourceFile::SourceFile(const std::string &fileName, const std::string &dirName) :
     fileName(fileName),
     dirName(dirName),
+    layoutProcessingDone(false),
     ignore(false),
     floating(false),
     high(false),
@@ -662,17 +672,26 @@ void SourceFile::preprocess()
     std::string contentStr(content.begin(), content.end());
     std::istringstream stream(contentStr);
     std::string line;
+    uint32_t    lineNum = 0;
 
     while (std::getline(stream, line))
     {
+        lineNum++;
+
         if (line.empty()) continue;
         std::replace(line.begin(), line.end(), '\t', ' ');
         line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
-        if (!preprocessLine(line)) break;
+        preprocessLine(line, lineNum - 1);
     }
+
+    // XXX put preprocessed lines into content
+    // XXX symbolAliases[lineNum] = std::pair<std::string, uint16_t>(symbol, symbolImports[symNameSpace])
+
+    symbolAliases.clear();
+    symbolImports.clear();
 }
 
-bool SourceFile::preprocessLine(const std::string &line)
+void SourceFile::preprocessLine(const std::string &line, uint32_t lineNum)
 {
     // Split the line into tokens
 
@@ -685,7 +704,7 @@ bool SourceFile::preprocessLine(const std::string &line)
         if (token.empty()) continue;
         tokens.push_back(token);
     }
-    if (tokens.empty()) return true;
+    if (tokens.empty()) return;
 
     // Now preprocess line using the token list
 
@@ -693,19 +712,94 @@ bool SourceFile::preprocessLine(const std::string &line)
 
     // Injest the comment token
 
-    if ((iter++)->compare(";;") != 0 || iter == tokens.end()) return true;
+    if ((iter++)->compare(";;") != 0 || iter == tokens.end()) return;
 
     // Check if supported directive
 
-    if ((iter++)->compare("#LAYOUT#") != 0) return true;
+    if (iter->compare("#ALIAS#") == 0) preprocessLine_Alias(tokens, ++iter, lineNum);
+    else if (iter->compare("#IMPORT#") == 0) preprocessLine_Import(tokens, ++iter);
+    else if (iter->compare("#LAYOUT#") == 0) preprocessLine_Layout(tokens, ++iter);
+}
+
+void SourceFile::preprocessLine_Alias(const std::list<std::string> &tokens, std::list<std::string>::iterator &iter, uint32_t lineNum)
+{
+    if (ignore) return;
+
+    // Extract symbol, namespace, and target
+
+    if (iter == tokens.end()) ERROR("syntax error, missing symbol in '#ALIAS#'");
+    std::string symbol = *(iter++);
+
+    if (iter == tokens.end() || (iter++)->compare("=") != 0) ERROR("syntax error, expected assignment in '#ALIAS#'");
+    if (iter == tokens.end()) ERROR("syntax error, missing namespace/target in '#ALIAS#'");
+
+    auto dotPos = iter->rfind('.');
+    std::string symNameSpace = iter->substr(0, dotPos);
+    std::string symTarget    = iter->substr(dotPos + 1, std::string::npos);
+
+    if (symNameSpace.empty()) ERROR("syntax error, missing namespace in '#ALIAS#'");
+    if (symTarget.empty())    ERROR("syntax error, missing target in '#ALIAS#'");
+
+    // Put the alias - if address found
+
+    for (const auto &alias : symbolImports[symNameSpace])
+    {
+        if (alias.first.compare(symTarget) != 0) continue;
+
+        symbolAliases[lineNum] = std::pair<std::string, uint16_t>(symbol, alias.second);
+        break;
+    }
+}
+
+void SourceFile::preprocessLine_Import(const std::list<std::string> &tokens, std::list<std::string>::iterator &iter)
+{
+    if (ignore) return;
+
+    if (iter == tokens.end()) ERROR("syntax error, missing namespace in '#IMPORT#'");
+    std::string symNameSpace = *(iter++);
+
+    if (iter == tokens.end() || iter->compare("=") != 0) ERROR("syntax error, expected assignment in '#IMPORT#'");
+
+    while (++iter != tokens.end())
+    {
+        // Try to import sumbols for the file
+
+        std::ifstream impFile;
+        impFile.open(CMD_outDir + DIR_SEPARATOR + *iter);
+        if (!impFile.good())
+        {
+            impFile.close();
+            continue;
+        }
+
+        std::string line;
+        while (std::getline(impFile, line))
+        {
+            // Import label and address
+
+            auto eqPos = line.rfind('=');
+
+            auto address      = strtol(line.substr(eqPos + 3).c_str(), nullptr , 16);
+            std::string label = line.substr(1, eqPos - 2);
+
+            symbolImports[symNameSpace].push_back(std::pair<std::string, uint16_t>(label, address));
+        }
+
+        impFile.close();
+    }
+}
+
+void SourceFile::preprocessLine_Layout(const std::list<std::string> &tokens, std::list<std::string>::iterator &iter)
+{
+    if (layoutProcessingDone) return;
 
     // Check if segment name and rom layout match
 
     if (iter == tokens.end()) ERROR("syntax error, missing rom layout in '#LAYOUT#'");
-    if (!nameMatch(*(iter++), CMD_romLayout)) return true;
+    if (!nameMatch(*(iter++), CMD_romLayout)) return;
 
     if (iter == tokens.end()) ERROR("syntax error, missing segment name in '#LAYOUT#'");
-    if (!nameMatch(*(iter++), CMD_segName)) return true;
+    if (!nameMatch(*(iter++), CMD_segName)) return;
 
     // Retrieve and apply action
 
@@ -731,13 +825,14 @@ bool SourceFile::preprocessLine(const std::string &line)
     }
     else if (iter->compare("#TAKE") != 0)
     {
-        ERROR(std::string("syntax error, unsupported action '") + token + "' in '#LAYOUT#'");
+        ERROR(std::string("syntax error, unsupported action '") + *iter + "' in '#LAYOUT#'");
     }
 
-    // Tell the caller to finish processing the file
+    // Mark the file - to tell that layout processing is finished
 
-    return false;
+    layoutProcessingDone = true;
 }
+
 
 bool SourceFile::nameMatch(const std::string &token, const std::string &name)
 {
