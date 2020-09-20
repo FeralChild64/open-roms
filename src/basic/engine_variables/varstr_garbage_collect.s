@@ -124,7 +124,7 @@ varstr_garbage_collect_check_bptr:
 !ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT
 	jsr peek_under_roms
-} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_OLDTXT
 } else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
@@ -159,7 +159,7 @@ varstr_garbage_collect_check_bptr:
 	iny
 	jsr peek_under_roms
 	sta memmove__src+1
-} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr helper_gc_set_memmove_src
 } else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
@@ -222,7 +222,7 @@ varstr_garbage_collect_check_bptr:
 	adc INDEX+1
 	jsr poke_under_roms
 
-} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	
 	jsr helper_gc_increase_oldtxt
 
@@ -249,7 +249,7 @@ varstr_garbage_collect_check_bptr:
 !ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<OLDTXT
 	jsr peek_under_roms
-} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_OLDTXT
 } else { ; CONFIG_MEMORY_MODEL_38K
 	lda (OLDTXT),y
@@ -311,7 +311,7 @@ varstr_garbage_collect_unused:
 !ifdef CONFIG_MEMORY_MODEL_60K {
 	ldx #<TXTPTR
 	jsr peek_under_roms
-} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 	jsr peek_under_roms_via_TXTPTR
 } else { ; CONFIG_MEMORY_MODEL_38K
 	lda (TXTPTR),y

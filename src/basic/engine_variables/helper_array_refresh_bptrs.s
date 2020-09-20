@@ -19,7 +19,7 @@ helper_array_refresh_bptrs:
 
 helper_array_refresh_bptrs_loop_1:
 
-	; Check if we reached end of arays
+	; Check if we reached end of arrays
 
 	lda INDEX+1
 	cmp STREND+1
@@ -141,7 +141,7 @@ helper_array_refresh_bptrs_loop_2:
 	lda INDEX+1
 	jsr poke_under_roms
 @2:
-} else ifdef CONFIG_MEMORY_MODEL_46K_50K {
+} else ifdef CONFIG_MEMORY_MODEL_46K_OR_50K {
 
 	jsr helper_array_refresh_bptrs_part2
 
