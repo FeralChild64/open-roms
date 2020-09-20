@@ -58,19 +58,19 @@
 
 command_jumptable_lo:
 
-	!byte <ITEM_80, <ITEM_81, <ITEM_82, <ITEM_83, <ITEM_84, <ITEM_85, <ITEM_86, <ITEM_87
-	!byte <ITEM_88, <ITEM_89, <ITEM_8A, <ITEM_8B, <ITEM_8C, <ITEM_8D, <ITEM_8E, <ITEM_8F
-	!byte <ITEM_90, <ITEM_91, <ITEM_92, <ITEM_93, <ITEM_94, <ITEM_95, <ITEM_96, <ITEM_97
-	!byte <ITEM_98, <ITEM_99, <ITEM_9A, <ITEM_9B, <ITEM_9C, <ITEM_9D, <ITEM_9E, <ITEM_9F
-	!byte <ITEM_A0, <ITEM_A1, <ITEM_A2, <ITEM_A3, <ITEM_A4, <ITEM_A5, <ITEM_A6
+	!byte <(ITEM_80-1), <(ITEM_81-1), <(ITEM_82-1), <(ITEM_83-1), <(ITEM_84-1), <(ITEM_85-1), <(ITEM_86-1), <(ITEM_87-1)
+	!byte <(ITEM_88-1), <(ITEM_89-1), <(ITEM_8A-1), <(ITEM_8B-1), <(ITEM_8C-1), <(ITEM_8D-1), <(ITEM_8E-1), <(ITEM_8F-1)
+	!byte <(ITEM_90-1), <(ITEM_91-1), <(ITEM_92-1), <(ITEM_93-1), <(ITEM_94-1), <(ITEM_95-1), <(ITEM_96-1), <(ITEM_97-1)
+	!byte <(ITEM_98-1), <(ITEM_99-1), <(ITEM_9A-1), <(ITEM_9B-1), <(ITEM_9C-1), <(ITEM_9D-1), <(ITEM_9E-1), <(ITEM_9F-1)
+	!byte <(ITEM_A0-1), <(ITEM_A1-1), <(ITEM_A2-1), <(ITEM_A3-1), <(ITEM_A4-1), <(ITEM_A5-1), <(ITEM_A6-1)
 
 command_jumptable_hi:
 
-	!byte >ITEM_80, >ITEM_81, >ITEM_82, >ITEM_83, >ITEM_84, >ITEM_85, >ITEM_86, >ITEM_87
-	!byte >ITEM_88, >ITEM_89, >ITEM_8A, >ITEM_8B, >ITEM_8C, >ITEM_8D, >ITEM_8E, >ITEM_8F
-	!byte >ITEM_90, >ITEM_91, >ITEM_92, >ITEM_93, >ITEM_94, >ITEM_95, >ITEM_96, >ITEM_97
-	!byte >ITEM_98, >ITEM_99, >ITEM_9A, >ITEM_9B, >ITEM_9C, >ITEM_9D, >ITEM_9E, >ITEM_9F
-	!byte >ITEM_A0, >ITEM_A1, >ITEM_A2, >ITEM_A3, >ITEM_A4, >ITEM_A5, >ITEM_A6
+	!byte >(ITEM_80-1), >(ITEM_81-1), >(ITEM_82-1), >(ITEM_83-1), >(ITEM_84-1), >(ITEM_85-1), >(ITEM_86-1), >(ITEM_87-1)
+	!byte >(ITEM_88-1), >(ITEM_89-1), >(ITEM_8A-1), >(ITEM_8B-1), >(ITEM_8C-1), >(ITEM_8D-1), >(ITEM_8E-1), >(ITEM_8F-1)
+	!byte >(ITEM_90-1), >(ITEM_91-1), >(ITEM_92-1), >(ITEM_93-1), >(ITEM_94-1), >(ITEM_95-1), >(ITEM_96-1), >(ITEM_97-1)
+	!byte >(ITEM_98-1), >(ITEM_99-1), >(ITEM_9A-1), >(ITEM_9B-1), >(ITEM_9C-1), >(ITEM_9D-1), >(ITEM_9E-1), >(ITEM_9F-1)
+	!byte >(ITEM_A0-1), >(ITEM_A1-1), >(ITEM_A2-1), >(ITEM_A3-1), >(ITEM_A4-1), >(ITEM_A5-1), >(ITEM_A6-1)
 
 } else { ; HAS_OPCODES_65C02
 

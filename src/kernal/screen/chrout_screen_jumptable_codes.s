@@ -45,53 +45,53 @@ __chrout_screen_jumptable_codes_end:
 
 chrout_screen_jumptable_lo:
 
-	!byte <chrout_screen_CLR
-	!byte <chrout_screen_HOME
-	!byte <chrout_screen_SHIFT_OFF
-	!byte <chrout_screen_SHIFT_ON
-	!byte <chrout_screen_TXT
-	!byte <chrout_screen_GFX
-	!byte <chrout_screen_RVS_OFF
-	!byte <chrout_screen_RVS_ON
-	!byte <chrout_screen_CRSR_RIGHT
-	!byte <chrout_screen_CRSR_LEFT
-	!byte <chrout_screen_CRSR_DOWN
-	!byte <chrout_screen_CRSR_UP
-	!byte <chrout_screen_INS
+	!byte <(chrout_screen_CLR-1)
+	!byte <(chrout_screen_HOME-1)
+	!byte <(chrout_screen_SHIFT_OFF-1)
+	!byte <(chrout_screen_SHIFT_ON-1)
+	!byte <(chrout_screen_TXT-1)
+	!byte <(chrout_screen_GFX-1)
+	!byte <(chrout_screen_RVS_OFF-1)
+	!byte <(chrout_screen_RVS_ON-1)
+	!byte <(chrout_screen_CRSR_RIGHT-1)
+	!byte <(chrout_screen_CRSR_LEFT-1)
+	!byte <(chrout_screen_CRSR_DOWN-1)
+	!byte <(chrout_screen_CRSR_UP-1)
+	!byte <(chrout_screen_INS-1)
 !ifdef CONFIG_EDIT_STOPQUOTE {
-	!byte <chrout_screen_STOP
+	!byte <(chrout_screen_STOP-1)
 }
 !ifdef CONFIG_EDIT_TABULATORS {
-	!byte <chrout_screen_TAB_BW
-	!byte <chrout_screen_TAB_FW
+	!byte <(chrout_screen_TAB_BW-1)
+	!byte <(chrout_screen_TAB_FW-1)
 }
-	!byte <chrout_screen_DEL
-	!byte <chrout_screen_RETURN
+	!byte <(chrout_screen_DEL-1)
+	!byte <(chrout_screen_RETURN-1)
 
 chrout_screen_jumptable_hi:
 
-	!byte >chrout_screen_CLR
-	!byte >chrout_screen_HOME
-	!byte >chrout_screen_SHIFT_OFF
-	!byte >chrout_screen_SHIFT_ON
-	!byte >chrout_screen_TXT
-	!byte >chrout_screen_GFX
-	!byte >chrout_screen_RVS_OFF
-	!byte >chrout_screen_RVS_ON
-	!byte >chrout_screen_CRSR_RIGHT
-	!byte >chrout_screen_CRSR_LEFT
-	!byte >chrout_screen_CRSR_DOWN
-	!byte >chrout_screen_CRSR_UP
-	!byte >chrout_screen_INS
+	!byte >(chrout_screen_CLR-1)
+	!byte >(chrout_screen_HOME-1)
+	!byte >(chrout_screen_SHIFT_OFF-1)
+	!byte >(chrout_screen_SHIFT_ON-1)
+	!byte >(chrout_screen_TXT-1)
+	!byte >(chrout_screen_GFX-1)
+	!byte >(chrout_screen_RVS_OFF-1)
+	!byte >(chrout_screen_RVS_ON-1)
+	!byte >(chrout_screen_CRSR_RIGHT-1)
+	!byte >(chrout_screen_CRSR_LEFT-1)
+	!byte >(chrout_screen_CRSR_DOWN-1)
+	!byte >(chrout_screen_CRSR_UP-1)
+	!byte >(chrout_screen_INS-1)
 !ifdef CONFIG_EDIT_STOPQUOTE {
-	!byte >chrout_screen_STOP
+	!byte >(chrout_screen_STOP-1)
 }
 !ifdef CONFIG_EDIT_TABULATORS {
-	!byte >chrout_screen_TAB_BW
-	!byte >chrout_screen_TAB_FW
+	!byte >(chrout_screen_TAB_BW-1)
+	!byte >(chrout_screen_TAB_FW-1)
 }
-	!byte >chrout_screen_DEL
-	!byte >chrout_screen_RETURN
+	!byte >(chrout_screen_DEL-1)
+	!byte >(chrout_screen_RETURN-1)
 
 } else { ; HAS_OPCODES_65C02
 

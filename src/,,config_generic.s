@@ -79,7 +79,7 @@
 !set   CONFIG_KEYCMD_RUN = 1
 !macro CONFIG_KEYCMD_RUN  {
 	!byte $5F
-	!pet "L" }
+	!pet "l" }
 
 !set   CONFIG_KEYCMD_F1 = 1
 !macro CONFIG_KEYCMD_F1   { !pet "@" }

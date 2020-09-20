@@ -55,11 +55,11 @@ operator_priorities:                   ; higher number = higher priority
 
 operator_jumptable_lo:
 
-	!byte <ITEM_00, <ITEM_01, <ITEM_02, <ITEM_03, <ITEM_04, <ITEM_05, <ITEM_06, <ITEM_07 
-	!byte <ITEM_08, <ITEM_09, <ITEM_0A, <ITEM_0B, <ITEM_0C, <ITEM_0D, <ITEM_0E
+	!byte <(ITEM_00-1), <(ITEM_01-1), <(ITEM_02-1), <(ITEM_03-1), <(ITEM_04-1), <(ITEM_05-1), <(ITEM_06-1), <(ITEM_07-1)
+	!byte <(ITEM_08-1), <(ITEM_09-1), <(ITEM_0A-1), <(ITEM_0B-1), <(ITEM_0C-1), <(ITEM_0D-1), <(ITEM_0E-1)
 
 
 operator_jumptable_hi:
 
-	!byte >ITEM_00, >ITEM_01, >ITEM_02, >ITEM_03, >ITEM_04, >ITEM_05, >ITEM_06, >ITEM_07 
-	!byte >ITEM_08, >ITEM_09, >ITEM_0A, >ITEM_0B, >ITEM_0C, >ITEM_0D, >ITEM_0E
+	!byte >(ITEM_00-1), >(ITEM_01-1), >(ITEM_02-1), >(ITEM_03-1), >(ITEM_04-1), >(ITEM_05-1), >(ITEM_06-1), >(ITEM_07-1)
+	!byte >(ITEM_08-1), >(ITEM_09-1), >(ITEM_0A-1), >(ITEM_0B-1), >(ITEM_0C-1), >(ITEM_0D-1), >(ITEM_0E-1)

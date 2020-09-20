@@ -28,11 +28,11 @@
 
 command_02_jumptable_lo:
 
-	!byte <ITEM_00, <ITEM_01, <ITEM_02 
+	!byte <(ITEM_00-1), <(ITEM_01-1), <(ITEM_02-1) 
 
 command_02_jumptable_hi:
 
-	!byte >ITEM_00, >ITEM_01, >ITEM_02 
+	!byte >(ITEM_00-1), >(ITEM_01-1), >(ITEM_02-1)
 
 } else { ; HAS_OPCODES_65C02
 

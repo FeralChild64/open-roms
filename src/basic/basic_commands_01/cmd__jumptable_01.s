@@ -36,12 +36,12 @@
 
 command_01_jumptable_lo:
 
-	!byte <ITEM_00, <ITEM_01, <ITEM_02, <ITEM_03, <ITEM_04, <ITEM_05, <ITEM_06, <ITEM_07, <ITEM_08
+	!byte <(ITEM_00-1), <(ITEM_01-1), <(ITEM_02-1), <(ITEM_03-1), <(ITEM_04-1), <(ITEM_05-1), <(ITEM_06-1), <(ITEM_07-1), <(ITEM_08-1)
 
 
 command_01_jumptable_hi:
 
-	!byte >ITEM_00, >ITEM_01, >ITEM_02, >ITEM_03, >ITEM_04, >ITEM_05, >ITEM_06, >ITEM_07, >ITEM_08
+	!byte >(ITEM_00-1), >(ITEM_01-1), >(ITEM_02-1), >(ITEM_03-1), >(ITEM_04-1), >(ITEM_05-1), >(ITEM_06-1), >(ITEM_07-1), >(ITEM_08-1)
 
 } else { ; HAS_OPCODES_65C02
 
