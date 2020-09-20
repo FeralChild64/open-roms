@@ -109,7 +109,6 @@ DEP_KERNAL  = $(SRC_KERNAL)  $(SRCDIR_KERNAL)  $(GEN_KERNAL)
 
 # List of tools
 
-TOOL_COLLECT_DATA       = build/tools/collect_data
 TOOL_GENERATE_CONSTANTS = build/tools/generate_constants
 TOOL_GENERATE_STRINGS   = build/tools/generate_strings
 TOOL_PATCH_CHARGEN      = build/tools/patch_chargen
@@ -119,7 +118,14 @@ TOOL_RELEASE            = build/tools/release
 TOOL_SIMILARITY         = build/tools/similarity
 TOOL_ASSEMBLER          = build/tools/acme
 
-TOOLS_LIST = $(pathsubst tools/%,build/tools/%,$(basename $(SRC_TOOLS)))
+TOOLS_LIST = $(TOOL_GENERATE_CONSTANTS) \
+             $(TOOL_GENERATE_STRINGS) \
+             $(TOOL_PATCH_CHARGEN) \
+             $(TOOL_PNGPREPARE) \
+             $(TOOL_BUILD_SEGMENT) \
+             $(TOOL_RELEASE) \
+             $(TOOL_SIMILARITY) \
+             $(TOOL_ASSEMBLER)
 
 # List of targets
 
@@ -154,13 +160,13 @@ TARGET_LIST = build/chargen_openroms.rom \
 SEG_LIST_M65 =    $(DIR_M65)/basic.seg_0  \
                   $(DIR_M65)/basic.seg_1  \
                   $(DIR_M65)/dos.seg_1    \
-				  $(DIR_M65)/kernal.seg_0 \
-				  $(DIR_M65)/kernal.seg_1
+                  $(DIR_M65)/kernal.seg_0 \
+                  $(DIR_M65)/kernal.seg_1
 
 SEG_LIST_X16 =    $(DIR_X16)/basic.seg_0  \
                   $(DIR_X16)/basic.seg_1  \
-				  $(DIR_X16)/kernal.seg_0 \
-				  $(DIR_X16)/kernal.seg_1
+                  $(DIR_X16)/kernal.seg_0 \
+                  $(DIR_X16)/kernal.seg_1
 
 REL_TARGET_LIST = $(TARGET_LIST_GEN) $(TARGET_M65_x) $(TARGET_M65_x_PXL) $(TARGET_LIST_U64)
 
@@ -174,15 +180,18 @@ GIT_COMMIT:= $(shell git log -1 --pretty='%h' | tr '[:lower:]' '[:upper:]')
 
 # Rules - main   XXX fast build does not always succeed, not yet clear, why
 
-.PHONY: all fast clean updatebin
+.PHONY: all clean updatebin
 
 all:
+	@echo
+	@echo --- Building tools ---
+	@echo
 	$(MAKE) $(DIR_ACME)
+	$(MAKE) -j64 --output-sync=target $(TOOLS_LIST)
+	@echo
+	@echo --- Building Open ROMs ---
+	@echo
 	$(MAKE) $(TARGET_LIST) $(EXT_TARGET_LIST)
-
-fast:
-	$(MAKE) $(DIR_ACME)
-	$(MAKE) -j64 --output-sync=target $(TARGET_LIST) $(EXT_TARGET_LIST)
 
 clean:
 	@rm -rf build src/basic/combined.s src/kernal/combined.s

@@ -96,7 +96,7 @@ shell_process_line:
 
 	ldx __tokenise_work1                         ; size of the input, DOS wedges needs this  XXX this should not be needed
 }
-!if HAS_WEDGE {
+!ifdef HAS_WEDGE {
 	
 	; Check if DOS wedge should take over
 	lda BUF

@@ -65,7 +65,6 @@
 
 !ifdef CONFIG_PLATFORM_COMMANDER_X16 {
 	!if (counter != 0) { !error "Do not use CONFIG_CPU_* options for Commander X16 platform" }
-	!set CONFIG_CPU_WDC_65C02 = 1
 } else ifdef CONFIG_MB_M65 {
 	!if (counter != 0) { !error "Do not use CONFIG_CPU_* options for MEGA65 motherboard" }
 } else ifdef CONFIG_MB_U64 {
@@ -88,9 +87,9 @@
 	!ifdef CONFIG_MEMORY_MODEL_60K { !error "Do not use CONFIG_MEMORY_MODEL_60K options for MEGA65 motherboard" }
 }
 !ifdef CONFIG_PLATFORM_COMMANDER_X16 {
-	!if (counter != 0) { !error "Do not use CONFIG_MEMORY_MODEL_* options for Commander X16 platform" }
-	!set CONFIG_MEMORY_MODEL_38K = 1
-} else if (counter != 1) {
+	!ifndef CONFIG_MEMORY_MODEL_38K { !error "Select CONFIG_MEMORY_MODEL_38K options for Commander X16 platform" }
+}
+!if (counter != 1) {
 	!error "Please select exactly one CONFIG_MEMORY_MODEL_* option"	
 }
 
@@ -262,6 +261,12 @@
 }
 !ifdef CONFIG_CPU_RCW_65C02 {
 	!cpu r65c02
+	!set HAS_BCD_SAFE_INTERRUPTS = 1
+	!set HAS_OPCODE_BRA          = 1
+	!set HAS_OPCODES_65C02       = 1
+}
+!ifdef CONFIG_PLATFORM_COMMANDER_X16 {
+	!cpu w65c02
 	!set HAS_BCD_SAFE_INTERRUPTS = 1
 	!set HAS_OPCODE_BRA          = 1
 	!set HAS_OPCODES_65C02       = 1

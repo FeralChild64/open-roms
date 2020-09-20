@@ -15,6 +15,11 @@
 !set CONFIG_PLATFORM_COMMANDER_X16 = 1
 
 
+; Memory model
+
+!set CONFIG_MEMORY_MODEL_38K = 1
+
+
 ; Keyboard settings
 
 ; !set CONFIG_PROGRAMMABLE_KEYS = 1
