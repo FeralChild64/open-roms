@@ -11,7 +11,7 @@ cmd_gosys:
 
 	jsr is_end_of_statement
 	+bcs do_SYNTAX_error
-	+bra cmd_sys_nsys_common
+	+bra cmd_sys_common
 }
 
 cmd_sys:

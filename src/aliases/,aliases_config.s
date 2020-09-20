@@ -45,7 +45,7 @@
 	!if (counter != 0) { !error "Do not use CONFIG_BRAND_* options for non-C64 platforms" }
 } else ifdef CONFIG_MB_M65 {
 	!if (counter != 0) { !error "Do not use CONFIG_BRAND_* options for the MEGA65 motherboard" }
-} else ifdef CONFIG_MB_MU64 {
+} else ifdef CONFIG_MB_U64 {
 	!if (counter != 0) { !error "Do not use CONFIG_BRAND_* options for the Ultimate 64 motherboard" }
 } else if (counter != 1) {
 	!error "Please select exactly one CONFIG_BRAND_* option"	
@@ -70,7 +70,6 @@
 	!if (counter != 0) { !error "Do not use CONFIG_CPU_* options for MEGA65 motherboard" }
 } else ifdef CONFIG_MB_U64 {
 	!if (counter != 0) { !error "Do not use CONFIG_CPU_* options for Ultimate 64 motherboard" }
-	!set CONFIG_CPU_MOS_6502 = 1
 } else if (counter != 1) {
 	!error "Please select exactly one CONFIG_CPU_* option"	
 }
