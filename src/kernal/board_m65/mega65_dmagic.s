@@ -30,7 +30,7 @@ m65_dmagic_oper_fill:
 	; Adapt the addresses, launch the job
 
 	jsr m65_dmagic_adapt_dst
-	jmp_8 m65_dmagic_launch
+	bra m65_dmagic_launch
 
 m65_dmagic_oper_copy:
 
@@ -129,7 +129,7 @@ m65_dmagic_init:
 	sta M65_DMAGIC_LIST+0              ; <- $0A = use F018A list format (it is shorter by 1 byte)
 	lda #$80
 	sta M65_DMAGIC_LIST+1              ; <- $80 = next byte is highest 8 bits of source address
-	inc_a
+	inc
 	sta M65_DMAGIC_LIST+3              ; <- $81 = next byte is highest 8 bits of destination address
 
 	lda #$00

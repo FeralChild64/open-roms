@@ -29,7 +29,7 @@
 tape_turbo_bytestore_source:
 
 !ifdef CONFIG_MB_M65 {
-	jsr KERNAL_0.map_NORMAL
+	jsr map_NORMAL
 }
 
 	; Set all memory as RAM, tape motor ON
@@ -45,7 +45,7 @@ tape_turbo_bytestore_source:
 
 !ifdef CONFIG_MB_M65 {
 	; Restore default map and quit
-	jmp KERNAL_0.map_KERNAL_1
+	jmp map_KERNAL_1
 } else {
 	; Go back
 	rts

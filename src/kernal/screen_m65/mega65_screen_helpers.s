@@ -36,7 +36,11 @@ m65_screen_dmasrcdst_screen:
 	sta M65_DMAJOB_SRC_2
 	sta M65_DMAJOB_DST_2
 	lda M65_SCRSEG+1
-!:
+
+	; FALLTROUGH
+
+m65_screen_dmasrcdst_screen_cont:
+
 	sta M65_DMAJOB_SRC_3
 	sta M65_DMAJOB_DST_3
 
@@ -56,7 +60,7 @@ m65_screen_dmasrcdst_color:
 	sta M65_DMAJOB_SRC_2
 	sta M65_DMAJOB_DST_2
 	lda #$0F
-	jmp_8 !-
+	bra m65_screen_dmasrcdst_screen_cont
 
 
 m65_screen_dmasrc_add_row:
@@ -65,7 +69,7 @@ m65_screen_dmasrc_add_row:
 	lda M65_DMAJOB_SRC_0
 	adc #$50
 	sta M65_DMAJOB_SRC_0
-	bcc !+
+	bcc @1
 	inc M65_DMAJOB_SRC_1
-!:
+@1:
 	rts

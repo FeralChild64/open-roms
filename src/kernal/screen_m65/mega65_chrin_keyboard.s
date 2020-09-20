@@ -69,12 +69,12 @@ m65_chrin_keyboard_return_byte:
 
 	tya
 	taz
-	lda_lp (M65_LPNT_SCR), z
+	lda [M65_LPNT_SCR], z
 
 	jsr screen_check_toggle_quote
 	jsr screen_code_to_petscii
 
-	jmp_8 m65_chrin_keyboard_end
+	bra m65_chrin_keyboard_end
 
 m65_chrin_keyboard_read:
 
@@ -133,7 +133,7 @@ m65_chrin_enter_loop:
 
 	tya
 	taz
-	lda_lp (M65_LPNT_SCR), z
+	lda [M65_LPNT_SCR], z
 	cmp #$20
 	beq m65_chrin_enter_loop
 	iny
@@ -150,19 +150,18 @@ m65_chrin_enter_loop:
 	sty QTSW
 
 	; Return first char of line
-	jmp_8 m65_chrin_keyboard_return_byte     ; branch always
+	bra m65_chrin_keyboard_return_byte           ; branch always
 
 
 m65_chrin_keyboard_not_enter:
 
 	lda KEYD
 
-#if CONFIG_PROGRAMMABLE_KEYS
+!ifdef CONFIG_PROGRAMMABLE_KEYS {
 
 	jsr chrin_programmable_keys
 	bcc m65_chrin_keyboard_enter
-
-#endif ; CONFIG_PROGRAMMABLE_KEYS
+}
 
 	; Print character, keep looking for input from keyboard until carriage return
 	jsr CHROUT

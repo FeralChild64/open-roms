@@ -64,4 +64,4 @@ m65_helper_scrlpnt_chrin:
 	lda M65__SCRINPUT+1
 	sta M65_LPNT_SCR+1
 
-	jmp_8 m65_helper_scrlpnt_to_screen_hi
+	bra m65_helper_scrlpnt_to_screen_hi

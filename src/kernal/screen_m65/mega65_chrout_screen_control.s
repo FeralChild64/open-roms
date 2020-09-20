@@ -20,10 +20,10 @@ m65_chrout_try_jumptable_loop:
 	tay
 	lda QTSW
 	ora INSRT
-	beq !+
+	beq @1
 	tya
 	jmp m65_chrout_screen_quote
-!:
+@1:
 	tya
 
 	; FALLTROUGH
@@ -31,7 +31,7 @@ m65_chrout_try_jumptable_loop:
 m65_chrout_try_jumptable_loop_noquote:
 
 	cmp m65_chrout_screen_jumptable_codes, x
-	bne !+
+	bne @2
 
 	; Found, perform a jump to subroutine
 
@@ -40,7 +40,7 @@ m65_chrout_try_jumptable_loop_noquote:
 	tax
 	jmp (m65_chrout_screen_jumptable, x)
 
-!:
+@2:
 	dex
 	bpl m65_chrout_try_jumptable_loop
 
@@ -51,7 +51,7 @@ m65_chrout_try_COLOR:
 m65_chrout_try_color_loop:
 
 	cmp colour_codes,x
-	bne !+
+	bne @3
 
 	lda COLOR
 	and #$F0
@@ -62,7 +62,7 @@ m65_chrout_try_color_loop:
 	sta COLOR
 
 	jmp m65_chrout_screen_done
-!:	
+@3:	
 	dex
 	bpl m65_chrout_try_color_loop
 
@@ -76,21 +76,21 @@ m65_chrout_try_color_loop:
 ; XXX: implement screen routines below:
 
 m65_chrout_screen_TAB:
-	nop
+	+nop
 m65_chrout_screen_LINE_FEED:
-	nop
+	+nop
 m65_chrout_screen_UNDERLINE_ON:
-	nop
+	+nop
 m65_chrout_screen_UNDERLINE_OFF:
-	nop
+	+nop
 m65_chrout_screen_FLASHING_ON:
-	nop
+	+nop
 m65_chrout_screen_FLASHING_OFF:
-	nop
+	+nop
 m65_chrout_screen_TAB_SET_CLR:
-	nop
+	+nop
 m65_chrout_screen_ESC:
-	nop
+	+nop
 m65_chrout_screen_BELL:
 
 	jmp m65_chrout_screen_done

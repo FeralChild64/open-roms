@@ -17,6 +17,9 @@
 ;; #ALIAS# M65_SETWIN_N                    = KERNAL_0.M65_SETWIN_N
 ;; #ALIAS# M65_SETWIN_Y                    = KERNAL_0.M65_SETWIN_Y
 
+;; #ALIAS# map_NORMAL                      = KERNAL_0.map_NORMAL
+;; #ALIAS# map_KERNAL_1                    = KERNAL_0.map_KERNAL_1
+
 ;; #ALIAS# screen_on                       = KERNAL_0.screen_on
 ;; #ALIAS# screen_off                      = KERNAL_0.screen_off
 

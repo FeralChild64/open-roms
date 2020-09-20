@@ -1229,7 +1229,7 @@ void DataSet::generateConfigDepStrings()
 
         // List found
 
-        if (GLOBAL_ConfigOptions["CONFIG_SHOW_FEATURES"] || GLOBAL_ConfigOptions["CONFIG_MB_MEGA_65"])
+        if (GLOBAL_ConfigOptions["CONFIG_SHOW_FEATURES"] || GLOBAL_ConfigOptions["CONFIG_MB_M65"])
         {
             StringEntry newEntry1 = { true, true, true, true, "STR_PAL",      "PAL\r"    };
             StringEntry newEntry2 = { true, true, true, true, "STR_NTSC",     "NTSC\r"   };
@@ -1244,13 +1244,13 @@ void DataSet::generateConfigDepStrings()
             stringEntryList.list.push_back(newEntry);
         }
 
-        if (GLOBAL_ConfigOptions["CONFIG_MB_MEGA_65"])
+        if (GLOBAL_ConfigOptions["CONFIG_MB_M65"])
         {
             StringEntry newEntry = { false, true, false, false, "STR_SI_FEATURES", featureStrM65 };
             stringEntryList.list.push_back(newEntry);
         }
 
-        if (!GLOBAL_ConfigOptions["CONFIG_BRAND_CUSTOM_BUILD"] || GLOBAL_ConfigOptions["CONFIG_MB_MEGA_65"])
+        if (!GLOBAL_ConfigOptions["CONFIG_BRAND_CUSTOM_BUILD"] || GLOBAL_ConfigOptions["CONFIG_MB_M65"])
         {
             StringEntry newEntry = { true, true, true, true, "STR_PRE_REV", "RELEASE " };
             stringEntryList.list.push_back(newEntry);
@@ -1824,7 +1824,7 @@ void writeStrings()
        
         outputString = dataSetX16.getOutput();
     }
-    else if (GLOBAL_ConfigOptions["CONFIG_PLATFORM_COMMODORE_64"] && GLOBAL_ConfigOptions["CONFIG_MB_MEGA_65"])
+    else if (GLOBAL_ConfigOptions["CONFIG_PLATFORM_COMMODORE_64"] && GLOBAL_ConfigOptions["CONFIG_MB_M65"])
     {
         DataSetM65 dataSetM65;
 
@@ -1841,7 +1841,7 @@ void writeStrings()
        
         outputString = dataSetM65.getOutput();
     }
-    else if (GLOBAL_ConfigOptions["CONFIG_PLATFORM_COMMODORE_64"] && GLOBAL_ConfigOptions["CONFIG_MB_ULTIMATE_64"])
+    else if (GLOBAL_ConfigOptions["CONFIG_PLATFORM_COMMODORE_64"] && GLOBAL_ConfigOptions["CONFIG_MB_U64"])
     {
         DataSetU64 dataSetU64;
 

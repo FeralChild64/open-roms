@@ -111,9 +111,6 @@ tape_head_align_print_char:
 ; Strings to print
 ;
 
-.encoding "screencode_upper"
-
-
 tape_head_align_help_text:
 
 	; Each string consists of:

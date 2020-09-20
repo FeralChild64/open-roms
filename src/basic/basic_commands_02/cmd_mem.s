@@ -52,7 +52,7 @@ cmd_mem_loop:
 	; First print the information string
 
 	ldx helper_mem_tab_str, y
-	phy_trash_a
+	+phy_trash_a
 	jsr print_packed_misc_str
 
 	; Print start address
@@ -114,7 +114,7 @@ cmd_mem_loop:
 	lda $00, x
 	sbc $0000, y
 
-#ifdef HAS_OPCODES_65C02 {
+!ifdef HAS_OPCODES_65C02 {
 	plx
 } else {
 	tay

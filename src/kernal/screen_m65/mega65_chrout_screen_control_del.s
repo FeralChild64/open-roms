@@ -27,14 +27,14 @@ m65_chrout_screen_DEL:
 	ldz M65_SCRCOLMAX
 	lda COLOR
 	and #$0F
-	sta_lp (M65_LPNT_SCR), z
+	sta [M65_LPNT_SCR], z
 
 	jsr m65_helper_scrlpnt_to_screen
 	jsr m65_chrout_screen_DEL_copy
 
 	ldz M65_SCRCOLMAX
 	lda #$20
-	sta_lp (M65_LPNT_SCR), z
+	sta [M65_LPNT_SCR], z
 
 	plz
 
@@ -46,18 +46,18 @@ m65_chrout_screen_DEL_copy:
 
 	ldz M65__TXTCOL
 	dez
-!:
+@1:
 	cpz M65_SCRCOLMAX
-	beq !+
+	beq @2
 
 	inz
-	lda_lp (M65_LPNT_SCR), z
+	lda [M65_LPNT_SCR], z
 	dez 
-	sta_lp (M65_LPNT_SCR), z
+	sta [M65_LPNT_SCR], z
 	
 	inz
-	jmp_8 !-
-!:
+	bra @1
+@2:
 	rts
 
 
@@ -70,7 +70,7 @@ m65_chrout_screen_DEL_1stcol:
 	; If we are still in the first column - nothing to do
 
 	lda M65__TXTCOL
-	beq !+
+	beq @3
 
 	; Deleta character under cursor
 
@@ -81,16 +81,16 @@ m65_chrout_screen_DEL_1stcol:
 
 	lda COLOR
 	and #$0F
-	sta_lp (M65_LPNT_SCR), z
+	sta [M65_LPNT_SCR], z
 
 	jsr m65_helper_scrlpnt_to_screen
 	lda #$20
-	sta_lp (M65_LPNT_SCR), z
+	sta [M65_LPNT_SCR], z
 
 	plz
 
 	; End of character deletion
-!:
+@3:
 	jmp m65_chrout_screen_done
 
 
@@ -99,4 +99,3 @@ m65_chrout_screen_DEL_winmode:
 	; XXX provide implementation for window mode
 
 	jmp m65_chrout_screen_done
-

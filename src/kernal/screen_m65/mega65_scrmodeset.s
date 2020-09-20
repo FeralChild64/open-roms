@@ -122,7 +122,7 @@ m65_scrmodeset_internal: ; entry point for M65_MODE65
 	lda m65_scrtab_colviewmax_hi, x
 	sta M65_COLVIEWMAX+1
 	lda m65_scrtab_txtwidth,x
-	dec_a
+	dec
 	sta M65_SCRCOLMAX
 
 	rts

@@ -14,7 +14,7 @@ M65_CLRWIN:
 	; Check if windowed mode; if not, go to M65_CLRSCR
 
 	lda M65_SCRWINMODE
-	bpl_16 m65_clrscr_takeover
+	+bpl m65_clrscr_takeover
 
 	; To clear the window, two zeropage long pointers will be used:
 	; - M65_LPNT_SCR  for screen memory
@@ -63,14 +63,14 @@ m65_clrwin_loop:
 	; Clear the row
 
 	ldz M65_TXTWIN_X0
-!:
+@1:
 	lda #$20
-	sta_lp (M65_LPNT_SCR),z
+	sta [M65_LPNT_SCR],z
 	lda COLOR
-	sta_lp (M65_LPNT_KERN),z
+	sta [M65_LPNT_KERN],z
 	inz
 	cpz M65_TXTWIN_X1
-	bne !-
+	bne @1
 
 	; FALLTROUGH
 
@@ -82,16 +82,16 @@ m65_clrwin_loop_next:
 	lda #$50
 	adc M65_LPNT_SCR+0
 	sta M65_LPNT_SCR+0
-	bcc !+
+	bcc @2
 	inc M65_LPNT_SCR+1
-!:
+@2:
 	clc
 	lda #$50
 	adc M65_LPNT_KERN+0
 	sta M65_LPNT_KERN+0
-	bcc !+
+	bcc @3
 	inc M65_LPNT_KERN+1
-!:
+@3:
 	; Increment row counter, check if new row is valid
 
 	iny
