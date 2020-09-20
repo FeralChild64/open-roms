@@ -31,7 +31,7 @@
 	; Unary operators
 
 !set ITEM_0D = oper_unary_minus
-!set ITEM_0E = oper_unary_no
+!set ITEM_0E = oper_unary_not
 
 
 operator_priorities:                   ; higher number = higher priority

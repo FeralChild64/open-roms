@@ -262,7 +262,7 @@ varstr_garbage_collect_check_bptr:
 
 	lda __FAC1+2
 	cmp TXTPTR+1
-	bne !+
+	bne @3
 	lda __FAC1+1
 	cmp TXTPTR+0
 	bne @3

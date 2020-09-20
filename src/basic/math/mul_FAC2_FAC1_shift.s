@@ -33,13 +33,13 @@ mul_FAC2_FAC1_shift:
 	; Perform rounding
 
 	inc RESHO+4
-	bne !+
+	bne @2
 	inc RESHO+3
-	bne !+
+	bne @2
 	inc RESHO+2
-	bne !+
+	bne @2
 	inc RESHO+1
-	bne !+
+	bne @2
 	inc RESHO+0
 @2:
 	plp
