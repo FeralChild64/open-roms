@@ -670,11 +670,14 @@ SourceFile::SourceFile(const std::string &fileName, const std::string &dirName) 
 void SourceFile::preprocess()
 {
     std::string contentStr(content.begin(), content.end());
-    std::istringstream stream(contentStr);
+    std::istringstream stream1(contentStr);
+    std::istringstream stream2(contentStr);
     std::string line;
     uint32_t    lineNum = 0;
 
-    while (std::getline(stream, line))
+    // Preprocess all the lines
+
+    while (std::getline(stream1, line))
     {
         lineNum++;
 
@@ -684,8 +687,34 @@ void SourceFile::preprocess()
         preprocessLine(line, lineNum - 1);
     }
 
-    // XXX put preprocessed lines into content
-    // XXX symbolAliases[lineNum] = std::pair<std::string, uint16_t>(symbol, symbolImports[symNameSpace])
+    // Replace content with preprocessed one
+
+    std::string spacing;
+    content.clear();
+    lineNum = 0;
+
+    size_t maxSymLen = 0;
+    for (const auto &symbolAlias : symbolAliases) maxSymLen = std::max(maxSymLen, symbolAlias.second.first.length());
+
+    while (std::getline(stream2, line))
+    {
+        if (symbolAliases.find(lineNum) != symbolAliases.end())
+        {
+            std::ostringstream alias;
+            spacing.resize(maxSymLen + 2 - symbolAliases[lineNum].first.length(), ' ');
+            alias << "!addr " << symbolAliases[lineNum].first << spacing << "= $" <<
+                     std::hex << symbolAliases[lineNum].second << "    " << line;
+            const std::string aliasStr = alias.str();
+            content.insert(content.end(), aliasStr.begin(), aliasStr.end());
+        }
+        else
+        {
+            content.insert(content.end(), line.begin(), line.end());          
+        }
+
+        content.push_back('\n');
+        lineNum++;
+    }
 
     symbolAliases.clear();
     symbolImports.clear();
