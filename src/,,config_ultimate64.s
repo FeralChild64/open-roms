@@ -76,11 +76,11 @@
 ; !set   CONFIG_KEYCMD_F2 = 1
 ; !macro CONFIG_KEYCMD_F2   { !pet "" }
 !set   CONFIG_KEYCMD_F3 = 1
-!macro CONFIG_KEYCMD_F3   { !pet "RUN:" }
+!macro CONFIG_KEYCMD_F3   { !pet "run:" }
 ; !set   CONFIG_KEYCMD_F4 = 1
 ; !macro CONFIG_KEYCMD_F4   { !pet "" }
 !set   CONFIG_KEYCMD_F5 = 1
-!macro CONFIG_KEYCMD_F5   { !pet "LOAD" }
+!macro CONFIG_KEYCMD_F5   { !pet "load" }
 ; !set   CONFIG_KEYCMD_F6 = 1
 ; !macro CONFIG_KEYCMD_F6   { !pet "" }
 !set   CONFIG_KEYCMD_F7 = 1
@@ -89,7 +89,7 @@
 ; !macro CONFIG_KEYCMD_F8   { !pet "" }
 
 !set   CONFIG_KEYCMD_HELP = 1
-!macro CONFIG_KEYCMD_HELP { !pet "LIST" }
+!macro CONFIG_KEYCMD_HELP { !pet "list" }
 
 ; !set   CONFIG_KEYCMD_F9 = 1
 ; !macro CONFIG_KEYCMD_F9   { !pet "" }

@@ -35,9 +35,7 @@ iec_cmd_open: ; similar to TKSA, but without turnaround
 
 	sta TBTCNT
 	jsr iec_tx_command
-	bcc @1
-	rts
-@1:
+	bcs common_open_close_unlsn_second_done
 	jsr dolphindos_detect
 
 	jmp iec_tx_command_finalize
@@ -50,21 +48,25 @@ common_open_close_unlsn_second: ; common part of several commands
 	jsr iec_tx_command
 	+bcc iec_tx_command_finalize
 
+	// FALLTROUGH
+
+common_open_close_unlsn_second_done:
+
 	rts
 
 iec_check_channel_openclose:
 	; Due to OPEN/CLOSE/TKSA/SECOND command encoding (see https://www.pagetable.com/?p=1031),
 	; allowed channels are 0-15; report error if out of range
 	cmp #$10
-	bcc @2
+	bcc @1
 	; Workaround to allow reading executable files and disk directory
 	; using OPEN routine - see https://www.pagetable.com/?p=273 for
 	; example usage
 	cmp #$60
-	beq @2
+	beq @1
 	sec ; mark unsuitable channel number
 	rts
-@2:
+@1:
 	clc ; mark suitable channel number
 	rts
 }

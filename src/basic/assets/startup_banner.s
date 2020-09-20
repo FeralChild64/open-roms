@@ -10,14 +10,14 @@
 !macro  BANNER_TEXT {
 
 !ifdef CONFIG_BRAND_CUSTOM_BUILD {
-	!pet "OPEN ROMS "
+	!pet "open roms "
 	+CONFIG_CUSTOM_BRAND
 } else ifdef CONFIG_BRAND_GENERIC {
-	!pet "OPEN ROMS GENERIC BUILD"
+	!pet "open roms generic build"
 } else ifdef CONFIG_BRAND_TESTING {
-	!pet "OPEN ROMS TESTING BUILD"
+	!pet "open roms testing build"
 } else ifdef CONFIG_BRAND_ULTIMATE_64 {
-	!pet "OPEN ROMS FOR ULTIMATE 64"
+	!pet "open roms for ultimate 64"
 }
 
 }

@@ -33,59 +33,59 @@ __msg_kernal_first:
 
 __msg_kernalsearching_for:
 	!byte $0D
-	!pet  "SEARCHING FOR"
+	!pet  "searching for"
 	!byte $80 + $20 ; end of string mark + space
 
 __msg_kernalloading:
 	!byte $0D
-	!pet  "LOADIN"
+	!pet  "loadin"
 	!byte $80 + $47 ; end of string mark + 'G'
 
 __msg_kernalverifying:
 	!byte $0D
-	!pet  "VERIFYIN"
+	!pet  "verifyin"
 	!byte $80 + $47 ; end of string mark + 'G'
 
 __msg_kernalsaving:
 	!byte $0D
-	!pet  "SAVING"
+	!pet  "saving"
 	!byte $80 + $20 ; end of string mark + space
 
 __msg_kernalfrom_hex:
-	!pet  " FROM "
+	!pet  " from "
 	!byte $80 + $24 ; end of string mark + '$'
 
 __msg_kernalto_hex:
-	!pet  " TO "
+	!pet  " to "
 	!byte $80 + $24 ; end of string mark + '$'
 
 !ifdef HAS_TAPE {
 
 __msg_kernalplay:
 	!byte $0D
-	!pet  "PRESS PLAY ON TAPE"
+	!pet  "press play on tape"
 	!byte $80 + $0D ; end of string mark + return
 
 __msg_kernalfound:
-	!pet  "FOUND"
+	!pet  "found"
 	!byte $80 + $20 ; end of string mark + space
 
 !ifdef CONFIG_MB_M65 {
 
 __msg_kernaloksearching:
-	!pet  "OK"
+	!pet  "ok"
 	!byte $0D, $0D
-	!pet  "SEARCHIN"
+	!pet  "searchin"
 	!byte $80 + $47 ; end of string mark + 'G'
 } }
 
 !ifdef CONFIG_PANIC_SCREEN {
 
 __msg_kernalpanic:
-	!pet  "KERNAL PANI"
+	!pet  "kernal pani"
 	!byte $80 + $43 ; end of string mark + 'C'
 
 __msg_kernalpanic_rom_mismatch:
-	!pet  " - ROM MISMATC"
+	!pet  " - rom mismatc"
 	!byte $80 + $48 ; end of string mark + 'H'
 }

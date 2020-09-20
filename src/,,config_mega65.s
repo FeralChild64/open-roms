@@ -68,11 +68,11 @@
 ; !set   CONFIG_KEYCMD_F2 = 1
 ; !macro CONFIG_KEYCMD_F2   { !pet "" }
 !set   CONFIG_KEYCMD_F3 = 1
-!macro CONFIG_KEYCMD_F3   { !pet "RUN:" }
+!macro CONFIG_KEYCMD_F3   { !pet "run:" }
 ; !set   CONFIG_KEYCMD_F4 = 1
 ; !macro CONFIG_KEYCMD_F4   { !pet "" }
 !set   CONFIG_KEYCMD_F5 = 1
-!macro CONFIG_KEYCMD_F5   { !pet "LOAD" }
+!macro CONFIG_KEYCMD_F5   { !pet "load" }
 ; !set   CONFIG_KEYCMD_F6 = 1
 ; !macro CONFIG_KEYCMD_F6   { !pet "" }
 !set   CONFIG_KEYCMD_F7 = 1
@@ -81,20 +81,20 @@
 ; !macro CONFIG_KEYCMD_F8   { !pet "" }
 
 !set   CONFIG_KEYCMD_HELP = 1
-!macro CONFIG_KEYCMD_HELP { !pet "LIST" }
+!macro CONFIG_KEYCMD_HELP { !pet "list" }
 
 !set   CONFIG_KEYCMD_F9 = 1
-!macro CONFIG_KEYCMD_F9   { !pet "BOOT" }
+!macro CONFIG_KEYCMD_F9   { !pet "boot" }
 !set   CONFIG_KEYCMD_F10 = 1
-!macro CONFIG_KEYCMD_F10  { !pet "REM F10" }
+!macro CONFIG_KEYCMD_F10  { !pet "rem f10" }
 !set   CONFIG_KEYCMD_F11 = 1
-!macro CONFIG_KEYCMD_F11  { !pet "MONITOR" }
+!macro CONFIG_KEYCMD_F11  { !pet "monitor" }
 !set   CONFIG_KEYCMD_F12 = 1
-!macro CONFIG_KEYCMD_F12  { !pet "REM F12" }
+!macro CONFIG_KEYCMD_F12  { !pet "rem f12" }
 !set   CONFIG_KEYCMD_F13 = 1
-!macro CONFIG_KEYCMD_F13  { !byte $5F !pet "H" }
+!macro CONFIG_KEYCMD_F13  { !byte $5F !pet "h" }
 !set   CONFIG_KEYCMD_F14 = 1
-!macro CONFIG_KEYCMD_F14  { !pet "REM F14" }
+!macro CONFIG_KEYCMD_F14  { !pet "rem f14" }
 
 
 ; Screen editor

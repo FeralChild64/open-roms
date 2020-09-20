@@ -122,23 +122,23 @@ tape_head_align_help_text:
 	; - $FF to mark end
 
 	!word $2000 + (40 * 8) * 0 + 8 * 1
-	!scr  "COMPUTER HAS TO TELL THE SIGNALS APART"
+	!scr  "computer has to tell the signals apart"
 	!byte $FF
 
 	!word $2000 + (40 * 8) * 3 + 8 * 6
-	!scr  "ALIGN HEAD FOR MINIMUM NOISE"
+	!scr  "align head for minimum noise"
 	!byte $FF
 
 	!word $2000 + (40 * 8) * 6 + 8 * 2
-	!scr  "IF THE DECK HAS A PITCH (TAPE SPEED)"
+	!scr  "if the deck has a pitch (tape speed)"
 	!byte $FF
 
 	!word $2000 + (40 * 8) * 7 + 8 * 1
-	!scr  "CONTROL, TWEAK IT SO THAT DOTTED LINES"
+	!scr  "control, tweak it so that dotted lines"
 	!byte $FF
 
 	!word $2000 + (40 * 8) * 8 + 8 * 5
-	!scr  "ARE HALF A WAY BETWEEN SIGNALS"
+	!scr  "are half a way between signals"
 	!byte $FF
 
 	!byte $FF                          ; end of strings
