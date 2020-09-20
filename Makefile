@@ -65,9 +65,12 @@ SRC_KERNAL  = $(foreach dir,$(SRCDIR_KERNAL),$(wildcard $(dir)/*.s))
 SRC_TOOLS   = $(wildcard tools/*.c,tools/*.cc)
 
 DIR_ACME    = assembler/acme/src
-XCL_ACME    = $(wildcard $(DIR_ACME)/_*.c) $(wildcard $(DIR_ACME)/_*.h)
-SRC_ACME    = $(filter-out $(XCL_ACME),$(wildcard $(DIR_ACME)/*.c))
-HDR_ACME    = $(filter-out $(XCL_ACME),$(wildcard $(DIR_ACME)/*.h))
+HDR_ACME    = $(filter-out $(wildcard $(DIR_ACME)/_*.h),$(wildcard $(DIR_ACME)/*.h))
+SRC_ACME    = $(DIR_ACME)/acme.c $(DIR_ACME)/platform.c $(DIR_ACME)/alu.c $(DIR_ACME)/typesystem.c \
+              $(DIR_ACME)/cliargs.c $(DIR_ACME)/global.c $(DIR_ACME)/output.c $(DIR_ACME)/flow.c \
+              $(DIR_ACME)/macro.c $(DIR_ACME)/cpu.c $(DIR_ACME)/encoding.c $(DIR_ACME)/pseudoopcodes.c \
+              $(DIR_ACME)/dynabuf.c $(DIR_ACME)/mnemo.c $(DIR_ACME)/input.c $(DIR_ACME)/section.c \
+              $(DIR_ACME)/symbol.c $(DIR_ACME)/tree.c
 
 # Generated files
 
@@ -186,7 +189,6 @@ all:
 	@echo
 	@echo --- Building tools ---
 	@echo
-	$(MAKE) $(DIR_ACME)
 	$(MAKE) -j64 --output-sync=target $(TOOLS_LIST)
 	@echo
 	@echo --- Building Open ROMs ---
@@ -197,14 +199,13 @@ clean:
 	@rm -rf build src/basic/combined.s src/kernal/combined.s
 
 updatebin:
-	$(MAKE) $(DIR_ACME)
 	$(MAKE) -j64 --output-sync=target $(TARGET_LIST) $(TOOL_RELEASE)
 	$(TOOL_RELEASE) -i ./build -o ./bin $(patsubst build/%,%,$(REL_TARGET_LIST))
 	cp build/chargen_openroms.rom bin/chargen_openroms.rom
 
 # Rules - tools
 
-$(DIR_ACME):
+$(DIR_ACME) $(SRC_ACME) $(HDR_ACME):
 	git submodule init
 	git submodule update
 
