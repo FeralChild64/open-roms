@@ -37,9 +37,9 @@ enum class ListType
 
 typedef struct InputList
 {
-	const std::list<StringEntry> &targetList;
-	ListType                     listType;
-	const std::string            listName;
+	const std::list<InputStringEntry> &list;
+	const ListType                    listType;
+	const std::string                 listName;
 
 } InputList;
 
@@ -60,7 +60,7 @@ static std::map<std::string, bool> GLOBAL_ConfigOptions;
 static BuildType                   GLOBAL_BuildType;
 static std::string                 GLOBAL_BuildTypeName;
 
-const std::list<InputList>  GLOBAL_InputLists =
+const std::list<InputList>  GLOBAL_InputSet =
 {
     { LIST_Keywords_V2,       ListType::BASIC_KEYWORDS, "keywords_V2" },
     { LIST_Keywords_01,       ListType::BASIC_KEYWORDS, "keywords_01" },
@@ -215,43 +215,6 @@ void parseCommandLine(int argc, char **argv)
 }
 
 //
-// Common data processing structures
-//
-
-typedef struct StringRawEntry {
-
-    std::string alias;          // alias, for the assembler
-    std::string string;         // string/token
-    uint8_t     abbrevLen = 0;  // length of token abbreviation
-
-} StringRawEntry;
-
-typedef struct StringRawList {
-
-	const std::string           name;       // unique list name
-	const bool                  encodeFreq; // whether to encode the list entries based on character frequency
-	const bool                  encodeDict; // whether to encode the list entries based on dictionary of substring
-
-	std::vector<StringRawEntry> list;
-
-} StringRawList;
-
-typedef struct StringEncEntry {
-
-    const StringRawEntry &raw;         // reference to source raw string
-	std::vector<uint8_t> encoded;
-
-} StringEncEntry;
-
-typedef struct StringEncList {
-
-	const StringRawList &rawList;
-	
-	std::vector<StringEncEntry> list;
-
-} StringEncList;
-
-//
 // Main class
 //
 
@@ -267,14 +230,39 @@ public:
 	
 private:
 
-    bool isRelevant(const StringEntry &stringEntry) const;
+    typedef struct StringEntry
+    {
+        const InputStringEntry &inputEntry;
+        std::vector<uint8_t>   encoded;
+        const bool             relevant;
 
+    } StringEntry;
+
+    typedef struct StringList
+    {
+        std::list<StringEntry> list;
+
+        const ListType         listType;
+        const std::string      listName;
+        const bool             encDict;
+        const bool             encFreq;
+
+        StringList(ListType listType, const std::string &listName, bool encDict, bool encFreq) :
+            listType(listType), listName(listName), encDict(encDict), encFreq(encFreq)
+        {
+        }
+
+    } StringList;
+
+    std::list<StringList> stringSet;
+
+    bool isRelevant(const InputStringEntry &inputStringEntry) const;
     void addInputList(const InputList &inputList);
 };
 
 DataProcessor::DataProcessor()
 {
-    for (const auto &inputList : GLOBAL_InputLists)
+    for (const auto &inputList : GLOBAL_InputSet)
     {
         addInputList(inputList);
     }
@@ -313,14 +301,83 @@ void DataProcessor::write()
     std::cout << std::string("compressed strings written to: '") + CMD_outFile + "'\n\n";
 }
 
-bool DataProcessor::isRelevant(const StringEntry &stringEntry) const
+bool DataProcessor::isRelevant(const InputStringEntry &inputStringEntry) const
 {
-    // XXX
+    switch (GLOBAL_BuildType)
+    {
+        case GLOBAL_BuildType::STD: return inputStringEntry.enabledSTD;
+        case GLOBAL_BuildType::CRT: return inputStringEntry.enabledCRT;
+        case GLOBAL_BuildType::M65: return inputStringEntry.enabledM65;
+        case GLOBAL_BuildType::U64: return inputStringEntry.enabledU64;
+        case GLOBAL_BuildType::X16: return inputStringEntry.enabledX16;
+        default: ERROR(std::string("please update ") + __FUNCTION__);
+    }
+
+    return false;
 }
 
 void DataProcessor::addInputList(const InputList &inputList)
 {
-    // XXX
+    // First check if the list contains anything relevant to current build
+
+    bool isListRelevant = false;
+    for (auto &inputStringEntry : inputList.list)
+    {
+        if (isRelevant(inputStringEntry))
+        {
+            isListRelevant = true;
+            break;
+        }
+    }
+
+    if (!isListRelevant) return;
+
+    // Prepare the list of string entries
+
+    bool encDict = false;
+    bool encFreq = false;
+
+    switch (inputList.listType)
+    {
+        case ListType::BASIC_KEYWORDS:
+        {
+            encFreq = GLOBAL_Compression_BKw_Freq;
+        }
+        break;
+        case ListType::BASIC_STRINGS:
+        {
+            if (GLOBAL_Compression_Msg_Dict)
+            {
+                encDict = true;
+            }
+            else if (GLOBAL_Compression_Msg_Freq)
+            {
+                encFreq = true;
+            }
+        }
+        break;
+        case ListType::KERNAL_STRINGS: break;
+        default: ERROR(std::string("please update ") + __FUNCTION__);
+    }
+
+    stringSet.push_back(StringList(inputList.listType, inputList.listName, encDict, encFreq));
+
+    // Now copy the whole list into internal structures, handling irrelevant entries in the mean time
+
+    auto &stringList = stringSet.back();
+    for (auto &inputStringEntry : inputList.list)
+    {
+        if (isRelevant(inputStringEntry))
+        {
+            stringList.push_back(); // XXX
+        }
+        else if (inputList.listType)
+        {
+            // Push empty reference
+
+            // XXX
+        }
+    }
 }
 
 

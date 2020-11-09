@@ -11,7 +11,7 @@
 #include <string>
 #include <list>
 
-typedef struct StringEntry
+typedef struct InputStringEntry
 {
     bool        enabledSTD;     // if enabled for standard build
     bool        enabledCRT;     // if enabled for standard build with extra ROM cartridge
@@ -21,7 +21,7 @@ typedef struct StringEntry
     std::string alias;          // alias, for the assembler
     std::string string;         // string/token
     uint8_t     abbrevLen = 0;  // length of token abbreviation
-} StringEntry;
+} InputStringEntry;
 
 
 
@@ -62,7 +62,7 @@ typedef struct StringEntry
   infringe on the copyrights of the C64/C65/C128 etc ROMs.
 */
 
-const std::list<StringEntry> LIST_Keywords_V2 =
+const std::list<InputStringEntry> LIST_Keywords_V2 =
 {
     // STD    CRT    M65    U64    X16
     { true,  true,  true,  true,  true,  "KV2_80",   "END",        2 }, // https://www.landsnail.com/a2ref.htm
@@ -147,7 +147,7 @@ const std::list<StringEntry> LIST_Keywords_V2 =
 
 // extended BASIC keywords - list reserved for small BASIC commands, suitable for inclusion in all machines with extended ROM
 
-const std::list<StringEntry> LIST_Keywords_01 =
+const std::list<InputStringEntry> LIST_Keywords_01 =
 {
     // STD    CRT    M65    U64    X16
     { true,  true,  true,  true,  true,  "K01_01",   "SLOW",         }, // https://en.wikipedia.org/wiki/Sinclair_BASIC - ZX81 variant
@@ -167,7 +167,7 @@ const std::list<StringEntry> LIST_Keywords_01 =
 
 // extended BASIC keywords - list reserved for hardware dependent BASIC commands
 
-const std::list<StringEntry> LIST_Keywords_04 =
+const std::list<InputStringEntry> LIST_Keywords_04 =
 {
     // STD    CRT    M65    U64    X16
     { false, false, true,  false, false, "K04_01",   "SYSINFO",      }, // Not present in CBM BASIC dialects, Open ROMs specific
@@ -175,7 +175,7 @@ const std::list<StringEntry> LIST_Keywords_04 =
 
 // extended BASIC keywords - list reserved for functions
 
-const std::list<StringEntry> LIST_Keywords_06 =
+const std::list<InputStringEntry> LIST_Keywords_06 =
 {
     // STD    CRT    M65    U64    X16
     { false, false, true,  false, false, "K06_01",   "TEST",         }, // Not present in CBM BASIC dialects, Open ROMs specific
@@ -193,7 +193,7 @@ const std::list<StringEntry> LIST_Keywords_06 =
   https://fairuse.stanford.edu/2003/09/09/copyright_protection_for_short/
  */
 
-const std::list<StringEntry> LIST_Errors =
+const std::list<InputStringEntry> LIST_Errors =
 {
     // STD    CRT    M65    U64    X16   --- error strings compatible with CBM BASIC V2
     { true,  true,  true,  true,  true,  "EV2_01", "TOO MANY FILES"           },
@@ -246,7 +246,7 @@ const std::list<StringEntry> LIST_Errors =
 
 // BASIC - miscelaneous strings
 
-const std::list<StringEntry> LIST_MiscStrings =
+const std::list<InputStringEntry> LIST_MiscStrings =
 {
     // STD    CRT    M65    U64    X16   --- misc strings as on CBM machines
     { true,  true,  true,  true,  true,  "STR_RET_QM",       "\r?"                },
@@ -293,7 +293,7 @@ const std::list<StringEntry> LIST_MiscStrings =
 
 // Kernal messages
 
-const std::list<StringEntry> LIST_Kernal =
+const std::list<InputStringEntry> LIST_Kernal =
 {
     // STD    M65    U64    X16
     { true,  true,  true,  true,  "KMSG_01",   "\rSEARCHING FOR "          }, // XXX __msg_kernalsearching_for
