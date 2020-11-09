@@ -35,7 +35,6 @@ enum class ListType
     DICTIONARY
 };
 
-
 typedef struct InputList
 {
 	const std::list<StringEntry> &targetList;
@@ -44,11 +43,22 @@ typedef struct InputList
 
 } InputList;
 
+enum class BuildType
+{
+    STD,
+    CRT,
+    M65,
+    U64,
+    X16
+};
+
 //
 // Global variables
 //
 
-std::map<std::string, bool> GLOBAL_ConfigOptions;
+static std::map<std::string, bool> GLOBAL_ConfigOptions;
+static BuildType                   GLOBAL_BuildType;
+static std::string                 GLOBAL_BuildTypeName;
 
 const std::list<InputList>  GLOBAL_InputLists =
 {
@@ -60,6 +70,11 @@ const std::list<InputList>  GLOBAL_InputLists =
     { LIST_MiscStrings,       ListType::BASIC_STRINGS,  "misc"        },
     { LIST_Kernal,            ListType::KERNAL_STRINGS, "kernal"      },
 };
+
+
+static bool GLOBAL_Compression_BKw_Freq = false;
+static bool GLOBAL_Compression_Msg_Freq = false;
+static bool GLOBAL_Compression_Msg_Dict = false;
 
 //
 // Common helper functions
@@ -120,6 +135,53 @@ void parseConfigFile()
     }
    
     cnfFile.close();
+
+    // Determine build type
+
+    if (GLOBAL_ConfigOptions["PLATFORM_COMMANDER_X16"])
+    {
+        GLOBAL_BuildType     = BuildType::X16;
+        GLOBAL_BuildTypeName = "X16";
+    }
+    else if (GLOBAL_ConfigOptions["PLATFORM_COMMODORE_64"] && GLOBAL_ConfigOptions["MB_M65"])
+    {
+        GLOBAL_BuildType     = BuildType::M65;
+        GLOBAL_BuildTypeName = "M65";
+    }
+    else if (GLOBAL_ConfigOptions["PLATFORM_COMMODORE_64"] && GLOBAL_ConfigOptions["ROM_CRT"])
+    {
+        GLOBAL_BuildType     = BuildType::CRT;
+        GLOBAL_BuildTypeName = "CRT";
+    }
+    else if (GLOBAL_ConfigOptions["PLATFORM_COMMODORE_64"] && GLOBAL_ConfigOptions["MB_U64"])
+    {
+        GLOBAL_BuildType     = BuildType::U64;
+        GLOBAL_BuildTypeName = "U64";
+    }
+    else if (GLOBAL_ConfigOptions["PLATFORM_COMMODORE_64"])
+    {
+        GLOBAL_BuildType     = BuildType::STD;
+        GLOBAL_BuildTypeName = "STD";
+    }
+    else
+    {
+        ERROR("unable to determine build type");
+    }
+
+    // Determine string compression type
+
+    if (GLOBAL_ConfigOptions["COMPRESSED_KEYWORDS_FREQ"])
+    {
+        GLOBAL_Compression_BKw_Freq = true;
+    }
+    if (GLOBAL_ConfigOptions["COMPRESSED_MSG_FREQ"])
+    {
+        GLOBAL_Compression_Msg_Freq     = true;
+    }
+    if (GLOBAL_ConfigOptions["COMPRESSED_MSG_DICT"])
+    {
+        GLOBAL_Compression_Msg_Dict     = true;
+    }
 }
 
 void printUsage()
@@ -200,34 +262,86 @@ public:
 
 	DataProcessor();
 	
-	void read();
 	void process();
 	void write();
 	
 private:
 
+    bool isRelevant(const StringEntry &stringEntry) const;
 
-
+    void addInputList(const InputList &inputList);
 };
 
 DataProcessor::DataProcessor()
 {
-	// XXX
+    for (const auto &inputList : GLOBAL_InputLists)
+    {
+        addInputList(inputList);
+    }
 }
 
-DataProcessor::read()
+void DataProcessor::process()
 {
 	// XXX
 }
 
-DataProcessor::process()
+void DataProcessor::write()
 {
-	// XXX
+    // Remove old file
+
+    unlink(CMD_outFile.c_str());
+
+    // Open output file for writing
+
+    std::ofstream outFile(CMD_outFile, std::fstream::out | std::fstream::trunc);
+    if (!outFile.good()) ERROR(std::string("can't open oputput file '") + CMD_outFile + "'");
+
+    // Write header
+
+    outFile << ";\n; Generated file - do not edit\n;";
+
+    // Write packed strings
+
+    outFile << std::endl << std::endl;
+    outFile << outputString;                    // XXX generate this!
+    outFile << std::endl << std::endl;
+
+    // Close the file
+  
+    outFile.close();
+
+    std::cout << std::string("compressed strings written to: '") + CMD_outFile + "'\n\n";
 }
 
-DataProcessor::write()
+bool DataProcessor::isRelevant(const StringEntry &stringEntry) const
 {
-	// XXX
+    // XXX
+}
+
+void DataProcessor::addInputList(const InputList &inputList)
+{
+    // XXX
+}
+
+
+
+
+//
+// Main function
+//
+
+int main(int argc, char **argv)
+{
+    printBanner();
+
+    parseCommandLine(argc, argv);
+    parseConfigFile();
+
+    DataProcessor dataProcessor;
+    dataProcessor.process();
+    dataProcessor.write();
+
+    return 0;
 }
 
 
@@ -243,11 +357,6 @@ DataProcessor::write()
 
 
 
-
-
-
-
-    void addStrings(const StringEntryList &stringList);
 
     const std::string &getOutput();
 
@@ -292,35 +401,6 @@ private:
     std::string                           outFileContent;
 };
 
-class DataSetSTD : public DataSet
-{
-    bool isRelevant(const StringEntry &entry) const { return entry.enabledSTD; }
-    std::string layoutName() const { return "STD"; }
-};
-
-class DataSetCRT : public DataSet
-{
-    bool isRelevant(const StringEntry &entry) const { return entry.enabledCRT; }
-    std::string layoutName() const { return "CRT"; }
-};
-
-class DataSetM65 : public DataSet
-{
-    bool isRelevant(const StringEntry &entry) const { return entry.enabledM65; }
-    std::string layoutName() const { return "M65"; }
-};
-
-class DataSetU64 : public DataSet
-{
-    bool isRelevant(const StringEntry &entry) const { return entry.enabledU64; }
-    std::string layoutName() const { return "STD"; } // XXX to be changed for 'U64' once the layout is finished
-};
-
-class DataSetX16 : public DataSet
-{
-    bool isRelevant(const StringEntry &entry) const { return entry.enabledX16; }
-    std::string layoutName() const { return "X16"; }
-};
 
 //
 // Work class implementation
@@ -1482,119 +1562,3 @@ void DataSet::prepareOutput()
     outFileContent = stream.str();
 }
 
-
-//
-// Common helper functions
-//
-
-void writeStrings()
-{
-    std::string outputString;
-   
-    if (GLOBAL_ConfigOptions["PLATFORM_COMMANDER_X16"])
-    {
-        DataSetX16 dataSetX16;
-
-        // Add input data to computation objects
-       
-        dataSetX16.addStrings(GLOBAL_Keywords_V2);
-        dataSetX16.addStrings(GLOBAL_Keywords_01);
-        dataSetX16.addStrings(GLOBAL_Errors);
-        dataSetX16.addStrings(GLOBAL_MiscStrings);
-
-        // Retrieve the results
-       
-        outputString = dataSetX16.getOutput();
-    }
-    else if (GLOBAL_ConfigOptions["PLATFORM_COMMODORE_64"] && GLOBAL_ConfigOptions["MB_M65"])
-    {
-        DataSetM65 dataSetM65;
-
-        // Add input data to computation objects
-
-        dataSetM65.addStrings(GLOBAL_Keywords_V2);
-        dataSetM65.addStrings(GLOBAL_Keywords_01);
-        dataSetM65.addStrings(GLOBAL_Keywords_04);
-        dataSetM65.addStrings(GLOBAL_Keywords_06);
-        dataSetM65.addStrings(GLOBAL_Errors);
-        dataSetM65.addStrings(GLOBAL_MiscStrings);
-       
-        // Retrieve the results
-       
-        outputString = dataSetM65.getOutput();
-    }
-    else if (GLOBAL_ConfigOptions["PLATFORM_COMMODORE_64"] && GLOBAL_ConfigOptions["ROM_CRT"])
-    {
-        DataSetCRT dataSetCRT;
-
-        // Add input data to computation objects
-
-        dataSetCRT.addStrings(GLOBAL_Keywords_V2);
-        dataSetCRT.addStrings(GLOBAL_Keywords_01);
-        dataSetCRT.addStrings(GLOBAL_Errors);
-        dataSetCRT.addStrings(GLOBAL_MiscStrings);
-
-        // Retrieve the results
-
-        outputString = dataSetCRT.getOutput();   
-    }
-    else if (GLOBAL_ConfigOptions["PLATFORM_COMMODORE_64"] && GLOBAL_ConfigOptions["MB_U64"])
-    {
-        DataSetU64 dataSetU64;
-
-        // Add input data to computation objects
-
-        dataSetU64.addStrings(GLOBAL_Keywords_V2);
-        dataSetU64.addStrings(GLOBAL_Keywords_01);
-        dataSetU64.addStrings(GLOBAL_Errors);
-        dataSetU64.addStrings(GLOBAL_MiscStrings);
-       
-        // Retrieve the results
-       
-        outputString = dataSetU64.getOutput();
-    }
-    else if (GLOBAL_ConfigOptions["PLATFORM_COMMODORE_64"])
-    {
-        DataSetSTD dataSetSTD;
-
-        // Add input data to computation objects
-
-        dataSetSTD.addStrings(GLOBAL_Keywords_V2);
-        dataSetSTD.addStrings(GLOBAL_Keywords_01);
-        dataSetSTD.addStrings(GLOBAL_Errors);
-        dataSetSTD.addStrings(GLOBAL_MiscStrings);
-
-        // Retrieve the results
-
-        outputString = dataSetSTD.getOutput();   
-    }
-    else
-    {
-        ERROR("unable to determine string set");
-    }
-   
-    // Remove old file
-
-    unlink(CMD_outFile.c_str());
-
-    // Open output file for writing
-
-    std::ofstream outFile(CMD_outFile, std::fstream::out | std::fstream::trunc);
-    if (!outFile.good()) ERROR(std::string("can't open oputput file '") + CMD_outFile + "'");
-
-    // Write header
-
-    outFile << ";\n; Generated file - do not edit\n;";
-
-    // Write packed strings
-
-    outFile << std::endl << std::endl;
-    outFile << outputString;
-    outFile << std::endl << std::endl;
-
-    // Close the file
-  
-    outFile.close();
-
-    std::cout << std::string("compressed strings written to: '") + CMD_outFile + "'\n\n";
-}

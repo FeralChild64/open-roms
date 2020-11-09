@@ -327,6 +327,14 @@ Makes `printf` routine available.
 
 ## Other options
 
-### `COMPRESSION_LVL_2`
+### `COMPRESSED_KEYWORDS_FREQ`
 
-Adds additional step in compressing BASIC interpreter strings - a dictionary compression. Not tested extensively - and for now it won't bring any improvement (it will even increase the code/data size) as we do not have enough strings yet to make this method useful. Do not use!
+If enabled, BASIC keywords are compressed by character frequency (characters occuring frequently are encoded using 4 bits, remaining onews using 12 bits). Should be used only on machines with fast CPUs, as it slows down BASIC code tokenization. If both `COMPRESSED_KEYWORDS_FREQ` and `COMPRESSED_MSG_FREQ` are enabled, their frequency tables are shared. Changing the default setting is not recommended.
+
+### `COMPRESSED_MSG_FREQ`
+
+If enabled, strings displayed by BASIC interpreter are compressed by character frequency. Option can be combined with `COMPRESSED_MSG_DICT`. Changing the default setting is not recommended.
+
+### `COMPRESSED_MSG_DICT`
+
+If enabled, strings displayed by BASIC interpreter are compressed using a dictionary compression algorithm. Option can be combined with `COMPRESSED_MSG_FREQ` Changing the default setting is not recommended.

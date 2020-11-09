@@ -242,7 +242,7 @@ const std::list<StringEntry> LIST_Errors =
     { true,  true,  true,  true,  true,  "EOR_2A", "MEMORY CORRUPT"           },
     { false, false, true,  false, false, "EOR_2B", "NATIVE MODE ONLY"         },   
     { false, false, true,  false, false, "EOR_2C", "LEGACY MODE ONLY"         }, 
-} };
+};
 
 // BASIC - miscelaneous strings
 
