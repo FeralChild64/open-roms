@@ -4,26 +4,6 @@
 //
 
 
-//
-// List of text messages and BASIC keywords
-//
-
-#include <string>
-#include <list>
-
-typedef struct InputStringEntry
-{
-    bool        enabledSTD;     // if enabled for standard build
-    bool        enabledCRT;     // if enabled for standard build with extra ROM cartridge
-    bool        enabledM65;     // if enabled for Mega 65 build
-    bool        enabledU64;     // if enabled for Ultimate 64 build
-    bool        enabledX16;     // if enabled for Commander X16 build
-    std::string alias;          // alias, for the assembler
-    std::string string;         // string/token
-    uint8_t     abbrevLen = 0;  // length of token abbreviation
-} InputStringEntry;
-
-
 
 // BASIC keywords - V2 dialect
 //
@@ -310,6 +290,103 @@ const std::list<InputStringEntry> LIST_Kernal =
     { true,  true,  true,  true,  "KMSG_10",   "KERNAL PANIC"              }, // XXX __msg_kernalpanic
     { true,  true,  true,  true,  "KMSG_11",   " - ROM MISMATCH"           }, // XXX __msg_kernalpanic_rom_mismatch
 };
+
+// Generated strings
+
+void getFeatureStr(std::string &featureStr, std::string &featureStrM65)
+{
+    featureStr    = "";
+    featureStrM65 = "\r";
+
+    // Tape support features
+   
+    if (GLOBAL_ConfigOptions["TAPE_NORMAL"] && GLOBAL_ConfigOptions["TAPE_TURBO"])
+    {
+        featureStr    += "TAPE LOAD NORMAL TURBO\r";
+        featureStrM65 += "TAPE   : LOAD NORMAL TURBO\r";
+    }
+    else if (GLOBAL_ConfigOptions["TAPE_NORMAL"])
+    {
+        featureStr    += "TAPE LOAD NORMAL\r";
+        featureStrM65 += "TAPE   : LOAD NORMAL\r";
+    }
+    else if (GLOBAL_ConfigOptions["TAPE_TURBO"])
+    {
+        featureStr    += "TAPE LOAD TURBO\r";
+        featureStrM65 += "TAPE   : LOAD TURBO\r";
+    }
+   
+    // IEC support features
+   
+    if (GLOBAL_ConfigOptions["IEC"])
+    {
+        featureStr    += "IEC";
+        featureStrM65 += "IEC    :";
+       
+        bool extendedIEC = false;
+       
+        if (GLOBAL_ConfigOptions["IEC_BURST_CIA1"])
+        {
+            featureStr    += " BURST1";
+            extendedIEC    = true;
+        }
+        if (GLOBAL_ConfigOptions["IEC_BURST_CIA2"])
+        {
+            featureStr    += " BURST2";
+            extendedIEC    = true;
+        }
+        if (GLOBAL_ConfigOptions["IEC_BURST_MEGA65"])
+        {
+            featureStr    += " BURST";
+            featureStrM65 += " BURST";
+            extendedIEC    = true;
+        }
+       
+        if (GLOBAL_ConfigOptions["IEC_DOLPHINDOS"])
+        {
+            featureStr    += " DOLPHIN";
+            featureStrM65 += " DOLPHIN";
+            extendedIEC    = true;
+        }
+       
+        if (GLOBAL_ConfigOptions["IEC_JIFFYDOS"])
+        {
+            featureStr    += " JIFFY";
+            featureStrM65 += " JIFFY";
+            extendedIEC    = true;
+        }
+       
+        if (!extendedIEC)
+        {
+            featureStr    += " NORMAL ONLY";
+            featureStrM65 += " NORMAL ONLY";
+        }
+
+        featureStr    += "\r";
+        featureStrM65 += "\r";
+    }
+    else
+    {
+        featureStrM65 += "IEC    : NO\r";
+    }
+
+    // RS-232 support features
+   
+    if (GLOBAL_ConfigOptions["RS232_ACIA"])   featureStr += "ACIA 6551\r";
+    if (GLOBAL_ConfigOptions["RS232_UP2400"]) featureStr += "UP2400\r";
+    if (GLOBAL_ConfigOptions["RS232_UP9600"]) featureStr += "UP9600\r";
+   
+    featureStrM65 += "RS-232 : NO\r";
+
+    // CBDOS features
+
+    featureStrM65 += "CBDOS  : NO FDD/SD/RAM SUPPORT\r";
+
+    // Keyboard support features
+   
+    if (GLOBAL_ConfigOptions["KEYBOARD_C128"]) featureStr += "KBD 128\r";
+    if (GLOBAL_ConfigOptions["KEYBOARD_C65"])  featureStr += "KBD 65\r";
+}
 
 /* NOTE: for information purposes, below are the BASIC V7/V10 keywords, see:
          - https://sites.google.com/site/h2obsession/CBM/basic/tokens

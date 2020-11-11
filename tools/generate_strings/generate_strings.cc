@@ -4,7 +4,6 @@
 //
 
 #include "common.h"
-#include "config_generated_strings.h"
 
 #include <unistd.h>
 
@@ -13,6 +12,8 @@
 #include <iomanip>
 #include <regex>
 #include <sstream>
+#include <string>
+#include <list>
 #include <map>
 #include <vector>
 
@@ -30,10 +31,24 @@ std::string CMD_cnfFile = "";
 enum class ListType
 {
     BASIC_KEYWORDS,
+    BASIC_ERRORS,
 	BASIC_STRINGS,
     KERNAL_STRINGS,
     DICTIONARY
 };
+
+typedef struct InputStringEntry
+{
+    bool        enabledSTD = false; // if enabled for standard build
+    bool        enabledCRT = false; // if enabled for standard build with extra ROM cartridge
+    bool        enabledM65 = false; // if enabled for Mega 65 build
+    bool        enabledU64 = false; // if enabled for Ultimate 64 build
+    bool        enabledX16 = false; // if enabled for Commander X16 build
+    std::string alias;              // alias, for the assembler
+    std::string string;             // string/token
+    uint8_t     abbrevLen = 0;      // length of token abbreviation
+
+} InputStringEntry;
 
 typedef struct InputList
 {
@@ -56,25 +71,30 @@ enum class BuildType
 // Global variables
 //
 
+std::list<InputStringEntry> LIST_MiscStrings_Dynamic;
+
 static std::map<std::string, bool> GLOBAL_ConfigOptions;
-static BuildType                   GLOBAL_BuildType;
+static BuildType                   GLOBAL_BuildType; // XXX rename to LayoutType?
 static std::string                 GLOBAL_BuildTypeName;
 
-const std::list<InputList>  GLOBAL_InputSet =
-{
-    { LIST_Keywords_V2,       ListType::BASIC_KEYWORDS, "keywords_V2" },
-    { LIST_Keywords_01,       ListType::BASIC_KEYWORDS, "keywords_01" },
-    { LIST_Keywords_04,       ListType::BASIC_KEYWORDS, "keywords_04" },
-    { LIST_Keywords_06,       ListType::BASIC_KEYWORDS, "keywords_06" },
-    { LIST_Errors,            ListType::BASIC_STRINGS,  "errors"      },
-    { LIST_MiscStrings,       ListType::BASIC_STRINGS,  "misc"        },
-    { LIST_Kernal,            ListType::KERNAL_STRINGS, "kernal"      },
-};
-
+static const InputStringEntry GLOBAL_DummyInputString;
 
 static bool GLOBAL_Compression_BKw_Freq = false;
 static bool GLOBAL_Compression_Msg_Freq = false;
 static bool GLOBAL_Compression_Msg_Dict = false;
+
+#include "config_generated_strings.h"
+
+const std::list<InputList>  GLOBAL_InputSet =
+{
+    { LIST_Keywords_V2,            ListType::BASIC_KEYWORDS, "keywords_V2" },
+    { LIST_Keywords_01,            ListType::BASIC_KEYWORDS, "keywords_01" },
+    { LIST_Keywords_04,            ListType::BASIC_KEYWORDS, "keywords_04" },
+    { LIST_Keywords_06,            ListType::BASIC_KEYWORDS, "keywords_06" },
+    { LIST_Errors,                 ListType::BASIC_ERRORS,   "errors"      },
+    { LIST_MiscStrings_Dynamic,    ListType::BASIC_STRINGS,  "misc"        },
+    { LIST_Kernal,                 ListType::KERNAL_STRINGS, "kernal"      },
+};
 
 //
 // Common helper functions
@@ -184,6 +204,49 @@ void parseConfigFile()
     }
 }
 
+void prepareDynamicStrings()
+{
+    // Copy all the configured strings
+
+    LIST_MiscStrings_Dynamic = LIST_MiscStrings;
+
+    // Generate string to show the build features
+   
+    std::string featureStr;
+    std::string featureStrM65 = "\r";
+
+    getFeatureStr(featureStr, featureStrM65);
+
+    // Add strings to appropriate list
+
+    if (GLOBAL_ConfigOptions["SHOW_FEATURES"] || GLOBAL_ConfigOptions["MB_M65"])
+    {
+        InputStringEntry newEntry1 = { true, true, true, true, true, "STR_PAL",      "PAL\r"    };
+        InputStringEntry newEntry2 = { true, true, true, true, true, "STR_NTSC",     "NTSC\r"   };
+
+        LIST_MiscStrings_Dynamic.list.push_back(newEntry1);
+        LIST_MiscStrings_Dynamic.list.push_back(newEntry2);
+    }
+
+    if (GLOBAL_ConfigOptions["SHOW_FEATURES"])
+    {
+        InputStringEntry newEntry = { true, true, true, true, true, "STR_FEATURES", featureStr };
+        LIST_MiscStrings_Dynamic.list.push_back(newEntry);
+    }
+
+    if (GLOBAL_ConfigOptions["MB_M65"])
+    {
+        InputStringEntry newEntry = { false, true, true, false, false, "STR_SI_FEATURES", featureStrM65 };
+        LIST_MiscStrings_Dynamic.list.push_back(newEntry);
+    }
+
+    if (!GLOBAL_ConfigOptions["BRAND_CUSTOM_BUILD"] || GLOBAL_ConfigOptions["MB_M65"])
+    {
+        InputStringEntry newEntry = { true, true, true, true, true, "STR_PRE_REV", "RELEASE " };
+        LIST_MiscStrings_Dynamic.list.push_back(newEntry);
+    }
+}
+
 void printUsage()
 {
     std::cout << "\n" <<
@@ -214,10 +277,12 @@ void parseCommandLine(int argc, char **argv)
     }
 }
 
+
+
+
 //
 // Main class
 //
-
 
 class DataProcessor
 {
@@ -226,7 +291,6 @@ public:
 	DataProcessor();
 	
 	void process();
-	void write();
 	
 private:
 
@@ -236,6 +300,14 @@ private:
         std::vector<uint8_t>   encoded;
         const bool             relevant;
 
+        StringEntry(const InputStringEntry &inputEntry) : inputEntry(inputEntry), relevant(true)
+        {
+        }
+
+        StringEntry() : inputEntry(GLOBAL_DummyInputString), relevant(false)
+        {
+        }
+
     } StringEntry;
 
     typedef struct StringList
@@ -244,8 +316,8 @@ private:
 
         const ListType         listType;
         const std::string      listName;
-        const bool             encDict;
-        const bool             encFreq;
+        const bool             encDict = false;
+        const bool             encFreq = false;
 
         StringList(ListType listType, const std::string &listName, bool encDict, bool encFreq) :
             listType(listType), listName(listName), encDict(encDict), encFreq(encFreq)
@@ -255,9 +327,14 @@ private:
     } StringList;
 
     std::list<StringList> stringSet;
+    StringList            stringDict;
 
     bool isRelevant(const InputStringEntry &inputStringEntry) const;
     void addInputList(const InputList &inputList);
+
+    void createDictionary();
+
+    void writeResults();
 };
 
 DataProcessor::DataProcessor()
@@ -266,14 +343,20 @@ DataProcessor::DataProcessor()
     {
         addInputList(inputList);
     }
+
+    if (stringSet.empty()) ERROR(std::string("no valid strings in layout '") + GLOBAL_BuildTypeName + "'");
 }
 
 void DataProcessor::process()
 {
+    createDictionary();
+
 	// XXX
+
+    writeResults();
 }
 
-void DataProcessor::write()
+void DataProcessor::writeResults() // XXX move it down
 {
     // Remove old file
 
@@ -344,6 +427,7 @@ void DataProcessor::addInputList(const InputList &inputList)
             encFreq = GLOBAL_Compression_BKw_Freq;
         }
         break;
+        case ListType::BASIC_ERRORS:
         case ListType::BASIC_STRINGS:
         {
             if (GLOBAL_Compression_Msg_Dict)
@@ -369,16 +453,48 @@ void DataProcessor::addInputList(const InputList &inputList)
     {
         if (isRelevant(inputStringEntry))
         {
-            stringList.push_back(); // XXX
+            stringList.push_back(StringEntry(inputStringEntry));
         }
-        else if (inputList.listType)
+        else if (inputList.listType == ListType::BASIC_KEYWORDS || inputList.listType == ListType::BASIC_ERRORS)
         {
-            // Push empty reference
+            // Push empty item, - for certain lists we want to keep indices constant
 
-            // XXX
+            stringList.push_back(StringEntry());
         }
     }
 }
+
+void DataProcessor::createDictionary()
+{
+    if (!GLOBAL_Compression_Msg_Dict) return;
+
+    stringDict = StringList(ListType::DICTIONARY, "dict", false, GLOBAL_Compression_Msg_Freq);
+
+    for (auto &stringList : stringSet)
+    {
+        if (!stringList.listType.encDict) continue;
+
+        for (auto &stringEntry : stringList.list)
+        {
+            if (!stringEntry.relevant || stringEntry.inputEntry.string.empty()) continue;
+
+            // Replace the string with dictrionary entry reference
+
+            if (stringDict.list.size() >= 255)
+            {
+                ERROR("max 255 strings allowed for dictionary compression");
+            }
+
+            // XXX
+
+        }
+    }
+
+    // If dictionary is empty (unlikely) - disable dictionary compression
+
+    if (stringDict.list.empty()) GLOBAL_Compression_Msg_Dict = false;
+}
+
 
 
 
@@ -393,10 +509,10 @@ int main(int argc, char **argv)
 
     parseCommandLine(argc, argv);
     parseConfigFile();
+    prepareDynamicStrings();
 
     DataProcessor dataProcessor;
     dataProcessor.process();
-    dataProcessor.write();
 
     return 0;
 }
@@ -415,9 +531,18 @@ int main(int argc, char **argv)
 
 
 
-    const std::string &getOutput();
 
-private:
+
+
+
+
+
+
+
+
+
+
+    const std::string &getOutput();
 
     void process();
 
@@ -440,11 +565,6 @@ private:
 
     void putCharEncoding(std::ostringstream &stream, uint8_t idx, char character, bool is3n);
 
-    bool isCompressionLvl2(const StringEntryList &list) const;
-
-    virtual bool isRelevant(const StringEntry &entry) const = 0;
-    virtual std::string layoutName() const = 0;
-
     std::vector<StringEntryList>          stringEntryLists;
     std::vector<StringEncodedList>        stringEncodedLists;
 
@@ -456,7 +576,7 @@ private:
 
     size_t                                maxAliasLen          = 0;
     std::string                           outFileContent;
-};
+
 
 
 //
@@ -481,11 +601,6 @@ void DictEncoder::addString(const std::string &inString, StringEncoded *outPtr)
     }
     else
     {
-        if (dictionary.size() > 255)
-        {
-            ERROR("max 255 strings allowed for dictionary compression");
-        }
-
         dictionary.push_back(inString);
         encodings.back()->push_back(dictionary.size() - 1);
     }
@@ -865,15 +980,6 @@ bool DictEncoder::optimizeSplit()
     return optimizeAgain;
 }
 
-bool DictEncoder::optimizeJoin()
-{
-    // Try to optimize by joining two substrings
-   
-    // XXX - possible future improvement
-   
-    return false;
-}
-
 void DictEncoder::optimizeOrder()
 {
     // XXX - it would be better to do this after the dictionary is compressed
@@ -973,36 +1079,6 @@ void DictEncoder::process(StringEntryList &outDictionary)
     }
 }
 
-bool DataSet::isCompressionLvl2(const StringEntryList &list) const
-{
-    return (GLOBAL_ConfigOptions["COMPRESSION_LVL_2"] && list.type == ListType::STRINGS_BASIC);
-}
-
-void DataSet::addStrings(const StringEntryList &stringList)
-{
-    // Import the new list of strings
-
-    stringEntryLists.push_back(stringList);
-    stringEncodedLists.emplace_back();
-
-    // Clear strings not relevant for the current configuration
-   
-    while (1)
-    {
-        if (isRelevant(stringEntryLists.back().list.back())) break;
-
-        stringEntryLists.back().list.pop_back();
-        if (stringEntryLists.back().list.empty())
-        {
-            ERROR(std::string("no valid strings in layout '") + layoutName() + "', list'" + stringEntryLists.back().name + "'");
-        }
-    }
-   
-    // Clear the output content - make sure it is not valid anymore
-
-    outFileContent.clear();
-}
-
 void DataSet::process()
 {
     std::cout << "processing file '" << CMD_cnfFile << "', layout '" << layoutName() << "'" << std::endl;
@@ -1013,151 +1089,6 @@ void DataSet::process()
     calculateFrequencies();
     encodeStringsFreq();   
     prepareOutput();
-}
-
-const std::string &DataSet::getOutput()
-{
-    if (outFileContent.empty())
-    {
-        process();
-    }
-
-    return outFileContent;
-}
-
-void DataSet::generateConfigDepStrings()
-{
-    // Generate string to show the build features
-   
-    std::string featureStr;
-    std::string featureStrM65 = "\r";
-
-    // Tape support features
-   
-    if (GLOBAL_ConfigOptions["TAPE_NORMAL"] && GLOBAL_ConfigOptions["TAPE_TURBO"])
-    {
-        featureStr    += "TAPE LOAD NORMAL TURBO\r";
-        featureStrM65 += "TAPE   : LOAD NORMAL TURBO\r";
-    }
-    else if (GLOBAL_ConfigOptions["TAPE_NORMAL"])
-    {
-        featureStr    += "TAPE LOAD NORMAL\r";
-        featureStrM65 += "TAPE   : LOAD NORMAL\r";
-    }
-    else if (GLOBAL_ConfigOptions["TAPE_TURBO"])
-    {
-        featureStr    += "TAPE LOAD TURBO\r";
-        featureStrM65 += "TAPE   : LOAD TURBO\r";
-    }
-   
-    // IEC support features
-   
-    if (GLOBAL_ConfigOptions["IEC"])
-    {
-        featureStr    += "IEC";
-        featureStrM65 += "IEC    :";
-       
-        bool extendedIEC = false;
-       
-        if (GLOBAL_ConfigOptions["IEC_BURST_CIA1"])
-        {
-            featureStr    += " BURST1";
-            extendedIEC    = true;
-        }
-        if (GLOBAL_ConfigOptions["IEC_BURST_CIA2"])
-        {
-            featureStr    += " BURST2";
-            extendedIEC    = true;
-        }
-        if (GLOBAL_ConfigOptions["IEC_BURST_MEGA65"])
-        {
-            featureStr    += " BURST";
-            featureStrM65 += " BURST";
-            extendedIEC    = true;
-        }
-       
-        if (GLOBAL_ConfigOptions["IEC_DOLPHINDOS"])
-        {
-            featureStr    += " DOLPHIN";
-            featureStrM65 += " DOLPHIN";
-            extendedIEC    = true;
-        }
-       
-        if (GLOBAL_ConfigOptions["IEC_JIFFYDOS"])
-        {
-            featureStr    += " JIFFY";
-            featureStrM65 += " JIFFY";
-            extendedIEC    = true;
-        }
-       
-        if (!extendedIEC)
-        {
-            featureStr    += " NORMAL ONLY";
-            featureStrM65 += " NORMAL ONLY";
-        }
-
-        featureStr    += "\r";
-        featureStrM65 += "\r";
-    }
-    else
-    {
-        featureStrM65 += "IEC    : NO\r";
-    }
-
-    // RS-232 support features
-   
-    if (GLOBAL_ConfigOptions["RS232_ACIA"])   featureStr += "ACIA 6551\r";
-    if (GLOBAL_ConfigOptions["RS232_UP2400"]) featureStr += "UP2400\r";
-    if (GLOBAL_ConfigOptions["RS232_UP9600"]) featureStr += "UP9600\r";
-   
-    featureStrM65 += "RS-232 : NO\r";
-
-    // CBDOS features
-
-    featureStrM65 += "CBDOS  : NO FDD/SD/RAM SUPPORT\r";
-
-    // Keyboard support features
-   
-    if (GLOBAL_ConfigOptions["KEYBOARD_C128"]) featureStr += "KBD 128\r";
-    if (GLOBAL_ConfigOptions["KEYBOARD_C65"])  featureStr += "KBD 65\r";
-
-    // Add strings to appropriate list
-   
-    for (auto &stringEntryList : stringEntryLists)
-    {
-        if (stringEntryList.name != std::string("misc")) continue;
-
-        // List found
-
-        if (GLOBAL_ConfigOptions["SHOW_FEATURES"] || GLOBAL_ConfigOptions["MB_M65"])
-        {
-            StringEntry newEntry1 = { true, true, true, true, true, "STR_PAL",      "PAL\r"    };
-            StringEntry newEntry2 = { true, true, true, true, true, "STR_NTSC",     "NTSC\r"   };
-
-            stringEntryList.list.push_back(newEntry1);
-            stringEntryList.list.push_back(newEntry2);
-        }
-
-        if (GLOBAL_ConfigOptions["SHOW_FEATURES"])
-        {
-            StringEntry newEntry = { true, true, true, true, true, "STR_FEATURES", featureStr };
-            stringEntryList.list.push_back(newEntry);
-        }
-
-        if (GLOBAL_ConfigOptions["MB_M65"])
-        {
-            StringEntry newEntry = { false, true, true, false, false, "STR_SI_FEATURES", featureStrM65 };
-            stringEntryList.list.push_back(newEntry);
-        }
-
-        if (!GLOBAL_ConfigOptions["BRAND_CUSTOM_BUILD"] || GLOBAL_ConfigOptions["MB_M65"])
-        {
-            StringEntry newEntry = { true, true, true, true, true, "STR_PRE_REV", "RELEASE " };
-            stringEntryList.list.push_back(newEntry);
-        }
-
-        break;
-    }
 }
 
 void DataSet::validateLists()
