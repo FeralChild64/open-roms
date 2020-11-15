@@ -22,28 +22,34 @@ private:
 
     typedef struct StringEntry
     {
-        const InputStringEntry &inputEntry;
+        const std::string alias;        // alias, for the assembler
+        std::string string;             // original string/token
+        const uint8_t abbrevLen = 0;    // length of token abbreviation
+
         std::vector<uint8_t>   encoded;
         const bool             relevant;
 
-        StringEntry(const InputStringEntry &inputEntry) : inputEntry(inputEntry), relevant(true)
+        StringEntry(const InputStringEntry &inputEntry) :
+            alias(inputEntry.alias),
+            string(inputEntry.string),
+            abbrevLen(inputEntry.abbrevLen),
+            relevant(true)
         {
-        }
+        };
 
-        StringEntry() : inputEntry(GLOBAL_DummyInputString), relevant(false)
-        {
-        }
+        StringEntry(std::string &string) : string(string), relevant(true) { };
+        StringEntry() { };
 
     } StringEntry;
 
     typedef struct StringList
     {
-        std::list<StringEntry> list;
+        std::vector<StringEntry> list;
 
-        const ListType         listType;
-        const std::string      listName;
-        const bool             encDict = false;
-        const bool             encFreq = false;
+        const ListType           listType;
+        const std::string        listName;
+        const bool               encDict = false;
+        const bool               encFreq = false;
 
         StringList(ListType listType, const std::string &listName, bool encDict, bool encFreq) :
             listType(listType), listName(listName), encDict(encDict), encFreq(encFreq)
@@ -59,8 +65,15 @@ private:
     void addInputList(const InputList &inputList);
 
     void createDictionary();
-    uint8_t getAllocDictEntry(const std::string &entryString);
-    uint8_t allocDictEntry(const std::string &entryString);
+    void optimizeDictionaryEncoding();
+
+    uint8_t getAllocDictEntry(const std::string &string);
+    uint8_t allocDictEntry(const std::string &string);
+
+    void getDictCandidates(std::vector<std::string> &candidateList);
+    uint32_t evaluateDictCandidate(const std::string &candidate) const;
+    uint32_t evaluateDictCompression() const;
+    void applyDictReplacement(const std::string &candidate);
 
     void writeResults();
 };

@@ -20,6 +20,7 @@ DataProcessor::DataProcessor()
 void DataProcessor::process()
 {
     createDictionary();
+    optimizeDictionaryEncoding();
 
 	// XXX
 
@@ -146,16 +147,11 @@ void DataProcessor::createDictionary()
 
         for (auto &stringEntry : stringList.list)
         {
-            if (!stringEntry.relevant || stringEntry.inputEntry.string.empty()) continue;
+            if (!stringEntry.relevant || stringEntry.string.empty()) continue;
 
-            // Replace the string with dictionary entry reference
+            // Set initial encoding as index of the inly string in the dictionary
 
-            uint8_t dictIdx = getAllocDictEntry(stringEntry.inputEntry.string);
-
-
-
-            // XXX
-
+            stringEntry.encoded.push_back(getAllocDictEntry(stringEntry.string));
         }
     }
 
@@ -164,17 +160,304 @@ void DataProcessor::createDictionary()
     if (stringDict.list.empty()) GLOBAL_Compression_Msg_Dict = false;
 }
 
-uint8_t DataProcessor::getAllocDictEntry(const std::string &entryString)
+uint8_t DataProcessor::getAllocDictEntry(const std::string &string)
 {
-	// XXX
+	// Check if dictionary already contains given string
+
+	for (uint8_t idx = 0; idx < stringDict.list.size(); idx++)
+	{
+		if (string.compare(stringDict.list[idx].string) == 0)
+		{
+			return idx;
+		}
+	}
+
+	// String not present, allocate new entry
+
+	return allocDictEntry(string);
 }
 
-uint8_t DataProcessor::allocDictEntry(const std::string &entryString)
+uint8_t DataProcessor::allocDictEntry(const std::string &string)
 {
 	if (stringDict.list.size() >= 255)
 	{
 	    ERROR("max 255 strings allowed for dictionary compression");
 	}
-	
+
+	stringDict.list.insert(StringEntry(string));
+
+	return stringDict.list.size() - 1;
+}
+
+void DataProcessor::optimizeDictionaryEncoding()
+{
+	while (true)
+	{
+		// If maximum size of dictionary reached - nothing can be done
+
+		if (dictionary.size() >= 255) return;
+
+    	// Select words, which can potentially be extracted to new substrings
+   
+    	std::vector<std::string> candidateList;
+    	getDictCandidates(candidateList);
+
+	    // Now find the best candidate for a new dictionary entry
+	   
+	    auto bestCandidate = candidateList.end();
+	    uint32_t bestScore = 0;
+
+	    for (auto iter = candidateList.begin(); iter < candidateList.end(); iter++)
+	    {
+	        uint32_t score = evaluateDictCandidate(*iter);
+
+	        if (score > bestScore)
+	        {
+	            bestCandidate = iter;
+	            bestScore     = score;
+	        }
+	    }
+
+	    // If no candidates were evaluated - nothing to do
+
+	    if (bestScore < 1) return;
+
+	    // Only allow for replacements that brings some size benefit
+	   
+	    if (bestScore <= evaluateDictCompression()) return;
+
+	    // Replace substrings with the new dictionary entry
+
+	    applyDictReplacement(bestCandidate);
+	}
+}
+
+void DataProcessor::getDictCandidates(std::vector<std::string> &candidateList)
+{
+	// XXX consider checking for substrings of spaces only
+
+    for (const auto &dictEntry : stringDict)
+    {
+        // Split the dictionary entry into words
+
+        std::istringstream entryStream(dictEntry.striong);
+        while (entryStream)
+        {
+	        std::istringstream entryStream(dictEntry.string);
+	        while (entryStream)
+	        {
+	            std::string word_1;
+	            entryStream >> word_1;
+
+	            if (word_1.empty()) continue;
+	           
+	            // Create possible variants with spaces
+
+	            std::string word_2 = " " + word_1;
+	            std::string word_3 = word_1 + " ";
+	            std::string word_4 = word_2 + " ";
+
+	            // If necessary, add the word to candidate list
+	           
+	            auto addToList = [&dictEntry, &candidateList](std::string &word)
+	            {
+	                // Before adding, make sure the word exists in the string,
+	                // is not already on the list, and it's size makes it worth trying
+
+	                if (word.size() < 1) return;
+	                if (dictEntry.string.size() - word.size() > 1) return;
+	                if (dictEntry.string.find(word) == std::string::npos) return;
+	                if (std::find(candidateList.begin(), candidateList.end(), word) != candidateList.end()) return;
+
+	                candidateList.push_back(word);
+	            };
+	           
+	            addToList(word_1);
+	            addToList(word_2);
+	            addToList(word_3);
+	            addToList(word_4);
+	        }
+        }
+	}
+}
+
+uint32_t DataProcessor::evaluateDictCandidate(const std::string &candidate) const
+{
+	DataProcessor testProcessor = *this;
+	testProcessor.applyDictReplacement(candidate);
+	return testProcessor.evaluateDictCompression();
+}
+
+uint32_t DataProcessor::evaluateDictCompression() const
+{
 	// XXX
+}
+
+void DataProcessor::applyDictReplacement(const std::string &candidate)
+{
+	// XXX
+}
+
+
+
+
+
+
+
+
+
+
+
+bool DictEncoder::optimizeSplit()
+{
+
+
+
+
+   
+
+   
+   
+    // First add our selected candidate to the dictionary and replace all strings which are equal to it
+   
+    dictionary.push_back(selectedStr);
+
+    for (auto iter = dictionary.begin(); iter < dictionary.end(); iter++)
+    {
+        uint8_t currentStrIdx = iter - dictionary.begin();
+       
+        if (*iter != selectedStr || selectedStrIdx == currentStrIdx) continue;
+       
+        // Replace the current string with the new one
+       
+        for (auto &encoding : encodings) for (auto &byte : *encoding)
+        {
+            if (byte == currentStrIdx) byte = selectedStrIdx;
+        }
+       
+        // Mark obsolete dictionary entry as free for removal
+       
+        iter->clear();
+    }
+
+    cleanupDictionary();
+
+    // Now handle normal cases, when the string needs to be split
+    // XXX - this is not time-effective, optimize this in the future
+
+    bool optimizeAgain = true;
+    bool nexIteration  = true;
+    while (nexIteration)
+    {
+        nexIteration = false;
+
+        for (auto iter = dictionary.begin(); iter < dictionary.end(); iter++)
+        {
+            auto    &currentStr     = *iter;
+            uint8_t currentStrIdx   = iter - dictionary.begin();   
+            auto    selectedStrIter = std::find(dictionary.begin(), dictionary.end(), selectedStr);
+            selectedStrIdx          = selectedStrIter - dictionary.begin();
+
+            if (currentStrIdx == selectedStrIdx) continue;
+   
+            // Check if the current string contains the selected string
+           
+            auto pos = currentStr.find(selectedStr);
+            if (pos == std::string::npos) continue;
+               
+            nexIteration  = true;
+            optimizeAgain = true;
+   
+            // Prepare replacement sequence for 'selectedStrIdx'
+               
+            std::vector<uint8_t> replacement;
+           
+            if (pos == 0)
+            {
+                // The current dictionary string starts with our selected substring
+               
+                replacement.push_back(selectedStrIdx);
+                currentStr = currentStr.substr(selectedStr.size(), currentStr.size() - selectedStr.size());
+               
+                if (!currentStr.empty())
+                {
+                    // Check if the remaining string is present somewhere else in the dictionary; if so, reuse it
+               
+                    uint8_t pos2 = currentStrIdx;
+                    for (auto iter2 = dictionary.begin(); iter2 < dictionary.end(); iter2++)
+                    {
+                        if (iter2 == iter) continue;
+                        if (currentStr == *iter2)
+                        {
+                            dictionary[pos2].clear();
+                            pos2 = iter2 - dictionary.begin();
+                            break;
+                        }
+                    }
+                   
+                    replacement.push_back(pos2);
+                }
+            }
+            else
+            {
+                // The current dictionary string does not start with our selected substring
+               
+                std::string newStr = currentStr.substr(0, pos);
+                currentStr         = currentStr.substr(pos, currentStr.size() - pos);
+               
+                // Check if the newStr is present somewhere else in the dictionary; if so, reuse it
+               
+                bool    found = false;
+                uint8_t pos2  = 0;
+                for (auto iter2 = dictionary.begin(); iter2 < dictionary.end(); iter2++)
+                {
+                    if (*iter2 == newStr)
+                    {
+                        found = true;
+                        pos2  = iter2 - dictionary.begin();
+
+                        break;
+                    }
+                }
+           
+                if (found)
+                {
+                    replacement.push_back(pos2);                   
+                }
+                else
+                {
+                    dictionary.push_back(newStr);
+                    replacement.push_back(dictionary.size() - 1);                   
+                }
+
+                replacement.push_back(currentStrIdx);
+            }
+
+            // Now replace all the occurences of 'selectedStrIdx' with a 'replacement' vector
+
+            for (auto &encoding : encodings)
+            {
+                for (uint8_t idx = 0; idx < encoding->size(); idx++)
+                {
+                    if ((*encoding)[idx] != currentStrIdx) continue;
+                   
+                    // Perform replacement
+                   
+                    encoding->erase(encoding->begin() + idx);
+                   
+                    for (const auto replacementIdx : replacement)
+                    {
+                        encoding->insert(encoding->begin() + idx, replacementIdx);
+                        idx++;
+                    }
+                   
+                    idx--;
+                }
+            }
+           
+            cleanupDictionary();
+        }
+    }
+
+    return optimizeAgain;
 }
