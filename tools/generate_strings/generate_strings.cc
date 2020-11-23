@@ -307,29 +307,6 @@ int main(int argc, char **argv)
 // Work class implementation
 //
 
-void DictEncoder::addString(const std::string &inString, StringEncoded *outPtr)
-{
-    // Store the pointer to encoding
-
-    encodings.push_back(outPtr);
-
-    // Check if string is already present in the dictionary
-
-    auto pos = std::find(dictionary.begin(), dictionary.end(), inString);
-
-    // Create initial encoding
-
-    if (pos != dictionary.end())
-    {
-        encodings.back()->push_back(pos - dictionary.begin());
-    }
-    else
-    {
-        dictionary.push_back(inString);
-        encodings.back()->push_back(dictionary.size() - 1);
-    }
-}
-
 void DictEncoder::cleanupDictionary()
 {
     // Get rid of dictionary entries which are not needed anymore

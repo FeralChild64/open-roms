@@ -27,7 +27,7 @@ private:
         const uint8_t abbrevLen = 0;    // length of token abbreviation
 
         std::vector<uint8_t>   encoded;
-        const bool             relevant;
+        bool                   relevant = false;
 
         StringEntry(const InputStringEntry &inputEntry) :
             alias(inputEntry.alias),
@@ -73,7 +73,7 @@ private:
     void getDictCandidates(std::vector<std::string> &candidateList);
     uint32_t evaluateDictCandidate(const std::string &candidate) const;
     uint32_t evaluateDictCompression() const;
-    void applyDictReplacement(const std::string &candidate);
+    void applyDictReplacement(const std::string &newString);
 
     void writeResults();
 };

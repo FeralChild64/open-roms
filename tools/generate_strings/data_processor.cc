@@ -168,6 +168,7 @@ uint8_t DataProcessor::getAllocDictEntry(const std::string &string)
 	{
 		if (string.compare(stringDict.list[idx].string) == 0)
 		{
+			stringDict.list[idx].relevant = true;
 			return idx;
 		}
 	}
@@ -179,6 +180,19 @@ uint8_t DataProcessor::getAllocDictEntry(const std::string &string)
 
 uint8_t DataProcessor::allocDictEntry(const std::string &string)
 {
+	// First try to reuse irrelevant (effectively empty) entry
+
+	for (uint8_t idx = 0; idx < stringDict.list.size(); idx++)
+	{
+		if (!stringDict.list[idx].relevant)
+		{
+			stringDict.list[idx] = StringEntry(string);
+			return idx;
+		}
+	}
+
+	// Not free entry found - add a new one
+
 	if (stringDict.list.size() >= 255)
 	{
 	    ERROR("max 255 strings allowed for dictionary compression");
@@ -234,13 +248,13 @@ void DataProcessor::optimizeDictionaryEncoding()
 
 void DataProcessor::getDictCandidates(std::vector<std::string> &candidateList)
 {
-	// XXX consider checking for substrings of spaces only
+	// XXX consider checking for substrings of spaces only too
 
-    for (const auto &dictEntry : stringDict)
+    for (const auto &dictEntry : stringDict.list)
     {
         // Split the dictionary entry into words
 
-        std::istringstream entryStream(dictEntry.striong);
+        std::istringstream entryStream(dictEntry.string);
         while (entryStream)
         {
 	        std::istringstream entryStream(dictEntry.string);
@@ -290,41 +304,63 @@ uint32_t DataProcessor::evaluateDictCandidate(const std::string &candidate) cons
 
 uint32_t DataProcessor::evaluateDictCompression() const
 {
-	// XXX
-}
+	uint32_t score = 0;
 
-void DataProcessor::applyDictReplacement(const std::string &candidate)
-{
-	// XXX
-}
+	// First count the number of bytes needed for the dictionary
 
-
-
-
-
-
-
-
-
-
-
-bool DictEncoder::optimizeSplit()
-{
-
-
-
-
-   
-
-   
-   
-    // First add our selected candidate to the dictionary and replace all strings which are equal to it
-   
-    dictionary.push_back(selectedStr);
-
-    for (auto iter = dictionary.begin(); iter < dictionary.end(); iter++)
+    for (const auto &dictEntry : stringDict.list)
     {
-        uint8_t currentStrIdx = iter - dictionary.begin();
+    	if (!dictEntry.relevant) continue;
+
+    	// XXX for freq compressed dictionary, add compressed size instead
+    	score += dictEntry.string.size() + 1;
+    }
+
+    // Count bytes needed for the dictionary compressed strings
+
+    for (const auto &stringList : stringSet)
+    {
+    	if (!stringList.encDict) continue;
+
+    	for (const auto &stringEntry : stringList.list)
+    	{
+    		score += dictEntry.encoded.size() + 1;
+    	}
+	}
+
+	// Return results as score (higher value = better)
+
+	return 65536 - score;
+}
+
+void DataProcessor::applyDictReplacement(const std::string &newString)
+{
+    // First add our selected candidate to the dictionary
+
+	uint8_t newIdx = getAllocDictEntry(newString);
+
+	// Replace all strings which are equal to the new one
+
+	for (uint8_t idx = 0; idx < dictionary.list.size(); idx++)
+	{
+		if (!dictionary.list[idx].relevant || idx == newIdx) continue;
+
+		// XXX
+
+        // Mark obsolete dictionary entry as free for removal
+
+		dictionary.list[idx].relevant = false;
+	}
+
+	// XXX
+}
+
+
+
+
+
+
+
        
         if (*iter != selectedStr || selectedStrIdx == currentStrIdx) continue;
        
@@ -334,11 +370,10 @@ bool DictEncoder::optimizeSplit()
         {
             if (byte == currentStrIdx) byte = selectedStrIdx;
         }
+
        
-        // Mark obsolete dictionary entry as free for removal
-       
-        iter->clear();
-    }
+
+
 
     cleanupDictionary();
 
