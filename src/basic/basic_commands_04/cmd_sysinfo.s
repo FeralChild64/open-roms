@@ -53,7 +53,7 @@ print_sysinfo_banner:
 	ldx #IDX__STR_SI_HDR_HW
 	jsr print_packed_misc_str
 
-	lda MISC_BOARDID
+	lda MISC_M65MODEL
 	ldy #(__cmd_sysinfo_hw_ids_end - cmd_sysinfo_hw_ids - 1)
 @2:
 	cmp cmd_sysinfo_hw_ids, y
