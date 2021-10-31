@@ -85,6 +85,39 @@ m65_screen_dmasrcdst_color:
 	bra m65_screen_dmasrcdst_screen_cont
 
 
+m65_screen_dmasrcdst_screen_row:
+
+	jsr m65_screen_dmasrcdst_screen
+
+	; FALLTROUGH
+
+m65_screen_dmasrcdst_screen_row_cont:
+
+	clc
+	lda M65_DMAJOB_SRC_0
+	adc M65_TXTROW_OFF+0
+	sta M65_DMAJOB_SRC_0
+	lda M65_DMAJOB_SRC_1
+	adc M65_TXTROW_OFF+1
+	sta M65_DMAJOB_SRC_1
+
+	clc
+	lda M65_DMAJOB_DST_0
+	adc M65_TXTROW_OFF+0
+	sta M65_DMAJOB_DST_0
+	lda M65_DMAJOB_DST_1
+	adc M65_TXTROW_OFF+1
+	sta M65_DMAJOB_DST_1
+
+	rts
+
+
+m65_screen_dmasrcdst_color_row:
+
+	jsr m65_screen_dmasrcdst_color
+	bra m65_screen_dmasrcdst_screen_row_cont
+
+
 m65_screen_dmasrc_add_row:
 
 	clc

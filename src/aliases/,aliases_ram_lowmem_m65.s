@@ -43,7 +43,7 @@
 	; $780-$7FF - reserved for KERNAL
 
 	!addr M65_SCRSEG         = $780 ; $780-$781  segment address (2 higher bytes) of the screen memory
-	!addr M65_SCRBASE        = $782 ; $782-$783  first byte of screen memory
+	!addr M65_SCRBASE        = $782 ; $782-$783  most siginificant bytes of screen memory address
 	!addr M65_SCRGUARD       = $784 ; $784-$785  last byte of screen memory + 1  XXX is it needed?
 	!addr M65_COLGUARD       = $786 ; $786-$787  last byte of colour memory + 1
 	!addr M65_COLVIEW        = $788 ; $788-$789  first byte of color memory viewport

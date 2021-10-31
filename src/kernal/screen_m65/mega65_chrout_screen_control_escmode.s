@@ -183,6 +183,44 @@ m65_chrout_esc_F: ; enable cursor flashing
 
 	jmp m65_chrout_screen_done
 
+m65_chrout_esc_D: ; delete current line, move content up      XXX update for window mode
+
+	; Calculate size of data to copy
+
+	sec
+	lda M65_COLGUARD+0
+	sbc M65_COLVIEW+0
+	sta M65_DMAJOB_SIZE_0
+	lda M65_COLGUARD+1
+	sbc M65_COLVIEW+1
+	sta M65_DMAJOB_SIZE_1
+
+	; Decrease the data size according to current row
+
+	sec
+	lda M65_DMAJOB_SIZE_0
+	sbc M65_TXTROW_OFF+0
+	sta M65_DMAJOB_SIZE_0
+	lda M65_DMAJOB_SIZE_1
+	sbc M65_TXTROW_OFF+1
+	sta M65_DMAJOB_SIZE_1
+
+	; Scroll up screen memory
+
+	jsr m65_screen_dmasrcdst_screen_row
+	jsr m65_screen_dmasrc_add_row
+	jsr m65_dmagic_oper_copy
+
+	; Scroll up color memory
+
+	jsr m65_screen_dmasrcdst_color_row
+	jsr m65_screen_dmasrc_add_row
+	jsr m65_dmagic_oper_copy
+
+	; Clear the last row of screen
+
+	; XXX m65_chrout_clr_last_row does not seem to function properly
+	jmp m65_chrout_screen_done
 
 
 
@@ -196,8 +234,6 @@ m65_chrout_esc_A: ; enable auto-insert mode
 m65_chrout_esc_B: ; set bottom-right window position
 	+nop
 m65_chrout_esc_C: ; disable auto-insert mode
-	+nop
-m65_chrout_esc_D: ; delete current line, move content up
 	+nop
 m65_chrout_esc_I: ; insert empty line, move content down
 	+nop

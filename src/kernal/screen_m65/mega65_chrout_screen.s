@@ -268,6 +268,10 @@ m65_chrout_fix_scroll_up_scroll:
 	jsr m65_screen_dmasrc_add_row
 	jsr m65_dmagic_oper_copy
 
+	; FALLTROUHG
+
+m65_chrout_clr_last_row:
+
 	; Clear the last row - color and screen memory
 
 	phz

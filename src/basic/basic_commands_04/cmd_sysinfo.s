@@ -69,7 +69,7 @@ print_sysinfo_banner:
 	cpx #IDX__STR_SI_HW_XX
 	bne @4
 
-	lda MISC_BOARDID
+	lda MISC_M65MODEL
 	jsr print_hex_byte
 @4:
 
