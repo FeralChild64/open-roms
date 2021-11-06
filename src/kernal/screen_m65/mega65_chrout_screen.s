@@ -276,9 +276,7 @@ m65_chrout_clr_last_row:
 
 	phz
 
-	; XXX try to shorten code by using m65_screen_put_space
-
-	jsr m65_helper_scrlpnt_color
+	jsr m65_helper_scrlpnt_color_last
 	lda COLOR
 	and #$0F
 	ldz M65_SCRCOLMAX

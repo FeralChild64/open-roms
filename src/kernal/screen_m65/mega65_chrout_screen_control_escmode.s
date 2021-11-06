@@ -205,6 +205,8 @@ m65_chrout_esc_D: ; delete current line, move content up      XXX update for win
 	sbc M65_TXTROW_OFF+1
 	sta M65_DMAJOB_SIZE_1
 
+	; XXX calculation is not fully correct
+
 	; Scroll up screen memory
 
 	jsr m65_screen_dmasrcdst_screen_row
@@ -219,7 +221,7 @@ m65_chrout_esc_D: ; delete current line, move content up      XXX update for win
 
 	; Clear the last row of screen
 
-	; XXX m65_chrout_clr_last_row does not seem to function properly
+	jsr m65_chrout_clr_last_row
 	jmp m65_chrout_screen_done
 
 

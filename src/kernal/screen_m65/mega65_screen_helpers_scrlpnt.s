@@ -29,6 +29,25 @@ m65_helper_scrlpnt_color:
 	rts
 
 
+m65_helper_scrlpnt_color_last:
+
+	; Setting M65_LPNT_SCR to point to last line in colour memory
+
+	lda #$0F
+	sta M65_LPNT_SCR+3
+	lda #$F8
+	sta M65_LPNT_SCR+2
+
+	sec
+	lda M65_COLGUARD+0
+	sbc #$50
+	sta M65_LPNT_SCR+0
+	lda M65_COLGUARD+1
+	sbc #$00
+	sta M65_LPNT_SCR+1
+
+	rts
+
 
 m65_helper_scrlpnt_to_screen:
 
