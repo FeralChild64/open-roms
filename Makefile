@@ -835,25 +835,25 @@ test:     test_custom
 test_crt: test_generic_crt
 
 test_custom: $(TARGET_LIST_CUS) $(TARGET_CHR_PXL) build/symbols_custom.vs
-	x64 -kernal $(TARGET_CUS_K) -basic $(TARGET_CUS_B) -chargen $(TARGET_CHR_PXL) -moncommands build/symbols_custom.vs -1 $(TESTTAPE) -8 $(TESTDISK)
+	x64sc.gtk -kernal $(TARGET_CUS_K) -basic $(TARGET_CUS_B) -chargen $(TARGET_CHR_PXL) -moncommands build/symbols_custom.vs -1 $(TESTTAPE) -8 $(TESTDISK)
 
 test_generic: $(TARGET_LIST_GEN)$(TARGET_CHR_PXL) build/symbols_generic.vs
-	x64 -kernal $(TARGET_GEN_K) -basic $(TARGET_GEN_B) -chargen $(TARGET_CHR_PXL) -moncommands build/symbols_generic.vs -1 $(TESTTAPE) -8 $(TESTDISK)
+	x64sc.gtk -kernal $(TARGET_GEN_K) -basic $(TARGET_GEN_B) -chargen $(TARGET_CHR_PXL) -moncommands build/symbols_generic.vs -1 $(TESTTAPE) -8 $(TESTDISK)
 
 test_generic_x128: $(TARGET_LIST_GEN) $(TARGET_CHR_PXL) build/symbols_generic.vs
-	x128 -go64 -kernal64 $(TARGET_GEN_K) -basic64 $(TARGET_GEN_B) -chargen $(TARGET_CHR_PXL) -moncommands build/symbols_generic.vs -1 $(TESTTAPE) -8 $(TESTDISK)
+	x128.gtk -go64 -kernal64 $(TARGET_GEN_K) -basic64 $(TARGET_GEN_B) -chargen $(TARGET_CHR_PXL) -moncommands build/symbols_generic.vs -1 $(TESTTAPE) -8 $(TESTDISK)
 
 test_generic_crt: $(TARGET_LIST_GENCRT) $(TARGET_CHR_PXL) build/symbols_generic_crt.vs
-	x64 -kernal $(TARGET_GENCRT_K) -basic $(TARGET_GENCRT_B) -chargen $(TARGET_CHR_PXL) -cartcrt $(TARGET_GENCRT_X) -moncommands build/symbols_generic_crt.vs -1 $(TESTTAPE) -8 $(TESTDISK)
+	x64sc.gtk -kernal $(TARGET_GENCRT_K) -basic $(TARGET_GENCRT_B) -chargen $(TARGET_CHR_PXL) -cartcrt $(TARGET_GENCRT_X) -moncommands build/symbols_generic_crt.vs -1 $(TESTTAPE) -8 $(TESTDISK)
 
 test_testing: $(TARGET_LIST_TST) $(TARGET_CHR_PXL) build/symbols_testing.vs
-	x64 -kernal $(TARGET_TST_K) -basic $(TARGET_TST_B) -chargen $(TARGET_CHR_PXL) -moncommands build/symbols_testing.vs -1 $(TESTTAPE) -8 $(TESTDISK)
+	x64sc.gtk -kernal $(TARGET_TST_K) -basic $(TARGET_TST_B) -chargen $(TARGET_CHR_PXL) -moncommands build/symbols_testing.vs -1 $(TESTTAPE) -8 $(TESTDISK)
 
 test_ultimate64: $(TARGET_LIST_U64) $(TARGET_CHR_PXL) build/symbols_ultimate64.vs
-	x64 -kernal $(TARGET_U64_K) -basic $(TARGET_U64_B) -chargen $(TARGET_CHR_PXL) -moncommands build/symbols_ultimate64.vs -1 $(TESTTAPE) -8 $(TESTDISK)
+	x64sc.gtk -kernal $(TARGET_U64_K) -basic $(TARGET_U64_B) -chargen $(TARGET_CHR_PXL) -moncommands build/symbols_ultimate64.vs -1 $(TESTTAPE) -8 $(TESTDISK)
 
 test_ultimate64_crt: $(TARGET_LIST_U64CRT) $(TARGET_CHR_PXL) build/symbols_ultimate64_crt.vs
-	x64 -kernal $(TARGET_U64CRT_K) -basic $(TARGET_U64CRT_B) -chargen $(TARGET_CHR_PXL) -cartcrt $(TARGET_U64CRT_X) -moncommands build/symbols_ultimate64_crt.vs -1 $(TESTTAPE) -8 $(TESTDISK)
+	x64sc.gtk -kernal $(TARGET_U64CRT_K) -basic $(TARGET_U64CRT_B) -chargen $(TARGET_CHR_PXL) -cartcrt $(TARGET_U64CRT_X) -moncommands build/symbols_ultimate64_crt.vs -1 $(TESTTAPE) -8 $(TESTDISK)
 
 test_mega65: $(TARGET_M65_x_ORF) $(TARGET_M65_x_PXL)
 	../xemu/build/bin/xmega65.native -dmarev 2 -besure -fontrefresh -forcerom -loadrom $(TARGET_M65_x_PXL)
