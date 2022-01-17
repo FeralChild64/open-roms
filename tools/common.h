@@ -3,6 +3,10 @@
 // for providing uniform user experience
 //
 
+
+#ifndef COMMON_H
+#define COMMON_H
+
 #include <iostream>
 #include <string>
 
@@ -14,35 +18,17 @@
 #endif
 
 
-const std::string BANNER_LINE = "//-------------------------------------------------------------------------------------------";
+void ERROR();
+void ERROR(const std::string &message);
 
-
-void ERROR()
-{
-    exit(-1);
-}
-
-void ERROR(const std::string &message)
-{
-    std::cout << "\n" << "ERROR: " << message << "\n\n";
-    exit(-1);
-}
-
-void printBannerLineTop()
-{
-    std::cout << "\n\n\n" << BANNER_LINE << "\n";
-}
-
-void printBannerLineBottom()
-{
-    std::cout << BANNER_LINE << "\n\n";
-}
+void printBannerLineTop();
+void printBannerLineBottom();
 
 
 class DualStream
 {
 public:
-    DualStream(std::ostream& str1, std::ostream& str2) : str1(str1), str2(str2) {}
+    DualStream(std::ostream& str1, std::ostream& str2);
 
     template<class T> DualStream &operator<<(const T& x)
     {
@@ -56,3 +42,6 @@ private:
     std::ostream& str1;
     std::ostream& str2;
 };
+
+
+#endif // COMMON_H
