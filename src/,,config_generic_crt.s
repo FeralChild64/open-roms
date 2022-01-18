@@ -121,4 +121,7 @@
 
 ; --- Other
 
-;; #CONFIG# COMPRESSION_LVL_2          NO
+; --- Other
+
+;; #CONFIG# COMPRESSION_DICT           NO
+;; #CONFIG# COMPRESSION_FREQ           YES       ; for now always put YES here

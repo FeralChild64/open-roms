@@ -38,7 +38,7 @@ print_packed_misc_str:
 
 } else {
 
-!ifndef CONFIG_COMPRESSION_LVL_2 {
+!ifndef CONFIG_COMPRESSION_DICT {
 
 print_packed_error:                    ; .X - error string index
 

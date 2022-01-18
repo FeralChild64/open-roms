@@ -98,9 +98,9 @@ HDR_COMMON     = tools/common.h
 SRC_COMMON     = tools/common.cc
 
 DIR_GENSTR     = tools/generate_strings
-HDR_GENSTR     = $(HDR_COMMON) $(DIR_GENSTR)/dataset.h $(DIR_GENSTR)/dictencoder.h $(DIR_GENSTR)/global.h 
+HDR_GENSTR     = $(HDR_COMMON) $(DIR_GENSTR)/dataset.h $(DIR_GENSTR)/dictencoder.h $(DIR_GENSTR)/global.h $(DIR_GENSTR)/stringdef.h $(DIR_GENSTR)/stringdyn.h 
 SRC_GENSTR     = $(SRC_COMMON) $(DIR_GENSTR)/dataset.cc $(DIR_GENSTR)/dictencoder.cc $(DIR_GENSTR)/global.cc \
-                 $(DIR_GENSTR)/main.cc
+                 $(DIR_GENSTR)/main.cc $(DIR_GENSTR)/stringdef.cc $(DIR_GENSTR)/stringdyn.cc
 
 CRT_BIN_LIST   = assets/cartridge/header-cart.bin \
                  assets/cartridge/header-seg0.bin \

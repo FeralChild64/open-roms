@@ -22,10 +22,10 @@ extern std::string CMD_cnfFile;
 extern std::map<std::string, bool> GLOBAL_ConfigOptions;
 
 //
-// Type definition for strings/keywords to generate
+// Type definitions for input strings/keywords
 //
 
-typedef struct StringEntry
+typedef struct StringInputEntry
 {
     bool        enabledSTD;     // whether enabled for standard build
     bool        enabledCRT;     // whether enabled for standard build with extra ROM cartridge
@@ -44,26 +44,18 @@ enum class ListType
     DICTIONARY                  // for internal use only
 };
 
-typedef struct StringEntryList
+typedef struct StringInputList
 {
-    ListType                 type;
-    std::string              name;
-    std::vector<StringEntry> list;
-} StringEntryList;
+    ListType                      type;
+    std::string                   name;
+    std::vector<StringInputEntry> list;
+} StringInputList;
+
+//
+// Type definitions for imported/encoded strings/keywords
+//
 
 typedef std::vector<uint8_t>       StringEncoded;
 typedef std::vector<StringEncoded> StringEncodedList;
 
-//
-// Open ROMs string definitions
-//
-
-extern const StringEntryList GLOBAL_Keywords_V2;
-extern const StringEntryList GLOBAL_Keywords_01;
-extern const StringEntryList GLOBAL_Keywords_04;
-extern const StringEntryList GLOBAL_Keywords_06;
-extern const StringEntryList GLOBAL_Errors;
-extern const StringEntryList GLOBAL_MiscStrings;
-
-
-#endif GLOBAL_H
+#endif // GLOBAL_H

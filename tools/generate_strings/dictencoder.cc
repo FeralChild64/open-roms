@@ -487,7 +487,7 @@ void DictEncoder::optimizeOrder()
     for (uint8_t idx = 0; idx < dictionary.size(); idx++) dictionary[idx] = optimizedOrder[idx].word;
 }
 
-void DictEncoder::process(StringEntryList &outDictionary)
+void DictEncoder::process(StringInputList &outDictionary)
 {
     if (dictionary.empty()) return;
     // Optimize as long as it brings any improvement
@@ -502,7 +502,7 @@ void DictEncoder::process(StringEntryList &outDictionary)
 
     for (const auto &dictionaryStr : dictionary)
     {
-        StringEntry newEntry = { true, true, true, true, "", dictionaryStr };
+        StringInputEntry newEntry = { true, true, true, true, true, "", dictionaryStr };
         outDictionary.list.push_back(newEntry);
     }
 

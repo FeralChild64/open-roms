@@ -5,6 +5,7 @@
 #include "global.h"
 
 #include "dataset.h"
+#include "stringdef.h"
 
 #include <fstream>
 #include <regex>

@@ -12,7 +12,7 @@ public:
 
     void addString(const std::string &inString, StringEncoded *outPtr);
 
-    void process(StringEntryList &outDictionary);
+    void process(StringInputList &outDictionary);
 
 private:
 

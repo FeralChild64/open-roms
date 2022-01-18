@@ -10,7 +10,7 @@ class DataSet
 {
 public:
 
-    void addStrings(const StringEntryList &stringList);
+    void addStrings(const StringInputList &stringList);
 
     const std::string &getOutput();
 
@@ -18,7 +18,6 @@ private:
 
     void process();
 
-    void generateConfigDepStrings();
     void validateLists();
     void calculateFrequencies();
     void encodeStringsDict();
@@ -29,20 +28,21 @@ private:
     void prepareOutput();
     void prepareOutput_1n_3n(std::ostringstream &stream);
     void prepareOutput_labels(std::ostringstream &stream,
-                              const StringEntryList &stringEntryList,
+                              const StringInputList &stringInputList,
                               const StringEncodedList &stringEncodedList);
     void prepareOutput_packed(std::ostringstream &stream,
-                              const StringEntryList &stringEntryList,
+                              const StringInputList &stringInputList,
                               const StringEncodedList &stringEncodedList);
 
     void putCharEncoding(std::ostringstream &stream, uint8_t idx, char character, bool is3n);
 
-    bool isCompressionLvl2(const StringEntryList &list) const;
+    bool isCompressionDict(const StringInputList &list) const;
+    bool isCompressionFreq(const StringInputList &list) const;
 
-    virtual bool isRelevant(const StringEntry &entry) const = 0;
+    virtual bool isRelevant(const StringInputEntry &entry) const = 0;
     virtual std::string layoutName() const = 0;
 
-    std::vector<StringEntryList>          stringEntryLists;
+    std::vector<StringInputList>          stringInputLists;
     std::vector<StringEncodedList>        stringEncodedLists;
 
     std::vector<char>                     as1n; // list of bytes to be encoded as 1 nibble
@@ -58,31 +58,31 @@ private:
 
 class DataSetSTD : public DataSet
 {
-    bool isRelevant(const StringEntry &entry) const { return entry.enabledSTD; }
+    bool isRelevant(const StringInputEntry &entry) const { return entry.enabledSTD; }
     std::string layoutName() const { return "STD"; }
 };
 
 class DataSetCRT : public DataSet
 {
-    bool isRelevant(const StringEntry &entry) const { return entry.enabledCRT; }
+    bool isRelevant(const StringInputEntry &entry) const { return entry.enabledCRT; }
     std::string layoutName() const { return "CRT"; }
 };
 
 class DataSetM65 : public DataSet
 {
-    bool isRelevant(const StringEntry &entry) const { return entry.enabledM65; }
+    bool isRelevant(const StringInputEntry &entry) const { return entry.enabledM65; }
     std::string layoutName() const { return "M65"; }
 };
 
 class DataSetU64 : public DataSet
 {
-    bool isRelevant(const StringEntry &entry) const { return entry.enabledU64; }
+    bool isRelevant(const StringInputEntry &entry) const { return entry.enabledU64; }
     std::string layoutName() const { return "STD"; } // XXX to be changed for 'U64' once the layout is finished
 };
 
 class DataSetX16 : public DataSet
 {
-    bool isRelevant(const StringEntry &entry) const { return entry.enabledX16; }
+    bool isRelevant(const StringInputEntry &entry) const { return entry.enabledX16; }
     std::string layoutName() const { return "X16"; }
 };
 

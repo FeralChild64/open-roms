@@ -321,6 +321,10 @@ Makes `printf` routine available.
 
 ## Other options
 
-### `COMPRESSION_LVL_2`
+### `COMPRESSION_FREQ`
 
-Adds additional step in compressing BASIC interpreter strings - a dictionary compression. Not tested extensively - and for now it won't bring any improvement (it will even increase the code/data size) as we do not have enough strings yet to make this method useful. Do not use!
+Uses a character frequency based compression for BASIC interpreter strings. Do not disable it for now!
+
+### `COMPRESSION_DICT`
+
+Uses a dictionary based compression for BASIC interpreter strings. Not tested extensively - and for now it won't bring any improvement (it will even increase the code/data size) as we do not have enough strings yet to make this method useful. Do not use!

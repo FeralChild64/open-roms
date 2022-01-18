@@ -2,34 +2,40 @@
 #include "dataset.h"
 
 #include "dictencoder.h"
+#include "stringdyn.h"
 
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
 
 
-bool DataSet::isCompressionLvl2(const StringEntryList &list) const
+bool DataSet::isCompressionDict(const StringInputList &list) const
 {
-    return (GLOBAL_ConfigOptions["COMPRESSION_LVL_2"] && list.type == ListType::STRINGS_BASIC);
+    return (GLOBAL_ConfigOptions["COMPRESSION_DICT"] && list.type == ListType::STRINGS_BASIC);
 }
 
-void DataSet::addStrings(const StringEntryList &stringList)
+bool DataSet::isCompressionFreq(const StringInputList &list) const
+{
+    return (GLOBAL_ConfigOptions["COMPRESSION_FREQ"]);
+}
+
+void DataSet::addStrings(const StringInputList &stringList)
 {
     // Import the new list of strings
 
-    stringEntryLists.push_back(stringList);
+    stringInputLists.push_back(stringList);
     stringEncodedLists.emplace_back();
 
     // Clear strings not relevant for the current configuration
    
     while (1)
     {
-        if (isRelevant(stringEntryLists.back().list.back())) break;
+        if (isRelevant(stringInputLists.back().list.back())) break;
 
-        stringEntryLists.back().list.pop_back();
-        if (stringEntryLists.back().list.empty())
+        stringInputLists.back().list.pop_back();
+        if (stringInputLists.back().list.empty())
         {
-            ERROR(std::string("no valid strings in layout '") + layoutName() + "', list'" + stringEntryLists.back().name + "'");
+            ERROR(std::string("no valid strings in layout '") + layoutName() + "', list'" + stringInputLists.back().name + "'");
         }
     }
    
@@ -42,7 +48,11 @@ void DataSet::process()
 {
     std::cout << "processing file '" << CMD_cnfFile << "', layout '" << layoutName() << "'" << std::endl;
 
-    generateConfigDepStrings();
+    // Add dynamically generated strings
+
+    StringInputDynamic dynamic;
+    dynamic.addToInput(stringInputLists);
+
     validateLists();
     encodeStringsDict();
     calculateFrequencies();
@@ -60,164 +70,31 @@ const std::string &DataSet::getOutput()
     return outFileContent;
 }
 
-void DataSet::generateConfigDepStrings()
-{
-    // Generate string to show the build features
-   
-    std::string featureStr;
-    std::string featureStrM65 = "\r";
-
-    // Tape support features
-   
-    if (GLOBAL_ConfigOptions["TAPE_NORMAL"] && GLOBAL_ConfigOptions["TAPE_TURBO"])
-    {
-        featureStr    += "TAPE LOAD NORMAL TURBO\r";
-        featureStrM65 += "TAPE     : LOAD NORMAL TURBO\r";
-    }
-    else if (GLOBAL_ConfigOptions["TAPE_NORMAL"])
-    {
-        featureStr    += "TAPE LOAD NORMAL\r";
-        featureStrM65 += "TAPE     : LOAD NORMAL\r";
-    }
-    else if (GLOBAL_ConfigOptions["TAPE_TURBO"])
-    {
-        featureStr    += "TAPE LOAD TURBO\r";
-        featureStrM65 += "TAPE     : LOAD TURBO\r";
-    }
-   
-    // IEC support features
-   
-    if (GLOBAL_ConfigOptions["IEC"])
-    {
-        featureStr    += "IEC";
-        featureStrM65 += "IEC      :";
-       
-        bool extendedIEC = false;
-       
-        if (GLOBAL_ConfigOptions["IEC_BURST_CIA1"])
-        {
-            featureStr    += " BURST1";
-            extendedIEC    = true;
-        }
-        if (GLOBAL_ConfigOptions["IEC_BURST_CIA2"])
-        {
-            featureStr    += " BURST2";
-            extendedIEC    = true;
-        }
-        if (GLOBAL_ConfigOptions["IEC_BURST_MEGA65"])
-        {
-            featureStr    += " BURST";
-            featureStrM65 += " BURST";
-            extendedIEC    = true;
-        }
-       
-        if (GLOBAL_ConfigOptions["IEC_DOLPHINDOS"])
-        {
-            featureStr    += " DOLPHIN";
-            featureStrM65 += " DOLPHIN";
-            extendedIEC    = true;
-        }
-       
-        if (GLOBAL_ConfigOptions["IEC_JIFFYDOS"])
-        {
-            featureStr    += " JIFFY";
-            featureStrM65 += " JIFFY";
-            extendedIEC    = true;
-        }
-       
-        if (!extendedIEC)
-        {
-            featureStr    += " NORMAL ONLY";
-            featureStrM65 += " NORMAL ONLY";
-        }
-
-        featureStr    += "\r";
-        featureStrM65 += "\r";
-    }
-    else
-    {
-        featureStrM65 += "IEC      : -\r";
-    }
-
-    // RS-232 support features
-   
-    if (GLOBAL_ConfigOptions["RS232_ACIA"])   featureStr += "ACIA 6551\r";
-    if (GLOBAL_ConfigOptions["RS232_UP2400"]) featureStr += "UP2400\r";
-    if (GLOBAL_ConfigOptions["RS232_UP9600"]) featureStr += "UP9600\r";
-   
-    featureStrM65 += "RS-232   : -\r";
-
-    // CBDOS features
-
-    featureStrM65 += "\rSD CARD  : ";
-
-    // Keyboard support features
-   
-    if (GLOBAL_ConfigOptions["KEYBOARD_C128"]) featureStr += "KBD 128\r";
-
-    // Add strings to appropriate list
-   
-    for (auto &stringEntryList : stringEntryLists)
-    {
-        if (stringEntryList.name != std::string("misc")) continue;
-
-        // List found
-
-        if (GLOBAL_ConfigOptions["SHOW_FEATURES"] || GLOBAL_ConfigOptions["MB_M65"])
-        {
-            StringEntry newEntry1 = { true, true, true, true, true, "STR_PAL",      "PAL\r"    };
-            StringEntry newEntry2 = { true, true, true, true, true, "STR_NTSC",     "NTSC\r"   };
-
-            stringEntryList.list.push_back(newEntry1);
-            stringEntryList.list.push_back(newEntry2);
-        }
-
-        if (GLOBAL_ConfigOptions["SHOW_FEATURES"])
-        {
-            StringEntry newEntry = { true, true, true, true, true, "STR_FEATURES", featureStr };
-            stringEntryList.list.push_back(newEntry);
-        }
-
-        if (GLOBAL_ConfigOptions["MB_M65"])
-        {
-            StringEntry newEntry = { false, true, true, false, false, "STR_SI_FEATURES", featureStrM65 };
-            stringEntryList.list.push_back(newEntry);
-        }
-
-        if (!GLOBAL_ConfigOptions["BRAND_CUSTOM_BUILD"] || GLOBAL_ConfigOptions["MB_M65"])
-        {
-            StringEntry newEntry = { true, true, true, true, true, "STR_PRE_REV", "RELEASE " };
-            stringEntryList.list.push_back(newEntry);
-        }
-
-        break;
-    }
-}
 
 void DataSet::validateLists()
 {
-    for (const auto &stringEntryList : stringEntryLists)
+    for (const auto &stringInputList : stringInputLists)
     {
-        for (const auto &stringEntry : stringEntryList.list)
+        for (const auto &stringInputEntry : stringInputList.list)
         {
             // Check for maximum allowed string length
-            if (stringEntry.string.length() > 255) ERROR("string cannot be longer than 255 characters");
+            if (stringInputEntry.string.length() > 255) ERROR("string cannot be longer than 255 characters");
 
             // Check mor maximum keyword length
-            if (stringEntryList.type == ListType::KEYWORDS)
+            if (stringInputList.type == ListType::KEYWORDS)
             {
-                if (stringEntry.string.length() > 16) ERROR("keyword cannot be longer than 16 characters");
-                tk__max_keyword_len = std::max(tk__max_keyword_len, (uint8_t) stringEntry.string.length());
+                if (stringInputEntry.string.length() > 16) ERROR("keyword cannot be longer than 16 characters");
+                tk__max_keyword_len = std::max(tk__max_keyword_len, (uint8_t) stringInputEntry.string.length());
             }
 
             // Update maximum alias length too
-            maxAliasLen = std::max(maxAliasLen, stringEntry.alias.length());
+            maxAliasLen = std::max(maxAliasLen, stringInputEntry.alias.length());
 
-            for (const auto &character : stringEntry.string)
+            for (const auto &character : stringInputEntry.string)
             {
                 if ((unsigned char) character >= 0x80)
                 {
-                    ERROR(std::string("character above 0x80 in string '") + stringEntry.string + "'");
+                    ERROR(std::string("character above 0x80 in string '") + stringInputEntry.string + "'");
                 }
             }           
         }
@@ -230,30 +107,30 @@ void DataSet::encodeStringsDict()
 
     // Add strings for dictionary compresssion
 
-    for (uint8_t idx = 0; idx < stringEntryLists.size(); idx++)
+    for (uint8_t idx = 0; idx < stringInputLists.size(); idx++)
     {
-        const auto &stringEntryList = stringEntryLists[idx];
+        const auto &stringInputList = stringInputLists[idx];
         auto &stringEncodedList     = stringEncodedLists[idx];
 
         // Skip lists not to be encoded using the dictionary
-        if (!isCompressionLvl2(stringEntryList)) continue;
+        if (!isCompressionDict(stringInputList)) continue;
 
-        stringEncodedList.resize(stringEntryList.list.size());
-        for (uint8_t idxEntry = 0; idxEntry < stringEntryList.list.size(); idxEntry++)
+        stringEncodedList.resize(stringInputList.list.size());
+        for (uint8_t idxEntry = 0; idxEntry < stringInputList.list.size(); idxEntry++)
         {
-            dictEncoder.addString(stringEntryList.list[idxEntry].string,
+            dictEncoder.addString(stringInputList.list[idxEntry].string,
                                   &stringEncodedList[idxEntry]);
         }
     }
 
     // Perform the compression
 
-    StringEntryList dictionary;
+    StringInputList dictionary;
     dictEncoder.process(dictionary);
 
     // Add new lists
 
-    stringEntryLists.push_back(dictionary);
+    stringInputLists.push_back(dictionary);
     stringEncodedLists.emplace_back();
 }
 
@@ -267,19 +144,19 @@ void DataSet::calculateFrequencies()
 
     // Calculate frequencies of characters in the strings
 
-    for (const auto &stringEntryList : stringEntryLists)
+    for (const auto &stringInputList : stringInputLists)
     {
         // Skip lists encoded by the dictionary
-        if (isCompressionLvl2(stringEntryList)) continue;
+        if (isCompressionDict(stringInputList)) continue;
 
-        for (const auto &stringEntry : stringEntryList.list)
+        for (const auto &stringInputEntry : stringInputList.list)
         {
-            if (!isRelevant(stringEntry)) continue;
+            if (!isRelevant(stringInputEntry)) continue;
 
-            for (const auto &character : stringEntry.string)
+            for (const auto &character : stringInputEntry.string)
             {               
                 freqMapGeneral[character]++;
-                if (stringEntryList.type == ListType::KEYWORDS) freqMapKeywords[character]++;
+                if (stringInputList.type == ListType::KEYWORDS) freqMapKeywords[character]++;
             }
         }
     }
@@ -296,7 +173,7 @@ void DataSet::calculateFrequencies()
     std::sort(freqVector1.begin(), freqVector1.end(), [&freqMapGeneral](char e1, char e2)
               { return freqMapGeneral[e2] < freqMapGeneral[e1]; });
 
-    // Check if minimal amount of characters needed, below 15 is not supported by the 6502 side code
+    // Check if minimal amount of characters reached, below 15 is not supported by the 6502 side code
 
     if (freqVector1.size() < 15) ERROR(std::string("not enough distinct characters in layout '") + layoutName() + "', at least 15 needed");
 
@@ -407,24 +284,24 @@ void DataSet::encodeStringsFreq()
 {
     // Encode every relevant string from every list - by character frequency
 
-    for (uint8_t idx = 0; idx < stringEntryLists.size(); idx++)
+    for (uint8_t idx = 0; idx < stringInputLists.size(); idx++)
     {
-        const auto &stringEntryList = stringEntryLists[idx];
+        const auto &stringInputList = stringInputLists[idx];
         auto &stringEncodedList = stringEncodedLists[idx];
 
         // Skip lists encoded by the dictionary
-        if (isCompressionLvl2(stringEntryList)) continue;
+        if (isCompressionDict(stringInputList)) continue;
 
         // Perform frequency encoding of the list
 
-        for (const auto &stringEntry : stringEntryList.list)
+        for (const auto &stringInputEntry : stringInputList.list)
         {
             stringEncodedList.emplace_back();
             auto &stringEncoded = stringEncodedList.back();
 
-            if (isRelevant(stringEntry))
+            if (isRelevant(stringInputEntry))
             {
-                encodeByFreq(stringEntry.string, stringEncoded);
+                encodeByFreq(stringInputEntry.string, stringEncoded);
             }
         }
     }
@@ -491,32 +368,32 @@ void DataSet::prepareOutput_1n_3n(std::ostringstream &stream)
 }
 
 void DataSet::prepareOutput_labels(std::ostringstream &stream,
-                                   const StringEntryList &stringEntryList,
+                                   const StringInputList &stringInputList,
                                    const StringEncodedList &stringEncodedList)
 {
     // For the dictionary we do not have any labels
-    if (stringEntryList.type == ListType::DICTIONARY) return;
+    if (stringInputList.type == ListType::DICTIONARY) return;
 
     stream << std::endl;
     for (uint8_t idx = 0; idx < stringEncodedList.size(); idx++)
     {
-        const auto &stringEntry   = stringEntryList.list[idx];
-        const auto &stringEncoded = stringEncodedList[idx];
+        const auto &stringInputEntry = stringInputList.list[idx];
+        const auto &stringEncoded    = stringEncodedList[idx];
 
         if (!stringEncoded.empty())
         {
-            stream << "!set IDX__" << stringEntry.alias <<
-                      std::string(maxAliasLen - stringEntry.alias.length(), ' ') << " = $" <<
+            stream << "!set IDX__" << stringInputEntry.alias <<
+                      std::string(maxAliasLen - stringInputEntry.alias.length(), ' ') << " = $" <<
                       std::uppercase << std::hex << std::setfill('0') << std::setw(2) << +idx << std::endl;
         }
     }
 }
 
 void DataSet::prepareOutput_packed(std::ostringstream &stream,
-                                   const StringEntryList &stringEntryList,
+                                   const StringInputList &stringInputList,
                                    const StringEncodedList &stringEncodedList)
 {
-    if (isCompressionLvl2(stringEntryList))
+    if (isCompressionDict(stringInputList))
     {
         stream << std::endl << "!macro PUT_PACKED_DICT_";
     }
@@ -525,7 +402,7 @@ void DataSet::prepareOutput_packed(std::ostringstream &stream,
         stream << std::endl << "!macro PUT_PACKED_FREQ_";           
     }
 
-    stream << stringEntryList.name << " {" << std::endl << std::endl;
+    stream << stringInputList.name << " {" << std::endl << std::endl;
 
     enum LastStr { NONE, SKIPPED, WRITTEN } lastStr = LastStr::NONE;
     for (uint8_t idxString = 0; idxString < stringEncodedList.size(); idxString++)
@@ -534,10 +411,10 @@ void DataSet::prepareOutput_packed(std::ostringstream &stream,
 
         if (stringEncoded.empty())
         {
-            if (stringEntryList.type == ListType::DICTIONARY) ERROR("internal error"); // should never happen
+            if (stringInputList.type == ListType::DICTIONARY) ERROR("internal error"); // should never happen
 
             if (lastStr == LastStr::WRITTEN) stream << std::endl;
-            stream << "\t!byte $00    ; skipped " << stringEntryList.list[idxString].alias << std::endl;
+            stream << "\t!byte $00    ; skipped " << stringInputList.list[idxString].alias << std::endl;
             lastStr = LastStr::SKIPPED;
         }
         else
@@ -546,15 +423,15 @@ void DataSet::prepareOutput_packed(std::ostringstream &stream,
 
             // Output the label - as a comment
 
-            if (stringEntryList.type != ListType::DICTIONARY)
+            if (stringInputList.type != ListType::DICTIONARY)
             {
-                stream << "\t; IDX__" << stringEntryList.list[idxString].alias << std::endl;
+                stream << "\t; IDX__" << stringInputList.list[idxString].alias << std::endl;
             }
 
             // Output the source string - as a comment
 
             stream << "\t; '";
-            for (auto &character : stringEntryList.list[idxString].string)
+            for (auto &character : stringInputList.list[idxString].string)
             {
                 if (character >= 32 && character <= 132 && character != 39 && character != 34)
                 {
@@ -597,7 +474,7 @@ void DataSet::prepareOutput_packed(std::ostringstream &stream,
 
     // For the token list - put the 'end of keywords' mark
 
-    if (stringEntryList.type == ListType::KEYWORDS)
+    if (stringInputList.type == ListType::KEYWORDS)
     {
         stream << std::endl << "\t; Marker - end of the keyword list" << std::endl;
         stream << "\t!byte $FF, $FF" << std::endl;
@@ -623,28 +500,28 @@ void DataSet::prepareOutput()
 
     // Export encoded strings
 
-    for (uint8_t idx = 0; idx < stringEntryLists.size(); idx++)
+    for (uint8_t idx = 0; idx < stringInputLists.size(); idx++)
     {
-        const auto &stringEntryList   = stringEntryLists[idx];
+        const auto &stringInputList   = stringInputLists[idx];
         const auto &stringEncodedList = stringEncodedLists[idx];
 
         if (stringEncodedList.empty()) continue;
 
         // Export labels for the current list
 
-        prepareOutput_labels(stream, stringEntryList, stringEncodedList);
+        prepareOutput_labels(stream, stringInputList, stringEncodedList);
 
         // For the token list - put the number of tokens available
 
-        if (stringEntryList.type == ListType::KEYWORDS)
+        if (stringInputList.type == ListType::KEYWORDS)
         {
-            stream << std::endl << "!set TK__MAXTOKEN_" << stringEntryList.name << " = " <<
+            stream << std::endl << "!set TK__MAXTOKEN_" << stringInputList.name << " = " <<
                       std::dec << stringEncodedList.size() << std::endl;
         }
 
         // Export the packed data
 
-        prepareOutput_packed(stream, stringEntryList, stringEncodedList);
+        prepareOutput_packed(stream, stringInputList, stringEncodedList);
     }
 
     // Finalize the file stream
